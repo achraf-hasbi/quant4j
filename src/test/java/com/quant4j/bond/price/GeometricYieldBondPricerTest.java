@@ -8,17 +8,17 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class YieldBondPricerTest {
+class GeometricYieldBondPricerTest {
 
     @Test
     void testConstructor_NullStrategy() {
-        assertThrows(NullPointerException.class, () -> new YieldBondPricer(0.05, null),
+        assertThrows(NullPointerException.class, () -> new GeometricYieldBondPricer(0.05, null),
                 "Should throw NullPointerException when strategy is null");
     }
 
     @Test
     void testPrice_NullBond() {
-        YieldBondPricer pricer = new YieldBondPricer(0.05, new DiscreteCompoundingStrategy(Frequency.ANNUALLY));
+        GeometricYieldBondPricer pricer = new GeometricYieldBondPricer(0.05, new DiscreteCompoundingStrategy(Frequency.ANNUALLY));
         assertThrows(NullPointerException.class, () -> pricer.price(null),
                 "Should throw NullPointerException when bond is null");
     }
@@ -33,7 +33,7 @@ class YieldBondPricerTest {
 
         Bond bond = new Bond(faceValue, couponRate, maturityYears, frequency);
 
-        YieldBondPricer pricer = new YieldBondPricer(yield, new DiscreteCompoundingStrategy(frequency));
+        GeometricYieldBondPricer pricer = new GeometricYieldBondPricer(yield, new DiscreteCompoundingStrategy(frequency));
 
         double price = pricer.price(bond);
 
