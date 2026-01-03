@@ -4,8 +4,6 @@ import com.quant4j.bond.rate.compound.CompoundingFrequency;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -13,11 +11,6 @@ class CompoundInterestCalculatorTest {
 
     private final CompoundInterestCalculator calculator = new CompoundInterestCalculator();
     private static final double TOLERANCE = 1.0e-2; // Penny tolerance
-
-    private double getLast(List<Double> list) {
-        if (list.isEmpty()) return 0.0;
-        return list.get(list.size() - 1);
-    }
 
     @Test
     @DisplayName("Simple Annual Compounding without Contributions")
@@ -34,9 +27,9 @@ class CompoundInterestCalculatorTest {
                 CompoundingFrequency.ANNUALLY
         );
 
-        assertEquals(1210.0, getLast(result.balance()), TOLERANCE);
-        assertEquals(1000.0, getLast(result.totalDeposit()), TOLERANCE); // Only initial
-        assertEquals(210.0, getLast(result.accuredInterest()), TOLERANCE);
+        assertEquals(1210.0, result.balance().getLast(), TOLERANCE);
+        assertEquals(1000.0, result.totalDeposit().getLast(), TOLERANCE); // Only initial
+        assertEquals(210.0, result.accuredInterest().getLast(), TOLERANCE);
     }
 
     @Test
@@ -59,9 +52,9 @@ class CompoundInterestCalculatorTest {
         double r = 0.005;
         double expectedFV = 100 * (Math.pow(1 + r, 12) - 1) / r;
         
-        assertEquals(expectedFV, getLast(result.balance()), TOLERANCE);
-        assertEquals(1200.0, getLast(result.totalDeposit()), TOLERANCE);
-        assertEquals(33.56, getLast(result.accuredInterest()), TOLERANCE);
+        assertEquals(expectedFV, result.balance().getLast(), TOLERANCE);
+        assertEquals(1200.0, result.totalDeposit().getLast(), TOLERANCE);
+        assertEquals(33.56, result.accuredInterest().getLast(), TOLERANCE);
         assertEquals(12, result.balance().size() - 1); // Initial state + 12 periods
     }
 
@@ -84,10 +77,10 @@ class CompoundInterestCalculatorTest {
                 CompoundingFrequency.ANNUALLY
         );
 
-        assertEquals(4335, getLast(result.balance()), TOLERANCE);
-        assertEquals(3900, getLast(result.totalDeposit()), TOLERANCE);
-        assertEquals(285.0, getLast(result.interests()), TOLERANCE);
-        assertEquals(435.0, getLast(result.accuredInterest()), TOLERANCE);
+        assertEquals(4335, result.balance().getLast(), TOLERANCE);
+        assertEquals(3900, result.totalDeposit().getLast(), TOLERANCE);
+        assertEquals(285.0, result.interests().getLast(), TOLERANCE);
+        assertEquals(435.0, result.accuredInterest().getLast(), TOLERANCE);
         assertEquals(2, result.balance().size() - 1); // Initial + 1 period
     }
     
@@ -113,7 +106,7 @@ class CompoundInterestCalculatorTest {
         
         assertEquals(0.0, result.balance().get(1), TOLERANCE);
         assertEquals(0.0, result.balance().get(11), TOLERANCE); 
-        assertEquals(1200.0, getLast(result.balance()), TOLERANCE);
+        assertEquals(1200.0, result.balance().getLast(), TOLERANCE);
     }
 
     @Test
@@ -130,9 +123,9 @@ class CompoundInterestCalculatorTest {
         );
         
         // 1000 + 12*100 = 2200
-        assertEquals(2200.0, getLast(result.balance()), TOLERANCE);
-        assertEquals(2200.0, getLast(result.totalDeposit()), TOLERANCE);
-        assertEquals(0.0, getLast(result.accuredInterest()), TOLERANCE);
+        assertEquals(2200.0, result.balance().getLast(), TOLERANCE);
+        assertEquals(2200.0, result.totalDeposit().getLast(), TOLERANCE);
+        assertEquals(0.0, result.accuredInterest().getLast(), TOLERANCE);
     }
 
     @Test
