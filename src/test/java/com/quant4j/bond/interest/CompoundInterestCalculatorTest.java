@@ -1,6 +1,6 @@
 package com.quant4j.bond.interest;
 
-import com.quant4j.bond.enumeration.CompoundingFrequency;
+import com.quant4j.bond.enumeration.Frequency;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -21,10 +21,10 @@ class CompoundInterestCalculatorTest {
         CompoundInterestResult result = calculator.calculate(
                 1000,
                 0,
-                CompoundingFrequency.ANNUALLY,
+                Frequency.ANNUALLY,
                 2,
                 0.1,
-                CompoundingFrequency.ANNUALLY
+                Frequency.ANNUALLY
         );
 
         assertEquals(1210.0, result.balance().getLast(), TOLERANCE);
@@ -43,10 +43,10 @@ class CompoundInterestCalculatorTest {
         CompoundInterestResult result = calculator.calculate(
                 0,
                 100,
-                CompoundingFrequency.MONTHLY,
+                Frequency.MONTHLY,
                 1,
                 0.06,
-                CompoundingFrequency.MONTHLY
+                Frequency.MONTHLY
         );
 
         double r = 0.005;
@@ -71,10 +71,10 @@ class CompoundInterestCalculatorTest {
         CompoundInterestResult result = calculator.calculate(
                 1500,
                 100,
-                CompoundingFrequency.MONTHLY,
+                Frequency.MONTHLY,
                 2,
                 0.10,
-                CompoundingFrequency.ANNUALLY
+                Frequency.ANNUALLY
         );
 
         assertEquals(4335, result.balance().getLast(), TOLERANCE);
@@ -95,10 +95,10 @@ class CompoundInterestCalculatorTest {
         CompoundInterestResult result = calculator.calculate(
                 0,
                 1200,
-                CompoundingFrequency.ANNUALLY,
+                Frequency.ANNUALLY,
                 1,
                 0.0,
-                CompoundingFrequency.MONTHLY
+                Frequency.MONTHLY
         );
 
         // Month 1-11: balance 0.
@@ -116,10 +116,10 @@ class CompoundInterestCalculatorTest {
         CompoundInterestResult result = calculator.calculate(
                 1000,
                 100,
-                CompoundingFrequency.MONTHLY,
+                Frequency.MONTHLY,
                 1,
                 0.0,
-                CompoundingFrequency.MONTHLY
+                Frequency.MONTHLY
         );
 
         // 1000 + 12*100 = 2200
@@ -132,8 +132,8 @@ class CompoundInterestCalculatorTest {
     @DisplayName("Validation")
     void testValidation() {
         assertThrows(NullPointerException.class, () ->
-                calculator.calculate(100, 10, null, 1, 0.05, CompoundingFrequency.ANNUALLY));
+                calculator.calculate(100, 10, null, 1, 0.05, Frequency.ANNUALLY));
         assertThrows(IllegalArgumentException.class, () ->
-                calculator.calculate(100, 10, CompoundingFrequency.MONTHLY, -1, 0.05, CompoundingFrequency.ANNUALLY));
+                calculator.calculate(100, 10, Frequency.MONTHLY, -1, 0.05, Frequency.ANNUALLY));
     }
 }

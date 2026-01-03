@@ -4,7 +4,7 @@ package com.quant4j.bond.enumeration;
  * Represents the frequency of compounding for discrete interest rates.
  * Provides the number of periods per year for standard frequencies.
  */
-public enum CompoundingFrequency {
+public enum Frequency {
     /** Once per year. */
     ANNUALLY(1),
     /** Twice per year. */
@@ -18,7 +18,7 @@ public enum CompoundingFrequency {
 
     private final int periodsPerYear;
 
-    CompoundingFrequency(int periodsPerYear) {
+    Frequency(int periodsPerYear) {
         this.periodsPerYear = periodsPerYear;
     }
 

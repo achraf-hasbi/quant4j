@@ -1,6 +1,6 @@
 package com.quant4j.bond.interest;
 
-import com.quant4j.bond.enumeration.CompoundingFrequency;
+import com.quant4j.bond.enumeration.Frequency;
 
 import java.util.Objects;
 
@@ -31,10 +31,10 @@ public class CompoundInterestCalculator {
      */
     public CompoundInterestResult calculate(double initialInvestment,
                                             double periodicContribution,
-                                            CompoundingFrequency contributionFrequency,
+                                            Frequency contributionFrequency,
                                             double timeInYears,
                                             double annualRate,
-                                            CompoundingFrequency compoundingFrequency) {
+                                            Frequency compoundingFrequency) {
         Objects.requireNonNull(contributionFrequency, "Contribution frequency cannot be null");
         Objects.requireNonNull(compoundingFrequency, "Compounding frequency cannot be null");
         if (timeInYears < 0) {

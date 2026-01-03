@@ -1,6 +1,6 @@
 package com.quant4j.bond.pojo;
 
-import com.quant4j.bond.enumeration.CompoundingFrequency;
+import com.quant4j.bond.enumeration.Frequency;
 
 import java.util.Objects;
 
@@ -17,7 +17,7 @@ import static com.quant4j.bond.ValidationHelper.validateTimeCoherence;
 public record Bond(double faceValue,
                    double couponRate,
                    double maturityYears,
-                   CompoundingFrequency couponFrequency) {
+                   Frequency couponFrequency) {
 
     public Bond {
         if (faceValue <= 0) throw new IllegalArgumentException("Face value must be positive");

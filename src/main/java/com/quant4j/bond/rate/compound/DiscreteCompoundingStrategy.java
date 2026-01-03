@@ -1,6 +1,6 @@
 package com.quant4j.bond.rate.compound;
 
-import com.quant4j.bond.enumeration.CompoundingFrequency;
+import com.quant4j.bond.enumeration.Frequency;
 
 import java.util.Objects;
 
@@ -13,14 +13,14 @@ import java.util.Objects;
  */
 public class DiscreteCompoundingStrategy implements CompoundingStrategy {
 
-    private final CompoundingFrequency frequency;
+    private final Frequency frequency;
 
     /**
      * Constructs a strategy with the specified compounding frequency.
      *
      * @param frequency the compounding frequency (cannot be null)
      */
-    public DiscreteCompoundingStrategy(CompoundingFrequency frequency) {
+    public DiscreteCompoundingStrategy(Frequency frequency) {
         this.frequency = Objects.requireNonNull(frequency, "Compounding frequency cannot be null");
     }
 

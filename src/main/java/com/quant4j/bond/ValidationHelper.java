@@ -1,6 +1,6 @@
 package com.quant4j.bond;
 
-import com.quant4j.bond.enumeration.CompoundingFrequency;
+import com.quant4j.bond.enumeration.Frequency;
 
 import java.math.BigDecimal;
 
@@ -17,7 +17,7 @@ public class ValidationHelper {
      * @param frequency   the compounding frequency
      * @throws IllegalArgumentException if the duration results in fractional periods
      */
-    public static void validateTimeCoherence(double timeInYears, CompoundingFrequency frequency) {
+    public static void validateTimeCoherence(double timeInYears, Frequency frequency) {
         BigDecimal time = BigDecimal.valueOf(timeInYears);
         BigDecimal periods = BigDecimal.valueOf(frequency.getPeriodsPerYear());
         BigDecimal totalPeriods = time.multiply(periods);

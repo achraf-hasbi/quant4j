@@ -1,6 +1,6 @@
 package com.quant4j.bond.rate;
 
-import com.quant4j.bond.enumeration.CompoundingFrequency;
+import com.quant4j.bond.enumeration.Frequency;
 
 import java.util.Objects;
 
@@ -22,7 +22,7 @@ public class RateConverter {
      * @param frequency    the frequency of the discrete rate
      * @return the equivalent continuous rate
      */
-    public static double discreteToContinuous(double discreteRate, CompoundingFrequency frequency) {
+    public static double discreteToContinuous(double discreteRate, Frequency frequency) {
         Objects.requireNonNull(frequency, "Frequency cannot be null");
         int m = frequency.getPeriodsPerYear();
         return m * Math.log(1.0 + (discreteRate / m));
@@ -38,7 +38,7 @@ public class RateConverter {
      * @param frequency      the target frequency for the discrete rate
      * @return the equivalent discrete rate
      */
-    public static double continuousToDiscrete(double continuousRate, CompoundingFrequency frequency) {
+    public static double continuousToDiscrete(double continuousRate, Frequency frequency) {
         Objects.requireNonNull(frequency, "Frequency cannot be null");
         int m = frequency.getPeriodsPerYear();
         return m * (Math.exp(continuousRate / m) - 1.0);
@@ -57,8 +57,8 @@ public class RateConverter {
      * @return the equivalent rate at the target frequency
      */
     public static double convertDiscreteRates(double sourceRate,
-                                              CompoundingFrequency sourceFrequency,
-                                              CompoundingFrequency targetFrequency) {
+                                              Frequency sourceFrequency,
+                                              Frequency targetFrequency) {
         Objects.requireNonNull(sourceFrequency, "Source frequency cannot be null");
         Objects.requireNonNull(targetFrequency, "Target frequency cannot be null");
 

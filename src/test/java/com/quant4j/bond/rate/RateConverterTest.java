@@ -1,6 +1,6 @@
 package com.quant4j.bond.rate;
 
-import com.quant4j.bond.enumeration.CompoundingFrequency;
+import com.quant4j.bond.enumeration.Frequency;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,9 +14,9 @@ public class RateConverterTest {
     private static final double TOLERANCE = 1.0e-9;
 
     @ParameterizedTest
-    @EnumSource(CompoundingFrequency.class)
+    @EnumSource(Frequency.class)
     @DisplayName("Test Rate Conversion: Discrete to Continuous")
-    void testDiscreteToContinuous(CompoundingFrequency frequency) {
+    void testDiscreteToContinuous(Frequency frequency) {
         double discreteRate = 0.10;
         int m = frequency.getPeriodsPerYear();
 
@@ -27,9 +27,9 @@ public class RateConverterTest {
 
 
     @ParameterizedTest
-    @EnumSource(CompoundingFrequency.class)
+    @EnumSource(Frequency.class)
     @DisplayName("Test Rate Conversion: Continuous to Discrete")
-    void testContinuousToDiscrete(CompoundingFrequency frequency) {
+    void testContinuousToDiscrete(Frequency frequency) {
         double continuousRate = 0.07;
         int m = frequency.getPeriodsPerYear();
 
@@ -51,8 +51,8 @@ public class RateConverterTest {
         double sourceRate = 0.10;
         double targetRate = RateConverter.convertDiscreteRates(
                 sourceRate,
-                CompoundingFrequency.ANNUALLY,
-                CompoundingFrequency.SEMI_ANNUALLY
+                Frequency.ANNUALLY,
+                Frequency.SEMI_ANNUALLY
         );
 
         double expected = 2.0 * (Math.sqrt(1.10) - 1.0);
@@ -61,8 +61,8 @@ public class RateConverterTest {
         // Verify round trip
         double backToAnnual = RateConverter.convertDiscreteRates(
                 targetRate,
-                CompoundingFrequency.SEMI_ANNUALLY,
-                CompoundingFrequency.ANNUALLY
+                Frequency.SEMI_ANNUALLY,
+                Frequency.ANNUALLY
         );
         assertEquals(sourceRate, backToAnnual, TOLERANCE);
     }
