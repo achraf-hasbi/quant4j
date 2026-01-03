@@ -22,11 +22,22 @@ public class ContinuousCompoundingStrategy implements CompoundingStrategy {
     /**
      * {@inheritDoc}
      * <p>
+     * Formula: $AF = e^{r \cdot t}$
+     * </p>
+     */
+    @Override
+    public double accumulationFactor(double rate, double time) {
+        return Math.exp(rate * time);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
      * Formula: $FV = P \cdot e^{r \cdot t}$
      * </p>
      */
     @Override
     public double futureValue(double principal, double rate, double time) {
-        return principal * Math.exp(rate * time);
+        return principal * accumulationFactor(rate, time);
     }
 }

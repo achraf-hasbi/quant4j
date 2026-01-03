@@ -38,21 +38,23 @@ public class DiscreteCompoundingStrategy implements CompoundingStrategy {
     /**
      * {@inheritDoc}
      * <p>
+     * Formula: $AF = (1 + \frac{r}{m})^{(m \cdot t)}$
+     * </p>
+     */
+    @Override
+    public double accumulationFactor(double rate, double time) {
+        int m = frequency.getPeriodsPerYear();
+        return Math.pow(1.0 + (rate / m), m * time);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
      * Formula: $FV = P \cdot (1 + \frac{r}{m})^{(m \cdot t)}$
      * </p>
      */
     @Override
     public double futureValue(double principal, double rate, double time) {
-        int m = frequency.getPeriodsPerYear();
-        return principal * Math.pow(1.0 + (rate / m), m * time);
-    }
-
-    /**
-     * Returns the frequency associated with this strategy.
-     *
-     * @return the compounding frequency
-     */
-    public CompoundingFrequency getFrequency() {
-        return frequency;
+        return principal * accumulationFactor(rate, time);
     }
 }

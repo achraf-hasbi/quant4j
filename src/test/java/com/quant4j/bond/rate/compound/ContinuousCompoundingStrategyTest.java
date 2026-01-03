@@ -21,6 +21,17 @@ public class ContinuousCompoundingStrategyTest {
     }
 
     @Test
+    @DisplayName("Test Continuous Compounding Accumulation Factor")
+    void testContinuousAccumulationFactor() {
+        CompoundingStrategy strategy = new ContinuousCompoundingStrategy();
+        double rate = 0.08;
+        double time = 3.0;
+
+        double expected = Math.exp(rate * time);
+        assertEquals(expected, strategy.accumulationFactor(rate, time), TOLERANCE);
+    }
+
+    @Test
     @DisplayName("Test Continuous Compounding Future Value")
     void testContinuousFutureValue() {
         CompoundingStrategy strategy = new ContinuousCompoundingStrategy();

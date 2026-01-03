@@ -20,6 +20,19 @@ public interface CompoundingStrategy {
     double discountFactor(double rate, double time);
 
     /**
+     * Calculates the accumulation factor (Future Value Interest Factor).
+     * <p>
+     * Represents the future value of 1 unit of currency invested today
+     * at rate $r$ for time $t$.
+     * </p>
+     *
+     * @param rate the annual interest rate (as a decimal)
+     * @param time the time in years
+     * @return the accumulation factor
+     */
+    double accumulationFactor(double rate, double time);
+
+    /**
      * Calculates the future value of a principal amount.
      *
      * @param principal the initial amount
