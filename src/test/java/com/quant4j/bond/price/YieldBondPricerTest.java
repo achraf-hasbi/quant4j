@@ -3,20 +3,24 @@ package com.quant4j.bond.price;
 import com.quant4j.bond.enumeration.Frequency;
 import com.quant4j.bond.pojo.Bond;
 import com.quant4j.bond.rate.compound.DiscreteCompoundingStrategy;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@DisplayName("Yield Bond Pricer Tests")
 class YieldBondPricerTest {
 
     @Test
+    @DisplayName("Constructor should throw NPE when strategy is null")
     void testConstructor_NullStrategy() {
         assertThrows(NullPointerException.class, () -> new YieldBondPricer(0.05, null),
                 "Should throw NullPointerException when strategy is null");
     }
 
     @Test
+    @DisplayName("Price should throw NPE when bond is null")
     void testPrice_NullBond() {
         YieldBondPricer pricer = new YieldBondPricer(0.05, new DiscreteCompoundingStrategy(Frequency.ANNUALLY));
         assertThrows(NullPointerException.class, () -> pricer.price(null),
@@ -24,6 +28,7 @@ class YieldBondPricerTest {
     }
 
     @Test
+    @DisplayName("Price calculation for Semi-Annual Bond (1.5 years)")
     void testPrice_SemiAnnualBond_OneYear() {
         double yield = 0.052;
         double faceValue = 100.0;
