@@ -1,8 +1,7 @@
 package com.quant4j.bond.price;
 
-import com.quant4j.bond.price.Bond;
+import com.quant4j.bond.pojo.Bond;
 import com.quant4j.bond.rate.compound.CompoundingStrategy;
-import com.quant4j.bond.rate.compound.DiscreteCompoundingStrategy;
 
 import java.util.Objects;
 

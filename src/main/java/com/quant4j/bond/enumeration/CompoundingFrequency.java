@@ -1,4 +1,4 @@
-package com.quant4j.bond.rate.compound;
+package com.quant4j.bond.enumeration;
 
 /**
  * Represents the frequency of compounding for discrete interest rates.

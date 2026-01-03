@@ -1,8 +1,7 @@
-package com.quant4j.bond.price;
+package com.quant4j.bond.pojo;
 
-import com.quant4j.bond.rate.compound.CompoundingFrequency;
+import com.quant4j.bond.enumeration.CompoundingFrequency;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 
 import static com.quant4j.bond.ValidationHelper.validateTimeCoherence;

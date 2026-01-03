@@ -1,6 +1,6 @@
 package com.quant4j.bond.price;
 
-import com.quant4j.bond.price.Bond;
+import com.quant4j.bond.pojo.Bond;
 
 /**
  * Defines the contract for pricing bonds.

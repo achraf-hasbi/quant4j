@@ -1,5 +1,6 @@
 package com.quant4j.bond.rate.compound;
 
+import com.quant4j.bond.enumeration.CompoundingFrequency;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

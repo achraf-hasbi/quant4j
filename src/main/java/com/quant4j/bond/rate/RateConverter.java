@@ -1,6 +1,6 @@
 package com.quant4j.bond.rate;
 
-import com.quant4j.bond.rate.compound.CompoundingFrequency;
+import com.quant4j.bond.enumeration.CompoundingFrequency;
 
 import java.util.Objects;
 

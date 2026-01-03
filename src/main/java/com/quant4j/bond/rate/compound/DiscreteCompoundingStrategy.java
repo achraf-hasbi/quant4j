@@ -1,5 +1,7 @@
 package com.quant4j.bond.rate.compound;
 
+import com.quant4j.bond.enumeration.CompoundingFrequency;
+
 import java.util.Objects;
 
 /**
