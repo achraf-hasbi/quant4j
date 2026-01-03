@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CompoundInterestCalculatorTest {
@@ -39,7 +40,7 @@ class CompoundInterestCalculatorTest {
         // Rate per period = 0.06 / 12 = 0.005
         // FV = PMT * [ (1+r)^n - 1 ] / r
         // FV = 100 * [ (1.005)^12 - 1 ] / 0.005
-        
+
         CompoundInterestResult result = calculator.calculate(
                 0,
                 100,
@@ -48,10 +49,10 @@ class CompoundInterestCalculatorTest {
                 0.06,
                 CompoundingFrequency.MONTHLY
         );
-        
+
         double r = 0.005;
         double expectedFV = 100 * (Math.pow(1 + r, 12) - 1) / r;
-        
+
         assertEquals(expectedFV, result.balance().getLast(), TOLERANCE);
         assertEquals(1200.0, result.totalDeposit().getLast(), TOLERANCE);
         assertEquals(33.56, result.accuredInterest().getLast(), TOLERANCE);
@@ -67,7 +68,7 @@ class CompoundInterestCalculatorTest {
         // contributionThisPeriod = 100 * 12 = 1200.
         // Interest is calculated on start balance (0).
         // End balance = 0 + 0 + 1200 = 1200.
-        
+
         CompoundInterestResult result = calculator.calculate(
                 1500,
                 100,
@@ -83,7 +84,7 @@ class CompoundInterestCalculatorTest {
         assertEquals(435.0, result.accuredInterest().getLast(), TOLERANCE);
         assertEquals(2, result.balance().size() - 1); // Initial + 1 period
     }
-    
+
     @Test
     @DisplayName("Distribution: Annual Contribution, Monthly Compounding")
     void testDistributionLogic() {
@@ -91,7 +92,7 @@ class CompoundInterestCalculatorTest {
         // Compounding periods = 12. Contribution periods = 1.
         // interval = 12 / 1 = 12.
         // Contribution happens only at period 12.
-        
+
         CompoundInterestResult result = calculator.calculate(
                 0,
                 1200,
@@ -100,12 +101,12 @@ class CompoundInterestCalculatorTest {
                 0.0,
                 CompoundingFrequency.MONTHLY
         );
-        
+
         // Month 1-11: balance 0.
         // Month 12: Add 1200.
-        
+
         assertEquals(0.0, result.balance().get(1), TOLERANCE);
-        assertEquals(0.0, result.balance().get(11), TOLERANCE); 
+        assertEquals(0.0, result.balance().get(11), TOLERANCE);
         assertEquals(1200.0, result.balance().getLast(), TOLERANCE);
     }
 
@@ -121,7 +122,7 @@ class CompoundInterestCalculatorTest {
                 0.0,
                 CompoundingFrequency.MONTHLY
         );
-        
+
         // 1000 + 12*100 = 2200
         assertEquals(2200.0, result.balance().getLast(), TOLERANCE);
         assertEquals(2200.0, result.totalDeposit().getLast(), TOLERANCE);
@@ -131,9 +132,23 @@ class CompoundInterestCalculatorTest {
     @Test
     @DisplayName("Validation")
     void testValidation() {
-        assertThrows(NullPointerException.class, () -> 
-            calculator.calculate(100, 10, null, 1, 0.05, CompoundingFrequency.ANNUALLY));
-        assertThrows(IllegalArgumentException.class, () -> 
-            calculator.calculate(100, 10, CompoundingFrequency.MONTHLY, -1, 0.05, CompoundingFrequency.ANNUALLY));
+        assertThrows(NullPointerException.class, () ->
+                calculator.calculate(100, 10, null, 1, 0.05, CompoundingFrequency.ANNUALLY));
+        assertThrows(IllegalArgumentException.class, () ->
+                calculator.calculate(100, 10, CompoundingFrequency.MONTHLY, -1, 0.05, CompoundingFrequency.ANNUALLY));
+    }
+
+    @Test
+    @DisplayName("Test Time vs Frequency Coherence")
+    void testTimeCoherence() {
+        // 1.5 years is NOT coherent with ANNUAL compounding (1.5 periods)
+        assertThrows(IllegalArgumentException.class, () ->
+                calculator.calculate(1000, 0, CompoundingFrequency.ANNUALLY, 1.5, 0.05, CompoundingFrequency.ANNUALLY)
+        );
+
+        // 1.5 years is coherent with SEMI_ANNUAL compounding (3 periods)
+        assertDoesNotThrow(() ->
+                calculator.calculate(1000, 0, CompoundingFrequency.ANNUALLY, 1.5, 0.05, CompoundingFrequency.SEMI_ANNUALLY)
+        );
     }
 }
