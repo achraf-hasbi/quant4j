@@ -2,8 +2,9 @@ package com.quant4j.bond.interest;
 
 import com.quant4j.bond.rate.compound.CompoundingFrequency;
 
-import java.math.BigDecimal;
 import java.util.Objects;
+
+import static com.quant4j.bond.ValidationHelper.validateTimeCoherence;
 
 /**
  * Calculator for determining the growth of an investment using compound interest.
@@ -39,7 +40,6 @@ public class CompoundInterestCalculator {
         if (timeInYears < 0) {
             throw new IllegalArgumentException("Time cannot be negative");
         }
-
         validateTimeCoherence(timeInYears, compoundingFrequency);
 
         CompoundInterestResult result = new CompoundInterestResult();
@@ -103,45 +103,5 @@ public class CompoundInterestCalculator {
         }
 
         return result;
-    }
-
-    /**
-     * Validates that the total duration aligns with the compounding frequency.
-     * <p>
-     * Ensures that the total number of periods (time in years * frequency) is an integer.
-     * This prevents ambiguity in discrete calculations involving partial periods.
-     * </p>
-     *
-     * @param timeInYears the duration in years
-     * @param frequency   the compounding frequency
-     * @throws IllegalArgumentException if the duration results in fractional periods
-     */
-    private void validateTimeCoherence(double timeInYears, CompoundingFrequency frequency) {
-        BigDecimal time = BigDecimal.valueOf(timeInYears);
-        BigDecimal periods = BigDecimal.valueOf(frequency.getPeriodsPerYear());
-        BigDecimal totalPeriods = time.multiply(periods);
-
-        if (totalPeriods.stripTrailingZeros().scale() <= 0) {
-            throw new IllegalArgumentException(
-                    "Time duration must be a multiple of the compounding frequency period. " +
-                            "Duration: " + timeInYears + " years, Frequency: " + frequency
-            );
-        }
-    }
-
-    /**
-     * Helper method to accept time in months.
-     *
-     * @param timeInMonths Time duration in months.
-     * @return The calculated result.
-     * @see #calculate(double, double, CompoundingFrequency, double, double, CompoundingFrequency)
-     */
-    public CompoundInterestResult calculateForMonths(double initialInvestment,
-                                                     double periodicContribution,
-                                                     CompoundingFrequency contributionFrequency,
-                                                     int timeInMonths,
-                                                     double annualRate,
-                                                     CompoundingFrequency compoundingFrequency) {
-        return calculate(initialInvestment, periodicContribution, contributionFrequency, timeInMonths / 12.0, annualRate, compoundingFrequency);
     }
 }

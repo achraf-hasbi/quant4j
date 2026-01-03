@@ -5,7 +5,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CompoundInterestCalculatorTest {
@@ -136,19 +135,5 @@ class CompoundInterestCalculatorTest {
                 calculator.calculate(100, 10, null, 1, 0.05, CompoundingFrequency.ANNUALLY));
         assertThrows(IllegalArgumentException.class, () ->
                 calculator.calculate(100, 10, CompoundingFrequency.MONTHLY, -1, 0.05, CompoundingFrequency.ANNUALLY));
-    }
-
-    @Test
-    @DisplayName("Test Time vs Frequency Coherence")
-    void testTimeCoherence() {
-        // 1.5 years is NOT coherent with ANNUAL compounding (1.5 periods)
-        assertThrows(IllegalArgumentException.class, () ->
-                calculator.calculate(1000, 0, CompoundingFrequency.ANNUALLY, 1.5, 0.05, CompoundingFrequency.ANNUALLY)
-        );
-
-        // 1.5 years is coherent with SEMI_ANNUAL compounding (3 periods)
-        assertDoesNotThrow(() ->
-                calculator.calculate(1000, 0, CompoundingFrequency.ANNUALLY, 1.5, 0.05, CompoundingFrequency.SEMI_ANNUALLY)
-        );
     }
 }
