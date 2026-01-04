@@ -13,15 +13,15 @@ import java.util.Objects;
  */
 public class DiscreteCompoundingStrategy implements CompoundingStrategy {
 
-    private final Frequency frequency;
+    private final int periodsPerYear;
 
     /**
      * Constructs a strategy with the specified compounding frequency.
      *
-     * @param frequency the compounding frequency (cannot be null)
+     * @param periodsPerYear The number of periods per year.
      */
-    public DiscreteCompoundingStrategy(Frequency frequency) {
-        this.frequency = Objects.requireNonNull(frequency, "Compounding frequency cannot be null");
+    public DiscreteCompoundingStrategy(int periodsPerYear) {
+        this.periodsPerYear = periodsPerYear;
     }
 
     /**
@@ -33,8 +33,7 @@ public class DiscreteCompoundingStrategy implements CompoundingStrategy {
      */
     @Override
     public double discountFactor(double rate, double time) {
-        int m = frequency.getPeriodsPerYear();
-        return Math.pow(1.0 + (rate / m), -(m * time));
+        return Math.pow(1.0 + (rate / periodsPerYear), -(periodsPerYear * time));
     }
 
     /**
@@ -45,8 +44,7 @@ public class DiscreteCompoundingStrategy implements CompoundingStrategy {
      */
     @Override
     public double accumulationFactor(double rate, double time) {
-        int m = frequency.getPeriodsPerYear();
-        return Math.pow(1.0 + (rate / m), m * time);
+        return Math.pow(1.0 + (rate / periodsPerYear), periodsPerYear * time);
     }
 
     /**

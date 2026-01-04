@@ -14,10 +14,10 @@ public class DiscreteCompoundingStrategyTest {
     private static final double TOLERANCE = 1.0e-9;
 
     @ParameterizedTest
-    @EnumSource(Frequency.class)
+    @EnumSource(value = Frequency.class, names = "CONTINUOUS", mode = EnumSource.Mode.EXCLUDE)
     @DisplayName("Test Discrete Compounding Discount Factor Logic for all frequencies")
     void testDiscreteDiscountFactor(Frequency frequency) {
-        CompoundingStrategy strategy = new DiscreteCompoundingStrategy(frequency);
+        CompoundingStrategy strategy = frequency.getCompoundingStrategy();
         double rate = 0.05;
         double time = 1.5;
         int m = frequency.getPeriodsPerYear();
@@ -27,10 +27,10 @@ public class DiscreteCompoundingStrategyTest {
     }
 
     @ParameterizedTest
-    @EnumSource(Frequency.class)
+    @EnumSource(value = Frequency.class, names = "CONTINUOUS", mode = EnumSource.Mode.EXCLUDE)
     @DisplayName("Test Discrete Compounding Accumulation Factor Logic for all frequencies")
     void testDiscreteAccumulationFactor(Frequency frequency) {
-        CompoundingStrategy strategy = new DiscreteCompoundingStrategy(frequency);
+        CompoundingStrategy strategy = frequency.getCompoundingStrategy();
         double rate = 0.05;
         double time = 2.0;
         int m = frequency.getPeriodsPerYear();
@@ -40,10 +40,10 @@ public class DiscreteCompoundingStrategyTest {
     }
 
     @ParameterizedTest
-    @EnumSource(Frequency.class)
+    @EnumSource(value = Frequency.class, names = "CONTINUOUS", mode = EnumSource.Mode.EXCLUDE)
     @DisplayName("Test Discrete Compounding Future Value Logic for all frequencies")
     void testSpecificDiscreteCalculation(Frequency frequency) {
-        CompoundingStrategy strategy = new DiscreteCompoundingStrategy(frequency);
+        CompoundingStrategy strategy = frequency.getCompoundingStrategy();
         double principal = 100;
         double rate = 0.05;
         double time = 1.5;
@@ -52,11 +52,5 @@ public class DiscreteCompoundingStrategyTest {
         double expectedFV = principal * Math.pow(1.0 + (rate / m), m * time);
 
         assertEquals(expectedFV, strategy.futureValue(principal, rate, time), TOLERANCE);
-    }
-
-    @Test
-    @DisplayName("Test Null Safety")
-    void testNullSafety() {
-        assertThrows(NullPointerException.class, () -> new DiscreteCompoundingStrategy(null));
     }
 }

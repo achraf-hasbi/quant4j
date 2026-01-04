@@ -11,17 +11,14 @@ import java.util.Objects;
 public class YieldBondPricer implements BondPricer {
 
     private final double yield;
-    private final CompoundingStrategy yieldCompoundingStrategy;
 
     /**
-     * Constructs a pricer with a specific yield and compounding strategy.
+     * Constructs a pricer with a specific yield.
      *
      * @param yield                    The annual yield to maturity (decimal).
-     * @param yieldCompoundingStrategy The strategy used to discount the cash flows (cannot be null).
      */
-    public YieldBondPricer(double yield, CompoundingStrategy yieldCompoundingStrategy) {
+    public YieldBondPricer(double yield) {
         this.yield = yield;
-        this.yieldCompoundingStrategy = Objects.requireNonNull(yieldCompoundingStrategy, "Compounding strategy cannot be null");
     }
 
     /**
@@ -42,11 +39,11 @@ public class YieldBondPricer implements BondPricer {
         // Sum of discounted coupon payments
         for (int i = 1; i <= totalPeriods; i++) {
             double time = (double) i / periodsPerYear;
-            price += couponPayment * yieldCompoundingStrategy.discountFactor(yield, time);
+            price += couponPayment * bond.couponFrequency().getCompoundingStrategy().discountFactor(yield, time);
         }
 
         // Discounted Face Value (Redemption)
-        price += bond.faceValue() * yieldCompoundingStrategy.discountFactor(yield, bond.maturityYears());
+        price += bond.faceValue() * bond.couponFrequency().getCompoundingStrategy().discountFactor(yield, bond.maturityYears());
 
         return price;
     }

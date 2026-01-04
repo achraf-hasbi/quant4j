@@ -13,16 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class GeometricYieldBondPricerTest {
 
     @Test
-    @DisplayName("Constructor should throw NPE when strategy is null")
-    void testConstructor_NullStrategy() {
-        assertThrows(NullPointerException.class, () -> new GeometricYieldBondPricer(0.05, null),
-                "Should throw NullPointerException when strategy is null");
-    }
-
-    @Test
     @DisplayName("Price should throw NPE when bond is null")
     void testPrice_NullBond() {
-        GeometricYieldBondPricer pricer = new GeometricYieldBondPricer(0.05, new DiscreteCompoundingStrategy(Frequency.ANNUALLY));
+        GeometricYieldBondPricer pricer = new GeometricYieldBondPricer(0.05);
         assertThrows(NullPointerException.class, () -> pricer.price(null),
                 "Should throw NullPointerException when bond is null");
     }
@@ -38,7 +31,7 @@ class GeometricYieldBondPricerTest {
 
         Bond bond = new Bond(faceValue, couponRate, maturityYears, frequency);
 
-        GeometricYieldBondPricer pricer = new GeometricYieldBondPricer(yield, new DiscreteCompoundingStrategy(frequency));
+        GeometricYieldBondPricer pricer = new GeometricYieldBondPricer(yield);
 
         double price = pricer.price(bond);
 

@@ -1,25 +1,33 @@
 package com.quant4j.bond.enumeration;
 
+import com.quant4j.bond.rate.compound.CompoundingStrategy;
+import com.quant4j.bond.rate.compound.ContinuousCompoundingStrategy;
+import com.quant4j.bond.rate.compound.DiscreteCompoundingStrategy;
+
 /**
  * Represents the frequency of compounding for discrete interest rates.
  * Provides the number of periods per year for standard frequencies.
  */
 public enum Frequency {
     /** Once per year. */
-    ANNUALLY(1),
+    ANNUALLY(1, new DiscreteCompoundingStrategy(1)),
     /** Twice per year. */
-    SEMI_ANNUALLY(2),
+    SEMI_ANNUALLY(2, new DiscreteCompoundingStrategy(2)),
     /** Four times per year. */
-    QUARTERLY(4),
+    QUARTERLY(4, new DiscreteCompoundingStrategy(4)),
     /** Twelve times per year. */
-    MONTHLY(12),
+    MONTHLY(12, new DiscreteCompoundingStrategy(12)),
     /** 365 times per year (standard daily convention). */
-    DAILY(365);
+    DAILY(365, new DiscreteCompoundingStrategy(365)),
+    /** CONTINU */
+    CONTINUOUS(-1, new ContinuousCompoundingStrategy());
 
     private final int periodsPerYear;
+    private final CompoundingStrategy compoundingStrategy;
 
-    Frequency(int periodsPerYear) {
+    Frequency(int periodsPerYear, CompoundingStrategy compoundingStrategy) {
         this.periodsPerYear = periodsPerYear;
+        this.compoundingStrategy = compoundingStrategy;
     }
 
     /**
@@ -28,6 +36,15 @@ public enum Frequency {
      * @return the integer representing frequency (e.g., 12 for MONTHLY).
      */
     public int getPeriodsPerYear() {
-        return periodsPerYear;
+        return this.periodsPerYear;
+    }
+
+    /**
+     * Returns the compounding strategy for this frequency.
+     *
+     * @return the compounding strategy (e.g., DiscreteCompoundingStrategy or ContinuousCompoundingStrategy).
+     */
+    public CompoundingStrategy getCompoundingStrategy() {
+        return this.compoundingStrategy;
     }
 }
