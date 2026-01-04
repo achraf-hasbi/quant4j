@@ -24,11 +24,11 @@ class GeometricYieldBondPricerTest {
     void testPrice_SemiAnnualBond_OneYear() {
         double yield = 0.052;
         double faceValue = 100.0;
-        double couponRate = 0.04;
+        double annualRate = 0.04;
         double maturityYears = 1.5;
         Frequency frequency = Frequency.SEMI_ANNUALLY;
 
-        Bond bond = new Bond(faceValue, couponRate, maturityYears, frequency);
+        Bond bond = new Bond(faceValue, annualRate, maturityYears, frequency);
 
         GeometricYieldBondPricer pricer = new GeometricYieldBondPricer(yield);
 

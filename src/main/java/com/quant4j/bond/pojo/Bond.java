@@ -10,18 +10,18 @@ import static com.quant4j.bond.ValidationHelper.validateTimeCoherence;
  * Represents a fixed-coupon bond.
  *
  * @param faceValue      The principal amount of the bond (e.g., 1000).
- * @param couponRate     The annual coupon rate (decimal, e.g., 0.05 for 5%).
+ * @param annualRate     The annual coupon rate (decimal, e.g., 0.05 for 5%).
  * @param maturityYears  The time to maturity in years.
  * @param couponFrequency The frequency of coupon payments (e.g., SEMI_ANNUALLY).
  */
 public record Bond(double faceValue,
-                   double couponRate,
+                   double annualRate,
                    double maturityYears,
                    Frequency couponFrequency) {
 
     public Bond {
         if (faceValue <= 0) throw new IllegalArgumentException("Face value must be positive");
-        if (couponRate < 0) throw new IllegalArgumentException("Coupon rate cannot be negative");
+        if (annualRate < 0) throw new IllegalArgumentException("Annual rate cannot be negative");
         if (maturityYears <= 0) throw new IllegalArgumentException("Maturity must be positive");
         Objects.requireNonNull(couponFrequency, "Coupon frequency cannot be null");
         validateTimeCoherence(maturityYears, couponFrequency);
@@ -33,6 +33,6 @@ public record Bond(double faceValue,
      * @return the coupon amount.
      */
     public double getCouponPayment() {
-        return faceValue * couponRate / couponFrequency.getPeriodsPerYear();
+        return faceValue * annualRate / couponFrequency.getPeriodsPerYear();
     }
 }

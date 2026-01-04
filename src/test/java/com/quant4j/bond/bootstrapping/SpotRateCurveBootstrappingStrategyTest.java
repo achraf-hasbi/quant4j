@@ -24,11 +24,11 @@ class SpotRateCurveBootstrappingStrategyTest {
         // If a bond is trading at par, its yield to maturity is equal to the coupon rate.
         // For a single bullet bond at start, the zero rate is exactly the coupon rate.
         double faceValue = 1000.0;
-        double couponRate = 0.05;
+        double annualRate = 0.05;
         double maturity = 1.0;
         Frequency frequency = Frequency.ANNUALLY;
 
-        Bond bond = new Bond(faceValue, couponRate, maturity, frequency);
+        Bond bond = new Bond(faceValue, annualRate, maturity, frequency);
 
         Map<Double, Double> curve = strategy.bootstrapFromParBonds(List.of(bond), interpolationStrategy);
 
