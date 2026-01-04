@@ -3,6 +3,8 @@ package com.quant4j.bond.pojo;
 import com.quant4j.bond.enumeration.BondType;
 import com.quant4j.bond.enumeration.Frequency;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.quant4j.bond.ValidationHelper.validateTimeCoherence;
@@ -37,6 +39,42 @@ public record Bond(double faceValue,
      * @return the coupon amount.
      */
     public double getCouponPayment() {
+        if (type == BondType.ZERO_COUPON) {
+            return 0.0;
+        }
         return faceValue * annualRate / couponFrequency.getPeriodsPerYear();
+    }
+
+    /**
+     * Generates the cash flows for the bond.
+     *
+     * @return a map where the key is the time in years and the value is the cash flow amount.
+     */
+    public Map<Double, Double> getCashflows() {
+        Map<Double, Double> cashflows = new LinkedHashMap<>();
+
+        if (type == BondType.ZERO_COUPON) {
+            cashflows.put(maturityYears, faceValue);
+            return cashflows;
+        }
+
+        double couponPayment = getCouponPayment();
+        int periodsPerYear = couponFrequency.getPeriodsPerYear();
+        int totalPeriods = (int) Math.round(maturityYears * periodsPerYear);
+        double timeStep = 1.0 / periodsPerYear;
+
+        for (int i = 1; i <= totalPeriods; i++) {
+            double time = i * timeStep;
+            double amount = couponPayment;
+
+            // Add face value to the last payment
+            if (i == totalPeriods) {
+                amount += faceValue;
+            }
+
+            cashflows.put(time, amount);
+        }
+
+        return cashflows;
     }
 }
