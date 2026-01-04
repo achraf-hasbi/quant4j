@@ -10,6 +10,9 @@ import java.util.Objects;
  */
 public class LinearInterpolationStrategy implements InterpolationStrategy {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double interpolate(NavigableMap<Double, Double> data, double x) {
         Objects.requireNonNull(data, "Data map cannot be null");
@@ -23,12 +26,12 @@ public class LinearInterpolationStrategy implements InterpolationStrategy {
         if (floor == null && ceiling == null) {
             return 0.0;
         }
-        
+
         // x is before the first point on the curve. Flat extrapolation backward.
         if (floor == null) {
             return ceiling.getValue();
         }
-        
+
         // x is after the last point. Flat extrapolation forward.
         if (ceiling == null) {
             return floor.getValue();
