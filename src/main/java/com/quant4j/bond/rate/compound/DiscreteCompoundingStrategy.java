@@ -1,9 +1,5 @@
 package com.quant4j.bond.rate.compound;
 
-import com.quant4j.bond.enumeration.Frequency;
-
-import java.util.Objects;
-
 /**
  * Implements discrete compounding logic based on a specific frequency.
  * <p>

@@ -2,7 +2,6 @@ package com.quant4j.bond.price;
 
 import com.quant4j.bond.enumeration.Frequency;
 import com.quant4j.bond.pojo.Bond;
-import com.quant4j.bond.rate.compound.DiscreteCompoundingStrategy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
