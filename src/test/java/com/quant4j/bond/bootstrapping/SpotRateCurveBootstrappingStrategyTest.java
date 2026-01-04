@@ -1,5 +1,6 @@
 package com.quant4j.bond.bootstrapping;
 
+import com.quant4j.bond.enumeration.BondType;
 import com.quant4j.bond.enumeration.Frequency;
 import com.quant4j.bond.math.interpolation.InterpolationStrategy;
 import com.quant4j.bond.math.interpolation.LinearInterpolationStrategy;
@@ -28,7 +29,7 @@ class SpotRateCurveBootstrappingStrategyTest {
         double maturity = 1.0;
         Frequency frequency = Frequency.ANNUALLY;
 
-        Bond bond = new Bond(faceValue, annualRate, maturity, frequency);
+        Bond bond = new Bond(faceValue, BondType.COUPON_BEARING, annualRate, maturity, frequency);
 
         Map<Double, Double> curve = strategy.bootstrapFromParBonds(List.of(bond), interpolationStrategy);
 
@@ -42,9 +43,9 @@ class SpotRateCurveBootstrappingStrategyTest {
     @DisplayName("Bootstrap curve with two annual bonds")
     void testTwoBondBootstrapping() {
         // Bond 1: 1 Year, 5% Coupon, Par
-        Bond b1 = new Bond(100.0, 0.05, 1.0, Frequency.ANNUALLY);
+        Bond b1 = new Bond(100.0, BondType.COUPON_BEARING, 0.05, 1.0, Frequency.ANNUALLY);
         // Bond 2: 2 Year, 6% Coupon, Par
-        Bond b2 = new Bond(100.0, 0.06, 2.0, Frequency.ANNUALLY);
+        Bond b2 = new Bond(100.0, BondType.COUPON_BEARING, 0.06, 2.0, Frequency.ANNUALLY);
 
         List<Bond> bonds = List.of(b1, b2);
         
@@ -83,9 +84,9 @@ class SpotRateCurveBootstrappingStrategyTest {
     @Test
     @DisplayName("Verify list sorting does not affect result")
     void testSorting() {
-        Bond b1 = new Bond(100.0, 0.04, 1.0, Frequency.ANNUALLY);
-        Bond b2 = new Bond(100.0, 0.05, 2.0, Frequency.ANNUALLY);
-        Bond b3 = new Bond(100.0, 0.06, 3.0, Frequency.ANNUALLY);
+        Bond b1 = new Bond(100.0, BondType.COUPON_BEARING, 0.04, 1.0, Frequency.ANNUALLY);
+        Bond b2 = new Bond(100.0, BondType.COUPON_BEARING, 0.05, 2.0, Frequency.ANNUALLY);
+        Bond b3 = new Bond(100.0, BondType.COUPON_BEARING, 0.06, 3.0, Frequency.ANNUALLY);
 
         // Provide in reverse order
         List<Bond> bonds = List.of(b3, b2, b1);
