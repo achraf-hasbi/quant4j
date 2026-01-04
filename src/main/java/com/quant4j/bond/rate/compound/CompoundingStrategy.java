@@ -41,4 +41,13 @@ public interface CompoundingStrategy {
      * @return the future value
      */
     double futureValue(double principal, double rate, double time);
+
+    /**
+     * Deduce the rate from a given discount factor and time.
+     *
+     * @param discountFactor the discount factor
+     * @param time           the time in years
+     * @return the deduced annual interest rate
+     */
+    double rateFromDiscountFactor(double discountFactor, double time);
 }

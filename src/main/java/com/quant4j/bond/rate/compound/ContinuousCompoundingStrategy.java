@@ -40,4 +40,15 @@ public class ContinuousCompoundingStrategy implements CompoundingStrategy {
     public double futureValue(double principal, double rate, double time) {
         return principal * accumulationFactor(rate, time);
     }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Formula: $r = -\frac{\ln(DF)}{t}$
+     * </p>
+     */
+    @Override
+    public double rateFromDiscountFactor(double discountFactor, double time) {
+        return -Math.log(discountFactor) / time;
+    }
 }

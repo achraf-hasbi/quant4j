@@ -53,4 +53,16 @@ public class DiscreteCompoundingStrategy implements CompoundingStrategy {
     public double futureValue(double principal, double rate, double time) {
         return principal * accumulationFactor(rate, time);
     }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Formula: $r = m \cdot ((DF)^{-\frac{1}{m \cdot t}} - 1)$
+     * </p>
+     */
+    @Override
+    public double rateFromDiscountFactor(double discountFactor, double time) {
+        double exponent = -1.0 / (periodsPerYear * time);
+        return periodsPerYear * (Math.pow(discountFactor, exponent) - 1);
+    }
 }
