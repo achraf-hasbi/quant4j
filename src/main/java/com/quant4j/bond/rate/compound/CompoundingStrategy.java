@@ -60,4 +60,16 @@ public interface CompoundingStrategy {
      * @return the deduced annual interest rate
      */
     double rateFromDiscountFactor(double discountFactor, double time);
+
+    /**
+     * Calculates the forward rate between two time periods.
+     *
+     * @param r1 Rate for period 1
+     * @param t1 Time to maturity 1 (in years)
+     * @param r2 Rate for period 2
+     * @param t2 Time to maturity 2 (in years)
+     * @return the forward rate applicable between t1 and t2
+     * @throws IllegalArgumentException if t1 >= t2
+     */
+    double forwardRate(double r1, double t1, double r2, double t2);
 }

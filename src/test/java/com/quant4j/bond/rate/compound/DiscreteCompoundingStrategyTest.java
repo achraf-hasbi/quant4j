@@ -93,4 +93,22 @@ public class DiscreteCompoundingStrategyTest {
         double actualRate = strategy.rateFromDiscountFactor(df, time);
         assertEquals(expectedRate, actualRate, TOLERANCE);
     }
+
+    @ParameterizedTest(name = "Discrete Forward (Quarterly): r1={0}, t1={1}, r2={2}, t2={3}")
+    @CsvSource({
+            "0.030, 0.25, 0.032, 0.50, 0.034",
+            "0.032, 0.50, 0.034, 0.75, 0.038",
+            "0.034, 0.75, 0.035, 1.00, 0.038",
+            "0.035, 1.00, 0.036, 1.25, 0.040",
+            "0.036, 1.25, 0.037, 1.50, 0.042"
+    })
+    @DisplayName("Test Discrete Forward Rates (Quarterly Compounding)")
+    void testDiscreteForwardRate(double r1, double t1, double r2, double t2, double expectedForward) {
+        Frequency frequency = Frequency.QUARTERLY;
+        CompoundingStrategy strategy = new DiscreteCompoundingStrategy(frequency.getPeriodsPerYear());
+        
+        double actualForward = strategy.forwardRate(r1, t1, r2, t2);
+        // Using 1e-4 tolerance to verify up to 4 decimal places
+        assertEquals(expectedForward, actualForward, 1.0e-4);
+    }
 }

@@ -64,4 +64,18 @@ public class ContinuousCompoundingStrategy implements CompoundingStrategy {
     public double rateFromDiscountFactor(double discountFactor, double time) {
         return -Math.log(discountFactor) / time;
     }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Formula: $F = \frac{r_2 \cdot t_2 - r_1 \cdot t_1}{t_2 - t_1}$
+     * </p>
+     */
+    @Override
+    public double forwardRate(double r1, double t1, double r2, double t2) {
+        if (t1 >= t2) {
+            throw new IllegalArgumentException("t1 must be less than t2 to calculate a forward rate");
+        }
+        return (r2 * t2 - r1 * t1) / (t2 - t1);
+    }
 }

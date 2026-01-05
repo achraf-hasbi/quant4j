@@ -2,6 +2,8 @@ package com.quant4j.bond.rate.compound;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -71,5 +73,20 @@ public class ContinuousCompoundingStrategyTest {
 
         double actualRate = strategy.rateFromDiscountFactor(df, time);
         assertEquals(expectedRate, actualRate, TOLERANCE);
+    }
+
+    @ParameterizedTest(name = "Continuous Forward: r1={0}, t1={1}, r2={2}, t2={3}")
+    @CsvSource({
+            "0.030, 0.25, 0.032, 0.50, 0.034",
+            "0.032, 0.50, 0.034, 0.75, 0.038",
+            "0.034, 0.75, 0.035, 1.00, 0.038",
+            "0.035, 1.00, 0.036, 1.25, 0.040",
+            "0.036, 1.25, 0.037, 1.50, 0.042"
+    })
+    @DisplayName("Test Continuous Forward Rates Calculation")
+    void testContinuousForwardRate(double r1, double t1, double r2, double t2, double expectedForward) {
+        CompoundingStrategy strategy = new ContinuousCompoundingStrategy();
+        double actualForward = strategy.forwardRate(r1, t1, r2, t2);
+        assertEquals(expectedForward, actualForward, TOLERANCE);
     }
 }
