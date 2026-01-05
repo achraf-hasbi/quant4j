@@ -62,6 +62,23 @@ public class DiscreteCompoundingStrategyTest {
 
     @ParameterizedTest
     @CsvSource({
+            "ANNUALLY, 107.59298304257578",
+            "SEMI_ANNUALLY, 107.6890625",
+            "QUARTERLY, 107.73831805458065",
+            "MONTHLY, 107.77162109449165"
+    })
+    @DisplayName("Test Discrete Compounding Present Value with known values")
+    void testSpecificDiscretePresentValueCalculation(Frequency frequency, double futureAmount) {
+        CompoundingStrategy strategy = frequency.getCompoundingStrategy();
+        double expectedPrincipal = 100;
+        double rate = 0.05;
+        double time = 1.5;
+
+        assertEquals(expectedPrincipal, strategy.presentValue(futureAmount, rate, time), TOLERANCE);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
             "ANNUALLY, 0.9294286409033649",
             "SEMI_ANNUALLY, 0.928599410919749",
             "QUARTERLY, 0.9281748759929555",

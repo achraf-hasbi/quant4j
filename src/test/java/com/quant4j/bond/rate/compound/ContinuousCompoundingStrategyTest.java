@@ -47,6 +47,20 @@ public class ContinuousCompoundingStrategyTest {
     }
 
     @Test
+    @DisplayName("Test Continuous Compounding Present Value")
+    void testContinuousPresentValue() {
+        // From testContinuousFutureValue: 1000 * exp(0.10 * 1.5) = 1161.834242728
+        CompoundingStrategy strategy = new ContinuousCompoundingStrategy();
+        double futureAmount = 1161.834242728;
+        double rate = 0.10;
+        double time = 1.5;
+        double expectedPrincipal = 1000.0;
+
+        assertEquals(expectedPrincipal, strategy.presentValue(futureAmount, rate, time), TOLERANCE);
+    }
+
+
+    @Test
     @DisplayName("Test Rate from Discount Factor (Continuous)")
     void testRateFromDiscountFactor() {
         CompoundingStrategy strategy = new ContinuousCompoundingStrategy();

@@ -57,6 +57,19 @@ public class DiscreteCompoundingStrategy implements CompoundingStrategy {
     /**
      * {@inheritDoc}
      * <p>
+     * For discrete compounding, $PV = FV / (1 + r)^t$.
+     * This is equivalent to multiplying the future amount by the discount factor.
+     * </p>
+     */
+
+    @Override
+    public double presentValue(double futureAmount, double rate, double time) {
+        return futureAmount * discountFactor(rate, time);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
      * Formula: $r = m \cdot ((DF)^{-\frac{1}{m \cdot t}} - 1)$
      * </p>
      */

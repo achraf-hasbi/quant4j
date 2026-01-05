@@ -43,6 +43,16 @@ public interface CompoundingStrategy {
     double futureValue(double principal, double rate, double time);
 
     /**
+     * Calculates the present value of a future amount.
+     *
+     * @param futureAmount the amount to be received in the future
+     * @param rate         the annual interest rate (as a decimal)
+     * @param time         the time in years
+     * @return the present value
+     */
+    double presentValue(double futureAmount, double rate, double time);
+
+    /**
      * Deduce the rate from a given discount factor and time.
      *
      * @param discountFactor the discount factor

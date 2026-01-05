@@ -44,6 +44,19 @@ public class ContinuousCompoundingStrategy implements CompoundingStrategy {
     /**
      * {@inheritDoc}
      * <p>
+     * For continuous compounding, $PV = FV * e^{-rt}$.
+     * This is equivalent to multiplying the future amount by the discount factor.
+     * </p>
+     */
+
+    @Override
+    public double presentValue(double futureAmount, double rate, double time) {
+        return futureAmount * discountFactor(rate, time);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
      * Formula: $r = -\frac{\ln(DF)}{t}$
      * </p>
      */
