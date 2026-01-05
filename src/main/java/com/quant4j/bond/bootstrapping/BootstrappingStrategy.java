@@ -21,4 +21,15 @@ public interface BootstrappingStrategy {
      * @return a Map representing the curve: Time (Years) -> Rate.
      */
     Map<Double, Double> bootstrapFromParBonds(List<Bond> bonds, InterpolationStrategy interpolationStrategy);
+
+    /**
+     * Calculates the yield curve using market prices for the input bonds.
+     * The bonds are not necessarily trading at Par.
+     *
+     * @param bonds the list of benchmark bonds.
+     * @param marketPrices a map of bond to its market price.
+     * @param interpolationStrategy the interpolation strategy to use.
+     * @return a Map representing the curve: Time (Years) -> Rate.
+     */
+    Map<Double, Double> bootstrap(List<Bond> bonds, Map<Bond, Double> marketPrices, InterpolationStrategy interpolationStrategy);
 }

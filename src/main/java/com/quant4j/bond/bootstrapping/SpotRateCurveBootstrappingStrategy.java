@@ -2,11 +2,9 @@ package com.quant4j.bond.bootstrapping;
 
 import com.quant4j.bond.math.interpolation.InterpolationStrategy;
 import com.quant4j.bond.pojo.Bond;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Logic to bootstrap a spot rate (i.e zero-coupon yield) curve from a set of par bonds using a specific interpolation strategy.
@@ -25,15 +23,34 @@ public class SpotRateCurveBootstrappingStrategy implements BootstrappingStrategy
             throw new IllegalArgumentException("Bond list cannot be null or empty");
         }
 
-        // 1. Sort bonds by maturity
+        Map<Bond, Double> parPrices = bonds.stream()
+                .collect(Collectors.toMap(bond -> bond, Bond::faceValue));
+
+        return bootstrap(bonds, parPrices, interpolationStrategy);
+    }
+
+    @Override
+    public Map<Double, Double> bootstrap(List<Bond> bonds, Map<Bond, Double> marketPrices, InterpolationStrategy interpolationStrategy) {
+        if (bonds == null || marketPrices == null) {
+            throw new IllegalArgumentException("Bonds list and market prices map cannot be null");
+        }
+        if (bonds.isEmpty()) {
+            throw new IllegalArgumentException("Bond list cannot be empty");
+        }
+
+        // Sort bonds by maturity
         List<Bond> sortedBonds = new ArrayList<>(bonds);
         sortedBonds.sort(Comparator.comparingDouble(Bond::maturityYears));
 
         // Map to store Time -> Zero Rate
-        // TreeMap ensures keys are sorted, useful for interpolation lookups
         TreeMap<Double, Double> zeroCurve = new TreeMap<>();
 
         for (Bond bond : sortedBonds) {
+            if (!marketPrices.containsKey(bond)) {
+                throw new IllegalArgumentException("Market price missing for bond with maturity " + bond.maturityYears());
+            }
+            double price = marketPrices.get(bond);
+
             double maturity = bond.maturityYears();
             double couponPayment = bond.getCouponPayment();
             double faceValue = bond.faceValue();
@@ -47,16 +64,15 @@ public class SpotRateCurveBootstrappingStrategy implements BootstrappingStrategy
             // Iterate over all coupons except the final principal+coupon at maturity
             for (int i = 0; i < cashFlowTimes.size() - 1; i++) {
                 double t = cashFlowTimes.get(i);
-                // Use the strategy to get the rate
                 double rate = interpolationStrategy.interpolate(zeroCurve, t);
                 double df = bond.couponFrequency().getCompoundingStrategy().discountFactor(rate, t);
                 sumPvKnownCoupons += couponPayment * df;
             }
 
-            // Equation: FaceValue = sumPvKnownCoupons + (FaceValue + Coupon) * DF(T)
-            // DF(T) = (FaceValue - sumPvKnownCoupons) / (FaceValue + Coupon)
+            // Equation: Price = sumPvKnownCoupons + (FaceValue + Coupon) * DF(T)
+            // DF(T) = (Price - sumPvKnownCoupons) / (FaceValue + Coupon)
             double finalCashFlow = faceValue + couponPayment;
-            double dfAtMaturity = (faceValue - sumPvKnownCoupons) / finalCashFlow;
+            double dfAtMaturity = (price - sumPvKnownCoupons) / finalCashFlow;
 
             double zeroRate = bond.couponFrequency().getCompoundingStrategy().rateFromDiscountFactor(dfAtMaturity, maturity);
 
