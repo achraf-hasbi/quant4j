@@ -50,29 +50,31 @@ public class SpotRateCurveBootstrappingStrategy implements BootstrappingStrategy
                 throw new IllegalArgumentException("Market price missing for bond with maturity " + bond.maturityYears());
             }
             double price = marketPrices.get(bond);
-
             double maturity = bond.maturityYears();
-            double couponPayment = bond.getCouponPayment();
-            double faceValue = bond.faceValue();
-            int frequency = bond.couponFrequency().getPeriodsPerYear();
 
-            // Calculate cash flow times
-            List<Double> cashFlowTimes = generateCashFlowTimes(maturity, frequency);
+            Map<Double, Double> cashflows = bond.getCashflows();
 
-            double sumPvKnownCoupons = 0.0;
+            double sumPvKnownCashflows = 0.0;
+            double finalCashFlow = 0.0;
 
-            // Iterate over all coupons except the final principal+coupon at maturity
-            for (int i = 0; i < cashFlowTimes.size() - 1; i++) {
-                double t = cashFlowTimes.get(i);
-                double rate = interpolationStrategy.interpolate(zeroCurve, t);
-                double df = bond.couponFrequency().getCompoundingStrategy().discountFactor(rate, t);
-                sumPvKnownCoupons += couponPayment * df;
+            for (Map.Entry<Double, Double> entry : cashflows.entrySet()) {
+                double t = entry.getKey();
+                double amount = entry.getValue();
+
+                if (Math.abs(t - maturity) < 1e-9) {
+                    // This is the payment at maturity (Coupon + FaceValue)
+                    finalCashFlow = amount;
+                } else {
+                    // Intermediate cash flow, discount it using known curve
+                    double rate = interpolationStrategy.interpolate(zeroCurve, t);
+                    double df = bond.couponFrequency().getCompoundingStrategy().discountFactor(rate, t);
+                    sumPvKnownCashflows += amount * df;
+                }
             }
 
-            // Equation: Price = sumPvKnownCoupons + (FaceValue + Coupon) * DF(T)
-            // DF(T) = (Price - sumPvKnownCoupons) / (FaceValue + Coupon)
-            double finalCashFlow = faceValue + couponPayment;
-            double dfAtMaturity = (price - sumPvKnownCoupons) / finalCashFlow;
+            // Equation: Price = sumPvKnownCashflows + finalCashFlow * DF(T)
+            // DF(T) = (Price - sumPvKnownCashflows) / finalCashFlow
+            double dfAtMaturity = (price - sumPvKnownCashflows) / finalCashFlow;
 
             double zeroRate = bond.couponFrequency().getCompoundingStrategy().rateFromDiscountFactor(dfAtMaturity, maturity);
 
@@ -80,17 +82,5 @@ public class SpotRateCurveBootstrappingStrategy implements BootstrappingStrategy
         }
 
         return zeroCurve;
-    }
-
-    private List<Double> generateCashFlowTimes(double maturity, int frequency) {
-        List<Double> times = new ArrayList<>();
-        double dt = 1.0 / frequency;
-        // Simple generation: T, T-dt, T-2dt ... until > 0
-        // Then sort them back to ascending order
-        for (double t = maturity; t > 1e-9; t -= dt) {
-            times.add(t);
-        }
-        times.sort(Double::compare);
-        return times;
     }
 }
