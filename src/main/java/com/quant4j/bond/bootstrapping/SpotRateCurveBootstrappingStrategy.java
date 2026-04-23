@@ -2,20 +2,41 @@ package com.quant4j.bond.bootstrapping;
 
 import com.quant4j.bond.math.interpolation.InterpolationStrategy;
 import com.quant4j.bond.pojo.Bond;
+import com.quant4j.bond.rate.compound.CompoundingStrategy;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Logic to bootstrap a spot rate (i.e zero-coupon yield) curve from a set of par bonds using a specific interpolation strategy.
+ * Logic to bootstrap a spot rate (i.e. zero-coupon yield) curve from a set of bonds.
+ *
+ * <p>An initial spot rate curve is provided at construction time and is never mutated.
+ * Each call to {@link #bootstrap} or {@link #bootstrapFromParBonds} starts from a copy
+ * of that initial curve and appends the newly derived zero rates.</p>
  */
 public class SpotRateCurveBootstrappingStrategy implements BootstrappingStrategy {
-    
+
+    private final TreeMap<Double, Double> initialZeroCurve;
+    private final CompoundingStrategy compoundingStrategy;
+
     /**
-     * Calculates the zero-coupon yield curve using the bootstrap method.
+     * Constructs the strategy with an initial spot rate curve and a compounding convention.
      *
-     * @param bonds the list of benchmark bonds (par bonds).
-     * @return a Map representing the curve: Time (Years) -> Zero Rate.
+     * @param initialZeroCurve   Known spot rates to seed the bootstrap with (maturity -> rate).
+     *                           May be empty if no prior rates are known.
+     * @param compoundingStrategy The compounding convention used to compute discount factors
+     *                            and derive zero rates during bootstrapping.
+     */
+    public SpotRateCurveBootstrappingStrategy(TreeMap<Double, Double> initialZeroCurve,
+                                              CompoundingStrategy compoundingStrategy) {
+        Objects.requireNonNull(initialZeroCurve, "Initial zero curve cannot be null");
+        Objects.requireNonNull(compoundingStrategy, "Compounding strategy cannot be null");
+        this.initialZeroCurve = initialZeroCurve;
+        this.compoundingStrategy = compoundingStrategy;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public Map<Double, Double> bootstrapFromParBonds(List<Bond> bonds, InterpolationStrategy interpolationStrategy) {
@@ -29,6 +50,12 @@ public class SpotRateCurveBootstrappingStrategy implements BootstrappingStrategy
         return bootstrap(bonds, parPrices, interpolationStrategy);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Starts from a copy of the initial zero curve provided at construction and
+     * appends the bootstrapped zero rates. The initial curve is never mutated.</p>
+     */
     @Override
     public Map<Double, Double> bootstrap(List<Bond> bonds, Map<Bond, Double> marketPrices, InterpolationStrategy interpolationStrategy) {
         if (bonds == null || marketPrices == null) {
@@ -38,12 +65,11 @@ public class SpotRateCurveBootstrappingStrategy implements BootstrappingStrategy
             throw new IllegalArgumentException("Bond list cannot be empty");
         }
 
-        // Sort bonds by maturity
+        // Start from a copy of the initial curve — never mutate the original
+        TreeMap<Double, Double> zeroCurve = new TreeMap<>(initialZeroCurve);
+
         List<Bond> sortedBonds = new ArrayList<>(bonds);
         sortedBonds.sort(Comparator.comparingDouble(Bond::maturityYears));
-
-        // Map to store Time -> Zero Rate
-        TreeMap<Double, Double> zeroCurve = new TreeMap<>();
 
         for (Bond bond : sortedBonds) {
             if (!marketPrices.containsKey(bond)) {
@@ -62,21 +88,16 @@ public class SpotRateCurveBootstrappingStrategy implements BootstrappingStrategy
                 double amount = entry.getValue();
 
                 if (Math.abs(t - maturity) < 1e-9) {
-                    // This is the payment at maturity (Coupon + FaceValue)
                     finalCashFlow = amount;
                 } else {
-                    // Intermediate cash flow, discount it using known curve
                     double rate = interpolationStrategy.interpolate(zeroCurve, t);
-                    double df = bond.couponFrequency().getCompoundingStrategy().discountFactor(rate, t);
+                    double df = compoundingStrategy.discountFactor(rate, t);
                     sumPvKnownCashflows += amount * df;
                 }
             }
 
-            // Equation: Price = sumPvKnownCashflows + finalCashFlow * DF(T)
-            // DF(T) = (Price - sumPvKnownCashflows) / finalCashFlow
             double dfAtMaturity = (price - sumPvKnownCashflows) / finalCashFlow;
-
-            double zeroRate = bond.couponFrequency().getCompoundingStrategy().rateFromDiscountFactor(dfAtMaturity, maturity);
+            double zeroRate = compoundingStrategy.rateFromDiscountFactor(dfAtMaturity, maturity);
 
             zeroCurve.put(maturity, zeroRate);
         }
