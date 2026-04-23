@@ -1,6 +1,5 @@
 package com.quant4j.bond.pojo;
 
-import com.quant4j.bond.enumeration.BondType;
 import com.quant4j.bond.enumeration.Frequency;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,14 +8,14 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@DisplayName("Coupon Bearing Bond Tests")
-class CouponBearingBondTest {
+@DisplayName("Bond Tests")
+class BondTest {
 
     @Test
     @DisplayName("Calculate coupon payment for Semi-Annual bond")
     void testGetCouponPayment_SemiAnnual() {
         // Face Value = 1000, Rate = 5%, Semi-Annual -> 1000 * 0.05 / 2 = 25
-        Bond bond = new Bond(1000.0, BondType.COUPON_BEARING, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
+        Bond bond = new Bond(1000.0, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
         assertEquals(25.0, bond.getCouponPayment(), 1e-9);
     }
 
@@ -26,7 +25,7 @@ class CouponBearingBondTest {
         // 2 years * 2 payments/year = 4 periods
         // Coupon = 25
         // Final payment = 25 + 1000 = 1025
-        Bond bond = new Bond(1000.0, BondType.COUPON_BEARING, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
+        Bond bond = new Bond(1000.0, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
 
         Map<Double, Double> cashflows = bond.getCashflows();
 

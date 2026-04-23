@@ -1,6 +1,5 @@
 package com.quant4j.bond.pojo;
 
-import com.quant4j.bond.enumeration.BondType;
 import com.quant4j.bond.enumeration.Frequency;
 
 import java.util.LinkedHashMap;
@@ -13,20 +12,17 @@ import static com.quant4j.bond.ValidationHelper.validateTimeCoherence;
  * Represents a fixed-coupon bond.
  *
  * @param faceValue       The principal amount of the bond (e.g., 1000).
- * @param type        The type of the bond (e.g., COUPON_BEARING).
  * @param annualRate      The annual coupon rate (decimal, e.g., 0.05 for 5%).
  * @param maturityYears   The time to maturity in years.
  * @param couponFrequency The frequency of coupon payments (e.g., SEMI_ANNUALLY).
  */
 public record Bond(double faceValue,
-                   BondType type,
                    double annualRate,
                    double maturityYears,
                    Frequency couponFrequency) {
 
     public Bond {
         if (faceValue <= 0) throw new IllegalArgumentException("Face value must be positive");
-        Objects.requireNonNull(type, "Bond type cannot be null");
         if (annualRate < 0) throw new IllegalArgumentException("Annual rate cannot be negative");
         if (maturityYears <= 0) throw new IllegalArgumentException("Maturity must be positive");
         Objects.requireNonNull(couponFrequency, "Coupon frequency cannot be null");
@@ -39,9 +35,6 @@ public record Bond(double faceValue,
      * @return the coupon amount.
      */
     public double getCouponPayment() {
-        if (type == BondType.ZERO_COUPON) {
-            return 0.0;
-        }
         return faceValue * annualRate / couponFrequency.getPeriodsPerYear();
     }
 
@@ -52,11 +45,6 @@ public record Bond(double faceValue,
      */
     public Map<Double, Double> getCashflows() {
         Map<Double, Double> cashflows = new LinkedHashMap<>();
-
-        if (type == BondType.ZERO_COUPON) {
-            cashflows.put(maturityYears, faceValue);
-            return cashflows;
-        }
 
         double couponPayment = getCouponPayment();
         int periodsPerYear = couponFrequency.getPeriodsPerYear();

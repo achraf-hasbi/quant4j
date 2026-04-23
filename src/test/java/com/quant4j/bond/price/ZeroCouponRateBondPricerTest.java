@@ -1,6 +1,5 @@
 package com.quant4j.bond.price;
 
-import com.quant4j.bond.enumeration.BondType;
 import com.quant4j.bond.enumeration.Frequency;
 import com.quant4j.bond.math.interpolation.LinearInterpolationStrategy;
 import com.quant4j.bond.pojo.Bond;
@@ -42,7 +41,7 @@ class ZeroCouponRateBondPricerTest {
         ));
 
         // 2-year bond, 5% annual coupon, semi-annual payments, face value 1000
-        Bond bond = new Bond(1000, BondType.COUPON_BEARING, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
+        Bond bond = new Bond(1000, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
         ZeroCouponRateBondPricer pricer = new ZeroCouponRateBondPricer(zeroCurve, linearInterpolation, semiAnnualCompounding);
 
         double price = pricer.price(bond);
@@ -63,7 +62,7 @@ class ZeroCouponRateBondPricerTest {
         ));
 
         // 2-year bond, 5% annual coupon, face value 1000
-        Bond bond = new Bond(100, BondType.COUPON_BEARING, 0.04, 2.5, Frequency.SEMI_ANNUALLY);
+        Bond bond = new Bond(100, 0.04, 2.5, Frequency.SEMI_ANNUALLY);
         ZeroCouponRateBondPricer pricer = new ZeroCouponRateBondPricer(zeroCurve, linearInterpolation, continuousCompounding);
 
         double price = pricer.price(bond);

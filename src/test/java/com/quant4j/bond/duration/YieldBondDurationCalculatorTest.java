@@ -1,6 +1,5 @@
 package com.quant4j.bond.duration;
 
-import com.quant4j.bond.enumeration.BondType;
 import com.quant4j.bond.enumeration.Frequency;
 import com.quant4j.bond.pojo.Bond;
 import com.quant4j.bond.price.YieldBondPricer;
@@ -28,20 +27,9 @@ class YieldBondDurationCalculatorTest {
     }
 
     @Test
-    @DisplayName("Macaulay duration of a zero-coupon bond equals its maturity")
-    void testMacaulayDuration_ZeroCouponEqualsMaturity() {
-        Bond bond = new Bond(1000, BondType.ZERO_COUPON, 0.0, 3.0, Frequency.ANNUALLY);
-        double price = 1000 * continuous.discountFactor(0.05, 3.0);
-
-        double duration = calculator.macaulayDuration(bond, 0.05, continuous, price);
-
-        assertEquals(3.0, duration, TOLERANCE);
-    }
-
-    @Test
     @DisplayName("Macaulay duration of a coupon bond is less than its maturity")
     void testMacaulayDuration_CouponBondLessThanMaturity() {
-        Bond bond = new Bond(1000, BondType.COUPON_BEARING, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
+        Bond bond = new Bond(1000, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
         YieldBondPricer pricer = new YieldBondPricer(0.05, semiAnnual);
         double price = pricer.price(bond);
 
@@ -54,12 +42,11 @@ class YieldBondDurationCalculatorTest {
     @Test
     @DisplayName("Macaulay duration of a coupon bond is less than its maturity continuous compounding")
     void testMacaulayDuration_CouponBondLessThanMaturityContinuous() {
-        Bond bond = new Bond(100, BondType.COUPON_BEARING, 0.08, 5, Frequency.ANNUALLY);
+        Bond bond = new Bond(100, 0.08, 5, Frequency.ANNUALLY);
         YieldBondPricer pricer = new YieldBondPricer(0.07, continuous);
         double price = pricer.price(bond);
 
         double duration = calculator.macaulayDuration(bond, 0.07, continuous, price);
-        double modifiedDuration = calculator.modifiedDuration(bond, 0.068, continuous, price);
 
         assertEquals(4.3235, duration, 0.0001);
     }
@@ -67,7 +54,7 @@ class YieldBondDurationCalculatorTest {
     @Test
     @DisplayName("Modified duration equals Macaulay duration under continuous compounding")
     void testModifiedDuration_EqualsMacaulayForContinuous() {
-        Bond bond = new Bond(1000, BondType.COUPON_BEARING, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
+        Bond bond = new Bond(1000, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
         YieldBondPricer pricer = new YieldBondPricer(0.05, continuous);
         double price = pricer.price(bond);
 
@@ -80,7 +67,7 @@ class YieldBondDurationCalculatorTest {
     @Test
     @DisplayName("Modified duration is less than Macaulay duration under discrete compounding")
     void testModifiedDuration_LessThanMacaulayForDiscrete() {
-        Bond bond = new Bond(1000, BondType.COUPON_BEARING, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
+        Bond bond = new Bond(1000, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
         YieldBondPricer pricer = new YieldBondPricer(0.05, semiAnnual);
         double price = pricer.price(bond);
 
@@ -102,7 +89,7 @@ class YieldBondDurationCalculatorTest {
     @Test
     @DisplayName("Non-positive price should throw IllegalArgumentException")
     void testNonPositivePriceThrows() {
-        Bond bond = new Bond(1000, BondType.COUPON_BEARING, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
+        Bond bond = new Bond(1000, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
         assertThrows(IllegalArgumentException.class,
                 () -> calculator.macaulayDuration(bond, 0.05, continuous, 0));
     }

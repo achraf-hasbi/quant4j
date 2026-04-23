@@ -1,6 +1,5 @@
 package com.quant4j.bond.price;
 
-import com.quant4j.bond.enumeration.BondType;
 import com.quant4j.bond.enumeration.Frequency;
 import com.quant4j.bond.pojo.Bond;
 import com.quant4j.bond.rate.compound.ContinuousCompoundingStrategy;
@@ -30,7 +29,7 @@ class YieldBondPricerTest {
         double maturityYears = 1.5;
         Frequency frequency = Frequency.SEMI_ANNUALLY;
 
-        Bond bond = new Bond(faceValue, BondType.COUPON_BEARING, annualRate, maturityYears, frequency);
+        Bond bond = new Bond(faceValue, annualRate, maturityYears, frequency);
 
         YieldBondPricer pricer = new YieldBondPricer(yield, bond.couponFrequency().getCompoundingStrategy());
 
