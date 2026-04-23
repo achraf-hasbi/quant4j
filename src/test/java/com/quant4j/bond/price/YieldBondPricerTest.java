@@ -3,6 +3,7 @@ package com.quant4j.bond.price;
 import com.quant4j.bond.enumeration.BondType;
 import com.quant4j.bond.enumeration.Frequency;
 import com.quant4j.bond.pojo.Bond;
+import com.quant4j.bond.rate.compound.ContinuousCompoundingStrategy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +16,7 @@ class YieldBondPricerTest {
     @Test
     @DisplayName("Price should throw NPE when bond is null")
     void testPrice_NullBond() {
-        YieldBondPricer pricer = new YieldBondPricer(0.05);
+        YieldBondPricer pricer = new YieldBondPricer(0.05, new ContinuousCompoundingStrategy());
         assertThrows(NullPointerException.class, () -> pricer.price(null),
                 "Should throw NullPointerException when bond is null");
     }
@@ -31,7 +32,7 @@ class YieldBondPricerTest {
 
         Bond bond = new Bond(faceValue, BondType.COUPON_BEARING, annualRate, maturityYears, frequency);
 
-        YieldBondPricer pricer = new YieldBondPricer(yield);
+        YieldBondPricer pricer = new YieldBondPricer(yield, bond.couponFrequency().getCompoundingStrategy());
 
         double price = pricer.price(bond);
 
