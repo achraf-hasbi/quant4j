@@ -63,4 +63,12 @@ public class YieldBondDurationCalculator implements BondDurationCalculator {
         int periodsPerYear = bond.couponFrequency().getPeriodsPerYear();
         return macaulay / (1.0 + yield / periodsPerYear);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public double dv01(Bond bond, double yield, CompoundingStrategy yieldCompoundingStrategy, double price) {
+        return modifiedDuration(bond, yield, yieldCompoundingStrategy, price) * price * 0.0001;
+    }
 }

@@ -93,4 +93,29 @@ class YieldBondDurationCalculatorTest {
         assertThrows(IllegalArgumentException.class,
                 () -> calculator.macaulayDuration(bond, 0.05, continuous, 0));
     }
+
+    @Test
+    @DisplayName("DV01 equals modified duration times price times 0.0001")
+    void testDv01_EqualsModifiedDurationTimesPriceTimes0001() {
+        Bond bond = new Bond(1000, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
+        YieldBondPricer pricer = new YieldBondPricer(0.05, semiAnnual);
+        double price = pricer.price(bond);
+
+        double modifiedDuration = calculator.modifiedDuration(bond, 0.05, semiAnnual, price);
+        double dv01 = calculator.dv01(bond, 0.05, semiAnnual, price);
+
+        assertEquals(modifiedDuration * price * 0.0001, dv01, TOLERANCE);
+    }
+
+    @Test
+    @DisplayName("DV01 is positive")
+    void testDv01_IsPositive() {
+        Bond bond = new Bond(1000, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
+        YieldBondPricer pricer = new YieldBondPricer(0.05, semiAnnual);
+        double price = pricer.price(bond);
+
+        double dv01 = calculator.dv01(bond, 0.05, semiAnnual, price);
+
+        assertTrue(dv01 > 0, "DV01 must be positive");
+    }
 }
