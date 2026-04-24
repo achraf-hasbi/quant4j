@@ -67,23 +67,29 @@ class YieldBondDurationCalculatorTest {
     }
 
     @Test
-    @DisplayName("DV01 equals modified duration times price times 0.0001")
-    void testDv01_EqualsModifiedDurationTimesPriceTimes0001() {
+    @DisplayName("Modified duration uses the yield's compounding frequency, not the bond's coupon frequency")
+    void testModifiedDuration_UsesYieldCompoundingFrequency() {
         Bond bond = new Bond(1000, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
-        double price = new YieldBondPricer(0.05, semiAnnual).price(bond);
-        YieldBondDurationCalculator calculator = new YieldBondDurationCalculator(0.05, semiAnnual);
+        DiscreteCompoundingStrategy annual = new DiscreteCompoundingStrategy(1);
+        double price = new YieldBondPricer(0.05, annual).price(bond);
+        YieldBondDurationCalculator calculator = new YieldBondDurationCalculator(0.05, annual);
 
-        assertEquals(calculator.modifiedDuration(bond, price) * price * 0.0001, calculator.dv01(bond, price), TOLERANCE);
+        double macaulay = calculator.macaulayDuration(bond, price);
+        double modified = calculator.modifiedDuration(bond, price);
+
+        // m=1 (annual compounding): D_mod = D_mac / (1 + y/1) = D_mac / 1.05
+        assertEquals(macaulay / 1.05, modified, TOLERANCE);
     }
 
     @Test
-    @DisplayName("DV01 is positive")
-    void testDv01_IsPositive() {
+    @DisplayName("DV01 equals modified duration times price times 0.0001")
+    void testDv01_ConcreteValue() {
         Bond bond = new Bond(1000, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
         double price = new YieldBondPricer(0.05, semiAnnual).price(bond);
         YieldBondDurationCalculator calculator = new YieldBondDurationCalculator(0.05, semiAnnual);
 
-        assertTrue(calculator.dv01(bond, price) > 0);
+        // macaulay ≈ 1.928, modified = 1.928 / 1.025 ≈ 1.881, DV01 = 1.881 * 1000 * 0.0001 ≈ 0.188
+        assertEquals(0.188, calculator.dv01(bond, price), TOLERANCE);
     }
 
     @Test
