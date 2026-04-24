@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Computes the Macaulay and modified duration of a bond using its yield
- * and a specified compounding convention.
+ * Computes the Macaulay duration, modified duration and DV01 of a bond
+ * using a yield and compounding convention supplied at construction time.
  *
  * <p>Macaulay duration formula:</p>
  * <pre>
@@ -24,13 +24,27 @@ import java.util.Objects;
  */
 public class YieldBondDurationCalculator implements BondDurationCalculator {
 
+    private final double yield;
+    private final CompoundingStrategy yieldCompoundingStrategy;
+
+    /**
+     * Constructs a duration calculator for a specific yield and compounding convention.
+     *
+     * @param yield                    The yield to maturity (decimal).
+     * @param yieldCompoundingStrategy The compounding convention for the yield.
+     */
+    public YieldBondDurationCalculator(double yield, CompoundingStrategy yieldCompoundingStrategy) {
+        Objects.requireNonNull(yieldCompoundingStrategy, "Compounding strategy cannot be null");
+        this.yield = yield;
+        this.yieldCompoundingStrategy = yieldCompoundingStrategy;
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public double macaulayDuration(Bond bond, double yield, CompoundingStrategy yieldCompoundingStrategy, double price) {
+    public double macaulayDuration(Bond bond, double price) {
         Objects.requireNonNull(bond, "Bond cannot be null");
-        Objects.requireNonNull(yieldCompoundingStrategy, "Compounding strategy cannot be null");
         if (price <= 0) {
             throw new IllegalArgumentException("Price must be positive");
         }
@@ -51,15 +65,13 @@ public class YieldBondDurationCalculator implements BondDurationCalculator {
      * {@inheritDoc}
      */
     @Override
-    public double modifiedDuration(Bond bond, double yield, CompoundingStrategy yieldCompoundingStrategy, double price) {
-        double macaulay = macaulayDuration(bond, yield, yieldCompoundingStrategy, price);
+    public double modifiedDuration(Bond bond, double price) {
+        double macaulay = macaulayDuration(bond, price);
 
-        // Continuous compounding: modified duration equals Macaulay duration
         if (yieldCompoundingStrategy instanceof ContinuousCompoundingStrategy) {
             return macaulay;
         }
 
-        // Discrete compounding: D_mod = D_mac / (1 + y / m)
         int periodsPerYear = bond.couponFrequency().getPeriodsPerYear();
         return macaulay / (1.0 + yield / periodsPerYear);
     }
@@ -68,7 +80,7 @@ public class YieldBondDurationCalculator implements BondDurationCalculator {
      * {@inheritDoc}
      */
     @Override
-    public double dv01(Bond bond, double yield, CompoundingStrategy yieldCompoundingStrategy, double price) {
-        return modifiedDuration(bond, yield, yieldCompoundingStrategy, price) * price * 0.0001;
+    public double dv01(Bond bond, double price) {
+        return modifiedDuration(bond, price) * price * 0.0001;
     }
 }
