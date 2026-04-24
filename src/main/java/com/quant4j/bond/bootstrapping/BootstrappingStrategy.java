@@ -5,31 +5,44 @@ import com.quant4j.bond.pojo.Bond;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 
 /**
- * Interface for strategies that build a yield curve from a list of bonds.
+ * Strategy for bootstrapping a zero-coupon (spot rate) curve from a set of coupon bonds.
+ *
+ * <p>Bootstrapping iterates over bonds in ascending maturity order, discounting all
+ * intermediate cashflows with already-derived spot rates and solving for the unknown
+ * zero rate at each bond's maturity.</p>
  */
 public interface BootstrappingStrategy {
 
     /**
-     * Calculates the yield curve.
-     * The input bonds are trading at Par (Price = Face Value).
-     * Uses the configured interpolation strategy for rates between maturities.
+     * Bootstraps a spot rate curve assuming all bonds trade at par (price equals face value).
      *
-     * @param bonds the list of benchmark bonds.
-     * @param interpolationStrategy the interpolation strategy to use.
-     * @return a Map representing the curve: Time (Years) -> Rate.
+     * @param bonds                 the benchmark bonds; must not be null or empty.
+     * @param interpolationStrategy the strategy used to look up spot rates for maturities
+     *                              not yet in the curve; must not be null.
+     * @return a {@link NavigableMap} from maturity in years to zero (spot) rate,
+     *         sorted ascending by maturity, including any initial seed rates.
+     * @throws IllegalArgumentException if {@code bonds} is empty.
+     * @throws NullPointerException     if {@code bonds} or {@code interpolationStrategy} is null.
      */
-    Map<Double, Double> bootstrapFromParBonds(List<Bond> bonds, InterpolationStrategy interpolationStrategy);
+    NavigableMap<Double, Double> bootstrapFromParBonds(List<Bond> bonds, InterpolationStrategy interpolationStrategy);
 
     /**
-     * Calculates the yield curve using market prices for the input bonds.
-     * The bonds are not necessarily trading at Par.
+     * Bootstraps a spot rate curve from bonds trading at given market prices.
      *
-     * @param bonds the list of benchmark bonds.
-     * @param marketPrices a map of bond to its market price.
-     * @param interpolationStrategy the interpolation strategy to use.
-     * @return a Map representing the curve: Time (Years) -> Rate.
+     * @param bonds                 the benchmark bonds; must not be null or empty.
+     * @param marketPrices          observed market price per bond; must not be null and must
+     *                              contain an entry for every bond in {@code bonds}.
+     * @param interpolationStrategy the strategy used to look up spot rates for maturities
+     *                              not yet in the curve; must not be null.
+     * @return a {@link NavigableMap} from maturity in years to zero (spot) rate,
+     *         sorted ascending by maturity, including any initial seed rates.
+     * @throws IllegalArgumentException if {@code bonds} is empty or a market price is missing.
+     * @throws NullPointerException     if any argument is null.
      */
-    Map<Double, Double> bootstrap(List<Bond> bonds, Map<Bond, Double> marketPrices, InterpolationStrategy interpolationStrategy);
+    NavigableMap<Double, Double> bootstrapFromMarketPrices(List<Bond> bonds,
+                                                            Map<Bond, Double> marketPrices,
+                                                            InterpolationStrategy interpolationStrategy);
 }
