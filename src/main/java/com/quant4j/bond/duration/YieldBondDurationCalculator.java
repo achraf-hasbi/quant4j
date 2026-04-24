@@ -2,7 +2,7 @@ package com.quant4j.bond.duration;
 
 import com.quant4j.bond.pojo.Bond;
 import com.quant4j.bond.rate.compound.CompoundingStrategy;
-import com.quant4j.bond.rate.compound.ContinuousCompoundingStrategy;
+import com.quant4j.bond.rate.compound.DiscreteCompoundingStrategy;
 
 import java.util.Map;
 import java.util.Objects;
@@ -68,12 +68,11 @@ public class YieldBondDurationCalculator implements BondDurationCalculator {
     public double modifiedDuration(Bond bond, double price) {
         double macaulay = macaulayDuration(bond, price);
 
-        if (yieldCompoundingStrategy instanceof ContinuousCompoundingStrategy) {
-            return macaulay;
+        if (yieldCompoundingStrategy instanceof DiscreteCompoundingStrategy discrete) {
+            return macaulay / (1.0 + yield / discrete.getPeriodsPerYear());
         }
 
-        int periodsPerYear = bond.couponFrequency().getPeriodsPerYear();
-        return macaulay / (1.0 + yield / periodsPerYear);
+        return macaulay;
     }
 
     /**

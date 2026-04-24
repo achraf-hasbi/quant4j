@@ -20,6 +20,10 @@ public class DiscreteCompoundingStrategy implements CompoundingStrategy {
         this.periodsPerYear = periodsPerYear;
     }
 
+    public int getPeriodsPerYear() {
+        return periodsPerYear;
+    }
+
     /**
      * {@inheritDoc}
      * <p>

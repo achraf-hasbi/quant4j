@@ -13,9 +13,11 @@ public interface BondDurationCalculator {
      * <p>The Macaulay duration is the time-weighted average of the present values
      * of all cash flows, divided by the bond price.</p>
      *
-     * @param bond  The bond to compute the duration for.
-     * @param price The current price of the bond.
-     * @return The Macaulay duration in years.
+     * @param bond  the bond.
+     * @param price the current price of the bond.
+     * @return the Macaulay duration in years.
+     * @throws NullPointerException     if {@code bond} is null.
+     * @throws IllegalArgumentException if {@code price} is not positive.
      */
     double macaulayDuration(Bond bond, double price);
 
@@ -25,9 +27,11 @@ public interface BondDurationCalculator {
      * <p>The modified duration measures the percentage price sensitivity
      * of the bond to a unit change in yield.</p>
      *
-     * @param bond  The bond to compute the duration for.
-     * @param price The current price of the bond.
-     * @return The modified duration.
+     * @param bond  the bond.
+     * @param price the current price of the bond.
+     * @return the modified duration.
+     * @throws NullPointerException     if {@code bond} is null.
+     * @throws IllegalArgumentException if {@code price} is not positive.
      */
     double modifiedDuration(Bond bond, double price);
 
@@ -39,9 +43,11 @@ public interface BondDurationCalculator {
      *
      * <p>Formula: {@code DV01 = D_mod * P * 0.0001}</p>
      *
-     * @param bond  The bond to compute the DV01 for.
-     * @param price The current price of the bond.
-     * @return The DV01 in the same currency unit as the price.
+     * @param bond  the bond.
+     * @param price the current price of the bond.
+     * @return the DV01 in the same currency unit as the price.
+     * @throws NullPointerException     if {@code bond} is null.
+     * @throws IllegalArgumentException if {@code price} is not positive.
      */
     double dv01(Bond bond, double price);
 }
