@@ -18,9 +18,7 @@ public enum Frequency {
     /** Twelve times per year. */
     MONTHLY(12, new DiscreteCompoundingStrategy(12)),
     /** 365 times per year (standard daily convention). */
-    DAILY(365, new DiscreteCompoundingStrategy(365)),
-    /** CONTINU */
-    CONTINUOUS(-1, new ContinuousCompoundingStrategy());
+    DAILY(365, new DiscreteCompoundingStrategy(365));
 
     private final int periodsPerYear;
     private final CompoundingStrategy compoundingStrategy;
