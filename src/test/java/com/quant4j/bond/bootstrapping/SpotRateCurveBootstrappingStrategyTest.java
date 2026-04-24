@@ -3,8 +3,8 @@ package com.quant4j.bond.bootstrapping;
 import com.quant4j.bond.enumeration.Frequency;
 import com.quant4j.bond.math.interpolation.LinearInterpolationStrategy;
 import com.quant4j.bond.pojo.Bond;
+import com.quant4j.bond.rate.compound.CompoundingStrategy;
 import com.quant4j.bond.rate.compound.ContinuousCompoundingStrategy;
-import com.quant4j.bond.rate.compound.DiscreteCompoundingStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,12 +20,12 @@ class SpotRateCurveBootstrappingStrategyTest {
     private static final double TOLERANCE = 1e-6;
 
     private LinearInterpolationStrategy interpolation;
-    private DiscreteCompoundingStrategy annualCompounding;
+    private CompoundingStrategy annualCompounding;
 
     @BeforeEach
     void setUp() {
         interpolation = new LinearInterpolationStrategy();
-        annualCompounding = new DiscreteCompoundingStrategy(1);
+        annualCompounding = Frequency.ANNUALLY.getCompoundingStrategy();
     }
 
     @Test
@@ -38,6 +38,37 @@ class SpotRateCurveBootstrappingStrategyTest {
         Map<Double, Double> curve = strategy.bootstrapFromParBonds(List.of(bond), interpolation);
 
         assertEquals(0.05, curve.get(1.0), TOLERANCE);
+    }
+
+    @Test
+    @DisplayName("Multiple par bonds: bootstrapped zero rates are correct at each maturity")
+    void testMultipleParBonds_ZeroRatesAreCorrect() {
+        Bond bond1 = new Bond(1000, 0.04, 1.0, Frequency.ANNUALLY);
+        Bond bond2 = new Bond(1000, 0.045, 2.0, Frequency.ANNUALLY);
+        SpotRateCurveBootstrappingStrategy strategy =
+                new SpotRateCurveBootstrappingStrategy(new TreeMap<>(), annualCompounding);
+
+        Map<Double, Double> curve = strategy.bootstrapFromParBonds(List.of(bond1, bond2), interpolation);
+
+        assertEquals(2, curve.size());
+        assertEquals(0.04, curve.get(1.0), TOLERANCE);
+        // z(2) = sqrt(1045 * 1.04 / (1040 - 45)) - 1 = sqrt(1086.8 / 995) - 1
+        assertEquals(0.045113, curve.get(2.0), 1e-4);
+    }
+
+    @Test
+    @DisplayName("Bonds supplied out of maturity order are sorted and bootstrapped correctly")
+    void testUnsortedBondsAreBootstrappedCorrectly() {
+        Bond bond1 = new Bond(1000, 0.04, 1.0, Frequency.ANNUALLY);
+        Bond bond2 = new Bond(1000, 0.045, 2.0, Frequency.ANNUALLY);
+        SpotRateCurveBootstrappingStrategy strategy =
+                new SpotRateCurveBootstrappingStrategy(new TreeMap<>(), annualCompounding);
+
+        Map<Double, Double> curveOrdered = strategy.bootstrapFromParBonds(List.of(bond1, bond2), interpolation);
+        Map<Double, Double> curveReversed = strategy.bootstrapFromParBonds(List.of(bond2, bond1), interpolation);
+
+        assertEquals(curveOrdered.get(1.0), curveReversed.get(1.0), TOLERANCE);
+        assertEquals(curveOrdered.get(2.0), curveReversed.get(2.0), TOLERANCE);
     }
 
     @Test
@@ -57,9 +88,8 @@ class SpotRateCurveBootstrappingStrategyTest {
         SpotRateCurveBootstrappingStrategy strategy =
                 new SpotRateCurveBootstrappingStrategy(zeroCurve, new ContinuousCompoundingStrategy());
 
-        Map<Double, Double> curve = strategy.bootstrap(bonds, marketPrices, interpolation);
+        Map<Double, Double> curve = strategy.bootstrapFromMarketPrices(bonds, marketPrices, interpolation);
 
-        // 2 initial + 2 bootstrapped
         assertEquals(4, curve.size());
         assertEquals(0.1238, curve.get(0.5), 0.0001);
         assertEquals(0.1165, curve.get(1.0), 0.0001);
@@ -71,7 +101,6 @@ class SpotRateCurveBootstrappingStrategyTest {
     @DisplayName("Initial zero curve is seeded into the result and not mutated")
     void testInitialCurveIsSeededAndNotMutated() {
         TreeMap<Double, Double> initial = new TreeMap<>(Map.of(1.0, 0.04));
-
         Bond bond = new Bond(1000, 0.045, 2.0, Frequency.ANNUALLY);
         SpotRateCurveBootstrappingStrategy strategy =
                 new SpotRateCurveBootstrappingStrategy(initial, annualCompounding);
@@ -80,8 +109,6 @@ class SpotRateCurveBootstrappingStrategyTest {
 
         assertTrue(curve.containsKey(1.0));
         assertTrue(curve.containsKey(2.0));
-
-        // Original initial curve must not be mutated
         assertEquals(1, initial.size());
         assertFalse(initial.containsKey(2.0));
     }
@@ -98,6 +125,17 @@ class SpotRateCurveBootstrappingStrategyTest {
     void testNullCompoundingStrategyThrows() {
         assertThrows(NullPointerException.class,
                 () -> new SpotRateCurveBootstrappingStrategy(new TreeMap<>(), null));
+    }
+
+    @Test
+    @DisplayName("Null interpolation strategy should throw NullPointerException")
+    void testNullInterpolationStrategyThrows() {
+        SpotRateCurveBootstrappingStrategy strategy =
+                new SpotRateCurveBootstrappingStrategy(new TreeMap<>(), annualCompounding);
+        Bond bond = new Bond(1000, 0.05, 1.0, Frequency.ANNUALLY);
+
+        assertThrows(NullPointerException.class,
+                () -> strategy.bootstrapFromParBonds(List.of(bond), null));
     }
 
     @Test
@@ -118,6 +156,6 @@ class SpotRateCurveBootstrappingStrategyTest {
                 new SpotRateCurveBootstrappingStrategy(new TreeMap<>(), annualCompounding);
 
         assertThrows(IllegalArgumentException.class,
-                () -> strategy.bootstrap(List.of(bond), Map.of(), interpolation));
+                () -> strategy.bootstrapFromMarketPrices(List.of(bond), Map.of(), interpolation));
     }
 }
