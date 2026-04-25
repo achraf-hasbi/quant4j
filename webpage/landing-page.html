@@ -1,0 +1,876 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Quant4J — Quantitative finance, built for Java.</title>
+    <meta name="description" content="Quant4J is an open-source Java library for quantitative finance with a clean API for fixed income analytics and zero external runtime dependencies." />
+    <style>
+        .quant4j-logo-img {
+            display: block;
+            width: min(100%, 760px);
+            height: auto;
+            object-fit: contain;
+        }
+
+        .brand-logo-img {
+            display: block;
+            width: 156px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        :root {
+            --bg: #f7faf8;
+            --surface: #ffffff;
+            --surface-2: #eef6f1;
+            --ink: #0f2425;
+            --muted: #587071;
+            --line: #dce8e1;
+            --green: #23cc45;
+            --green-dark: #14842b;
+            --red: #e22c16;
+            --shadow: 0 18px 50px rgba(15, 36, 37, 0.10);
+            --radius-lg: 28px;
+            --radius-md: 18px;
+            --radius-sm: 12px;
+            --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            font-family: var(--sans);
+            color: var(--ink);
+            background:
+                    radial-gradient(circle at 20% 10%, rgba(35, 204, 69, 0.12), transparent 34rem),
+                    radial-gradient(circle at 85% 20%, rgba(226, 44, 22, 0.09), transparent 28rem),
+                    linear-gradient(180deg, #ffffff 0%, var(--bg) 50%, #ffffff 100%);
+            line-height: 1.6;
+        }
+
+        a { color: inherit; text-decoration: none; }
+
+        .page {
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            width: min(1160px, calc(100% - 40px));
+            margin-inline: auto;
+        }
+
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(18px);
+            background: rgba(255, 255, 255, 0.78);
+            border-bottom: 1px solid rgba(220, 232, 225, 0.8);
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            min-height: 76px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 850;
+            letter-spacing: -0.04em;
+            font-size: 1.35rem;
+            white-space: nowrap;
+        }
+
+        .brand-mark {
+            display: grid;
+            place-items: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            color: #fff;
+            background: linear-gradient(135deg, #102829, #143637);
+            box-shadow: 0 12px 25px rgba(15, 36, 37, 0.16);
+            font-weight: 900;
+        }
+
+        .brand strong { color: var(--red); }
+        .brand span:last-child { color: var(--green-dark); }
+
+        .top-tabs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .nav-trigger {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.86);
+            color: var(--green-dark);
+            font: inherit;
+            font-size: 0.92rem;
+            font-weight: 850;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(15, 36, 37, 0.05);
+        }
+
+        .nav-trigger::after {
+            content: "↗";
+            font-size: 0.95rem;
+            line-height: 1;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 10px);
+            min-width: 230px;
+            padding: 8px;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.96);
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transform: translateY(-6px);
+            pointer-events: none;
+            transition: opacity 150ms ease, transform 150ms ease;
+        }
+
+        .nav-dropdown:hover .dropdown-menu,
+        .nav-dropdown:focus-within .dropdown-menu {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .dropdown-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 11px 12px;
+            border-radius: 13px;
+            color: var(--muted);
+            font-weight: 800;
+            font-size: 0.92rem;
+        }
+
+        .dropdown-link:hover,
+        .dropdown-link.active {
+            color: var(--green-dark);
+            background: rgba(35, 204, 69, 0.12);
+        }
+
+
+        .hero {
+            padding: 94px 0 68px;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.02fr 0.98fr;
+            align-items: center;
+            gap: 52px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 8px 12px;
+            border: 1px solid rgba(35, 204, 69, 0.28);
+            background: rgba(35, 204, 69, 0.09);
+            color: var(--green-dark);
+            border-radius: 999px;
+            font-weight: 800;
+            font-size: 0.86rem;
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 0 6px rgba(35, 204, 69, 0.14);
+        }
+
+        h1 {
+            margin: 20px 0 16px;
+            font-size: clamp(3.8rem, 9vw, 7.8rem);
+            line-height: 0.86;
+            letter-spacing: -0.085em;
+        }
+
+        .q { color: var(--ink); }
+        .four { color: var(--red); }
+        .j { color: var(--green-dark); }
+
+        .tagline {
+            margin: 0;
+            font-size: clamp(1.4rem, 2.5vw, 2.25rem);
+            line-height: 1.16;
+            letter-spacing: -0.04em;
+            max-width: 650px;
+            font-weight: 830;
+        }
+
+        .hero-copy {
+            margin: 20px 0 0;
+            max-width: 650px;
+            color: var(--muted);
+            font-size: 1.08rem;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 13px;
+            margin-top: 32px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            min-height: 48px;
+            padding: 0 18px;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            font-weight: 850;
+            transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+        }
+
+        .btn:hover { transform: translateY(-2px); }
+
+        .btn.primary {
+            background: var(--green);
+            color: #06220d;
+            box-shadow: 0 18px 35px rgba(35, 204, 69, 0.25);
+        }
+
+        .btn.secondary {
+            background: #ffffff;
+            color: var(--ink);
+            border-color: var(--line);
+            box-shadow: 0 12px 30px rgba(15, 36, 37, 0.07);
+        }
+
+        .terminal-card {
+            position: relative;
+            border-radius: var(--radius-lg);
+            background: #102829;
+            color: #d9fff0;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            overflow: hidden;
+        }
+
+        .terminal-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .dot { width: 11px; height: 11px; border-radius: 50%; background: rgba(255, 255, 255, 0.28); }
+        .dot.red { background: #ff6b58; }
+        .dot.yellow { background: #ffc857; }
+        .dot.green { background: var(--green); }
+
+        pre {
+            margin: 0;
+            padding: 24px;
+            overflow: auto;
+            font-family: var(--mono);
+            font-size: 0.91rem;
+            line-height: 1.72;
+            tab-size: 2;
+        }
+
+        code { font-family: var(--mono); }
+
+        .code-comment { color: #8aa0a1; }
+        .code-key { color: #77f49a; }
+        .code-value { color: #ffb2a8; }
+        .code-type { color: #b7d7ff; }
+
+        section {
+            padding: 70px 0;
+        }
+
+        .section-head {
+            max-width: 760px;
+            margin-bottom: 30px;
+        }
+
+        .section-kicker {
+            color: var(--green-dark);
+            font-size: 0.82rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+        }
+
+        h2 {
+            margin: 8px 0 12px;
+            font-size: clamp(2rem, 4vw, 3.4rem);
+            line-height: 1;
+            letter-spacing: -0.065em;
+        }
+
+        .lead {
+            color: var(--muted);
+            font-size: 1.06rem;
+            margin: 0;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .feature-card {
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            box-shadow: 0 12px 35px rgba(15, 36, 37, 0.05);
+        }
+
+        .icon {
+            display: grid;
+            place-items: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: rgba(35, 204, 69, 0.12);
+            color: var(--green-dark);
+            font-size: 1.22rem;
+            margin-bottom: 18px;
+        }
+
+        .feature-card h3 {
+            margin: 0 0 8px;
+            letter-spacing: -0.03em;
+            font-size: 1.15rem;
+        }
+
+        .feature-card p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.96rem;
+        }
+
+        .callout {
+            position: relative;
+            padding: 38px;
+            border-radius: var(--radius-lg);
+            background:
+                    linear-gradient(135deg, rgba(16, 40, 41, 0.96), rgba(19, 55, 45, 0.96)),
+                    radial-gradient(circle at right, rgba(35, 204, 69, 0.35), transparent 30rem);
+            color: white;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .callout::after {
+            content: "{}";
+            position: absolute;
+            right: 34px;
+            bottom: -28px;
+            color: rgba(255, 255, 255, 0.08);
+            font-size: 11rem;
+            line-height: 1;
+            font-weight: 900;
+            letter-spacing: -0.12em;
+        }
+
+        .callout h2 { max-width: 780px; margin-top: 0; }
+        .callout p { position: relative; z-index: 1; max-width: 720px; color: rgba(255, 255, 255, 0.75); }
+
+        .install-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .snippet {
+            background: #102829;
+            color: #e9fff4;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .snippet h3 {
+            margin: 0;
+            padding: 16px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.95rem;
+            letter-spacing: -0.02em;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .roadmap-card {
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.82);
+            box-shadow: 0 18px 50px rgba(15, 36, 37, 0.06);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--line);
+            vertical-align: top;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.11em;
+            background: #f8fbf9;
+        }
+
+        tr:last-child td { border-bottom: 0; }
+        td:first-child { font-weight: 850; color: var(--green-dark); white-space: nowrap; }
+
+        .app-shell {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            min-height: 610px;
+            overflow: hidden;
+            border-radius: var(--radius-lg);
+            background: white;
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar {
+            padding: 20px;
+            background: #f8fbf9;
+            border-right: 1px solid var(--line);
+            overflow: auto;
+        }
+
+        .sidebar-title {
+            margin: 0 0 15px;
+            font-size: 0.86rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.11em;
+            color: var(--muted);
+        }
+
+        details {
+            border: 1px solid transparent;
+            border-radius: 14px;
+            margin-bottom: 8px;
+        }
+
+        details[open] {
+            background: white;
+            border-color: var(--line);
+        }
+
+        summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 11px 12px;
+            font-weight: 850;
+            border-radius: 14px;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            user-select: none;
+        }
+
+        summary::-webkit-details-marker { display: none; }
+        summary::after { content: "+"; color: var(--muted); }
+        details[open] > summary::after { content: "−"; color: var(--green-dark); }
+
+        .nav-list {
+            display: grid;
+            gap: 5px;
+            padding: 0 8px 10px 16px;
+        }
+
+        .nav-leaf {
+            width: 100%;
+            text-align: left;
+            border: 0;
+            background: transparent;
+            padding: 9px 10px;
+            border-radius: 12px;
+            color: var(--muted);
+            font: inherit;
+            font-size: 0.92rem;
+            cursor: pointer;
+        }
+
+        .nav-leaf:hover { background: #f4f8f5; color: var(--ink); }
+        .nav-leaf.active { color: var(--green-dark); background: rgba(35, 204, 69, 0.12); font-weight: 850; }
+
+        .panel {
+            padding: 34px;
+            display: grid;
+            align-content: start;
+            gap: 24px;
+        }
+
+        .active-trail {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            color: var(--green-dark);
+            font-size: 0.88rem;
+            font-weight: 800;
+        }
+
+        .active-trail span:not(:last-child)::after {
+            content: "/";
+            margin-left: 8px;
+            color: #9bb0a7;
+        }
+
+        .calculator-card {
+            padding: 26px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--line);
+            background: linear-gradient(180deg, #ffffff, #f9fcfa);
+        }
+
+        .calculator-card h3 {
+            margin: 0 0 8px;
+            font-size: clamp(1.6rem, 3vw, 2.35rem);
+            line-height: 1.05;
+            letter-spacing: -0.055em;
+        }
+
+        .calculator-card p {
+            margin: 0 0 20px;
+            color: var(--muted);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        label {
+            display: grid;
+            gap: 7px;
+            color: var(--muted);
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        input {
+            width: 100%;
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            padding: 12px 13px;
+            color: var(--ink);
+            background: white;
+            font: inherit;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: rgba(35, 204, 69, 0.7);
+            box-shadow: 0 0 0 4px rgba(35, 204, 69, 0.11);
+        }
+
+        .result-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .metric {
+            padding: 16px;
+            border-radius: 16px;
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+        }
+
+        .metric small {
+            display: block;
+            color: var(--muted);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.72rem;
+        }
+
+        .metric strong {
+            display: block;
+            margin-top: 6px;
+            font-size: 1.35rem;
+            letter-spacing: -0.04em;
+        }
+
+        .api-note {
+            padding: 18px;
+            border-radius: 16px;
+            background: #102829;
+            color: #e6fff1;
+            font-family: var(--mono);
+            font-size: 0.87rem;
+            overflow: auto;
+        }
+
+        .footer {
+            padding: 46px 0;
+            color: var(--muted);
+            border-top: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.65);
+        }
+
+        .footer-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .footer a {
+            color: var(--green-dark);
+            font-weight: 850;
+        }
+
+        @media (max-width: 980px) {
+            .header-inner { align-items: flex-start; flex-direction: column; padding: 14px 0; }
+            .top-tabs { width: 100%; justify-content: flex-start; }
+            .dropdown-menu { left: 0; right: auto; }
+            .hero-grid, .install-grid, .app-shell { grid-template-columns: 1fr; }
+            .features { grid-template-columns: repeat(2, 1fr); }
+            .sidebar { border-right: 0; border-bottom: 1px solid var(--line); max-height: 360px; }
+        }
+
+        @media (max-width: 680px) {
+            .container { width: min(100% - 28px, 1160px); }
+            .hero { padding-top: 58px; }
+            .features, .form-grid, .result-row { grid-template-columns: 1fr; }
+            th, td { padding: 14px 12px; }
+            table { font-size: 0.9rem; }
+            .panel { padding: 22px; }
+            .callout { padding: 26px; }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="#top" aria-label="Quant4J home">
+                <img class="brand-logo-img" src="quant4j-logo.png" alt="Quant4J quantitative finance library" />
+            </a>
+
+            <nav class="top-tabs" aria-label="Main navigation">
+                <a class="nav-trigger" href="https://javadoc.io/doc/io.quant4j/quant4j/latest/index.html" target="_blank" rel="noreferrer">API Documentation</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="top">
+        <section class="hero">
+            <div class="container hero-grid">
+                <div>
+                    <p class="tagline">Quantitative finance, built for Java.</p>
+                    <p class="hero-copy">
+                        A clean, interface-driven API for precise, testable fixed income analytics embedded directly in Java applications.
+                        Pure Java today, with derivatives, credit, equity options, and risk analytics on the roadmap.
+                    </p>
+                    <div class="actions">
+                        <a class="btn primary" href="#playground">Explore the documentation →</a>
+                        <a class="btn secondary" href="https://github.com/achraf-hasbi/quant4j" target="_blank" rel="noreferrer">View on GitHub</a>
+                    </div>
+                </div>
+
+                <div class="terminal-card" aria-label="Java usage example">
+                    <div class="terminal-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                    <pre><code><span class="code-comment">// Interface-driven fixed income analytics</span>
+<span class="code-key">BondPricer</span> pricer = <span class="code-key">new</span> YieldBondPricer();
+
+<span class="code-type">BigDecimal</span> price = pricer.price(
+  bond,
+  marketYield,
+  dayCountConvention
+);
+
+<span class="code-key">DurationCalculator</span> risk =
+  <span class="code-key">new</span> ModifiedDurationCalculator();
+
+<span class="code-type">BigDecimal</span> dv01 = risk.dv01(bond, marketYield);</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <section id="about">
+            <div class="container">
+                <div class="section-head">
+                    <span class="section-kicker">What is Quant4J?</span>
+                    <h2>Financial calculations that fit naturally inside Java codebases.</h2>
+                    <p class="lead">
+                        Quant4J is an open-source Java library for quantitative finance. It provides a clean, interface-driven API for fixed income analytics, with zero external runtime dependencies, designed for developers who need precise, testable financial calculations embedded in their applications.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="features">
+            <div class="container">
+                <div class="section-head">
+                    <span class="section-kicker">Feature highlights</span>
+                    <h2>Fixed income building blocks for production systems.</h2>
+                </div>
+
+                <div class="features">
+                    <article class="feature-card">
+                        <div class="icon">💵</div>
+                        <h3>Bond Pricing</h3>
+                        <p>Price bonds from market yield or zero curves using clear pricing abstractions.</p>
+                    </article>
+                    <article class="feature-card">
+                        <div class="icon">📉</div>
+                        <h3>Duration &amp; Risk</h3>
+                        <p>Measure Macaulay duration, modified duration, and DV01 for rate sensitivity workflows.</p>
+                    </article>
+                    <article class="feature-card">
+                        <div class="icon">🎯</div>
+                        <h3>Yield to Maturity</h3>
+                        <p>Compute YTM through root-finding calculators built for deterministic testing.</p>
+                    </article>
+                    <article class="feature-card">
+                        <div class="icon">🧱</div>
+                        <h3>Curve Construction</h3>
+                        <p>Bootstrap zero curves from par bonds or market prices for fixed income valuation.</p>
+                    </article>
+                    <article class="feature-card">
+                        <div class="icon">∞</div>
+                        <h3>Compounding</h3>
+                        <p>Switch between continuous and discrete compounding strategies through explicit APIs.</p>
+                    </article>
+                    <article class="feature-card">
+                        <div class="icon">√</div>
+                        <h3>Solvers</h3>
+                        <p>Root-finding primitives support yield, calibration, and future analytics modules.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="container">
+                <div class="callout">
+                    <span class="section-kicker">Zero dependencies</span>
+                    <h2>Pure Java. No third-party runtime dependencies.</h2>
+                    <p>
+                        Keep quantitative finance logic portable, auditable, and simple to embed. Quant4J is built to integrate cleanly into services, batch jobs, trading tools, and internal risk applications without dragging a dependency graph behind it.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="install">
+            <div class="container">
+                <div class="section-head">
+                    <span class="section-kicker">Quick install</span>
+                    <h2>Add Quant4J to your Java project.</h2>
+                    <p class="lead">Use Maven or Gradle and start with the fixed income APIs.</p>
+                </div>
+
+                <div class="install-grid">
+                    <div class="snippet">
+                        <h3>Maven</h3>
+                        <pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;io.github.achrafhasbi&lt;/groupId&gt;
+  &lt;artifactId&gt;quant4j&lt;/artifactId&gt;
+  &lt;version&gt;1.0.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+                    </div>
+                    <div class="snippet">
+                        <h3>Gradle</h3>
+                        <pre><code>dependencies {
+  implementation("io.github.achrafhasbi:quant4j:1.0.0")
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div>© <span id="year"></span> Quant4J. Apache 2.0 License. Built by Achraf Hasbi.</div>
+            <div><a href="https://github.com/" target="_blank" rel="noreferrer">GitHub</a></div>
+        </div>
+    </footer>
+</div>
+
+<script>
+    const leaves = document.querySelectorAll('.nav-leaf');
+    const activeTrail = document.getElementById('activeTrail');
+    const panelTitle = document.getElementById('panelTitle');
+    const panelText = document.getElementById('panelText');
+    const apiNote = document.getElementById('apiNote');
+
+    leaves.forEach((leaf) => {
+        leaf.addEventListener('click', () => {
+            leaves.forEach((item) => item.classList.remove('active'));
+            leaf.classList.add('active');
+
+            const title = leaf.dataset.title;
+            const api = leaf.dataset.api;
+            const trail = leaf.dataset.trail.split('/').map((part) => part.trim());
+
+            activeTrail.innerHTML = trail.map((part) => `<span>${part}</span>`).join('');
+            panelTitle.textContent = title;
+            panelText.innerHTML = `Prototype calculator panel backed by the <strong>${api}</strong> API. Replace the placeholder math with your production implementation or bind it to the Quant4J web app layer.`;
+            apiNote.textContent = `new ${api}().calculate(input);`;
+        });
+    });
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
