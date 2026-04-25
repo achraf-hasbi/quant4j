@@ -1,8 +1,6 @@
-package com.quant4j.rate.interest;
+package com.quant4j.rates.interest;
 
 import com.quant4j.rates.Frequency;
-import com.quant4j.rates.interest.CompoundInterestCalculator;
-import com.quant4j.rates.interest.CompoundInterestResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

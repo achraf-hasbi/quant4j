@@ -1,8 +1,6 @@
-package com.quant4j.rate.compounding;
+package com.quant4j.rates.compounding;
 
 import com.quant4j.rates.Frequency;
-import com.quant4j.rates.compounding.CompoundingStrategy;
-import com.quant4j.rates.compounding.DiscreteCompoundingStrategy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;

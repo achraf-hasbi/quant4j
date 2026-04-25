@@ -1,7 +1,5 @@
-package com.quant4j.rate;
+package com.quant4j.rates;
 
-import com.quant4j.rates.Frequency;
-import com.quant4j.rates.RateConverter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
