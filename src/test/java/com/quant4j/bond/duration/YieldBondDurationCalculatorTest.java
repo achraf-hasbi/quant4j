@@ -3,6 +3,7 @@ package com.quant4j.bond.duration;
 import com.quant4j.bond.Bond;
 import com.quant4j.bond.pricing.YieldBondPricer;
 import com.quant4j.rates.Frequency;
+import com.quant4j.rates.compounding.CompoundingStrategy;
 import com.quant4j.rates.compounding.ContinuousCompoundingStrategy;
 import com.quant4j.rates.compounding.DiscreteCompoundingStrategy;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +30,7 @@ class YieldBondDurationCalculatorTest {
         double duration = calculator.macaulayDuration(bond, price);
 
         assertTrue(duration < 2.0, "Coupon bond duration must be less than maturity");
-        assertEquals(1.928, duration, TOLERANCE);
+        assertEquals(1.928011, duration, TOLERANCE);
     }
 
     @Test
@@ -72,7 +73,7 @@ class YieldBondDurationCalculatorTest {
     @DisplayName("Modified duration uses the yield's compounding frequency, not the bond's coupon frequency")
     void testModifiedDuration_UsesYieldCompoundingFrequency() {
         Bond bond = new Bond(1000, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
-        DiscreteCompoundingStrategy annual = new DiscreteCompoundingStrategy(1);
+        CompoundingStrategy annual = Frequency.ANNUALLY.getCompoundingStrategy();
         double price = new YieldBondPricer(0.05, annual).price(bond);
         YieldBondDurationCalculator calculator = new YieldBondDurationCalculator(0.05, annual);
 
@@ -91,7 +92,7 @@ class YieldBondDurationCalculatorTest {
         YieldBondDurationCalculator calculator = new YieldBondDurationCalculator(0.05, semiAnnual);
 
         // macaulay ≈ 1.928, modified = 1.928 / 1.025 ≈ 1.881, DV01 = 1.881 * 1000 * 0.0001 ≈ 0.188
-        assertEquals(0.188, calculator.dv01(bond, price), TOLERANCE);
+        assertEquals(0.188098, calculator.dv01(bond, price), TOLERANCE);
     }
 
     @Test
