@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <!-- ===== Coordinates ===== -->
-    <groupId>com.quant4j</groupId>
+    <groupId>io.quant4j</groupId>
     <artifactId>quant4j</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>

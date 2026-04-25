@@ -3,7 +3,7 @@
 ## Package structure
 
 ```
-com.quant4j
+io.quant4j
 ├── math
 │   ├── solver          — root-finding algorithms (Bisection, Newton-Raphson, Secant)
 │   ├── interpolation   — curve interpolation strategies (Linear)

@@ -1,0 +1,16 @@
+package io.quant4j.rates.interest;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+public record CompoundInterestResult(List<Double> deposits,
+                                     List<Double> interests,
+                                     List<Double> totalDeposit,
+                                     List<Double> accuredInterest,
+                                     List<Double> balance) {
+
+    public CompoundInterestResult() {
+        this(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    }
+}

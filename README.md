@@ -1,6 +1,6 @@
 # Quant4J
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.quant4j/quant4j)](https://central.sonatype.com/artifact/com.quant4j/quant4j)
+[![Maven Central](https://img.shields.io/maven-central/v/io.quant4j/quant4j)](https://central.sonatype.com/artifact/io.quant4j/quant4j)
 [![Coverage](https://codecov.io/gh/achraf-hasbi/quant4j/branch/main/graph/badge.svg)](https://codecov.io/gh/achraf-hasbi/quant4j)
 [![Java](https://img.shields.io/badge/Java-21-blue)](https://adoptium.net)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green)](LICENSE)
@@ -35,7 +35,7 @@ with new instrument types, all sharing the same consistent, interface-driven API
 **Maven**
 ```xml
 <dependency>
-    <groupId>com.quant4j</groupId>
+    <groupId>io.quant4j</groupId>
     <artifactId>quant4j</artifactId>
     <version>1.0.0</version>
 </dependency>
@@ -43,7 +43,7 @@ with new instrument types, all sharing the same consistent, interface-driven API
 
 **Gradle**
 ```groovy
-implementation 'com.quant4j:quant4j:1.0.0'
+implementation 'io.quant4j:quant4j:1.0.0'
 ```
 
 ---
@@ -53,25 +53,25 @@ implementation 'com.quant4j:quant4j:1.0.0'
 ### 1. Price a bond at a given yield
 
 ```java
-import com.quant4j.bond.Bond;
-import com.quant4j.bond.pricing.YieldBondPricer;
-import com.quant4j.rates.Frequency;
-import com.quant4j.rates.compounding.DiscreteCompoundingStrategy;
+import bond.io.quant4j.Bond;
+import pricing.bond.io.quant4j.YieldBondPricer;
+import rates.io.quant4j.Frequency;
+import compounding.rates.io.quant4j.DiscreteCompoundingStrategy;
 
 // 6% annual coupon, semi-annual payments, 5 years, face value 1000
 Bond bond = new Bond(1000, 0.06, 5.0, Frequency.SEMI_ANNUALLY);
 
-// Price at a 7% YTM using semi-annual discrete compounding
-double price = new YieldBondPricer(0.07, new DiscreteCompoundingStrategy(2)).price(bond);
+        // Price at a 7% YTM using semi-annual discrete compounding
+        double price = new YieldBondPricer(0.07, new DiscreteCompoundingStrategy(2)).price(bond);
 // → 958.42
 ```
 
 ### 2. Compute yield to maturity from a market price
 
 ```java
-import com.quant4j.bond.yield.BondYieldCalculator;
-import com.quant4j.bond.yield.RootFindingBondYieldCalculator;
-import com.quant4j.math.solver.NewtonRaphsonSolver;
+import yield.bond.io.quant4j.BondYieldCalculator;
+import yield.bond.io.quant4j.RootFindingBondYieldCalculator;
+import solver.math.io.quant4j.NewtonRaphsonSolver;
 
 BondYieldCalculator calculator = new RootFindingBondYieldCalculator(
         new DiscreteCompoundingStrategy(2),
@@ -84,23 +84,24 @@ double ytm = calculator.yield(bond, 950.24);
 ### 3. Compute duration and DV01
 
 ```java
-import com.quant4j.bond.duration.BondDurationCalculator;
-import com.quant4j.bond.duration.YieldBondDurationCalculator;
+import duration.bond.io.quant4j.BondDurationCalculator;
+import duration.bond.io.quant4j.YieldBondDurationCalculator;
 
 BondDurationCalculator duration = new YieldBondDurationCalculator(
         0.07, new DiscreteCompoundingStrategy(2));
 
 double macaulay = duration.macaulayDuration(bond, price); // years
 double modified = duration.modifiedDuration(bond, price); // % per unit yield
-double dv01     = duration.dv01(bond, price);             // $ per basis point
+double dv01 = duration.dv01(bond, price);             // $ per basis point
 ```
 
 ### 4. Price using a full zero rate curve
 
 ```java
-import com.quant4j.bond.pricing.ZeroCouponBondRateBondPricer;
-import com.quant4j.math.interpolation.LinearInterpolationStrategy;
-import com.quant4j.rates.compounding.ContinuousCompoundingStrategy;
+import pricing.bond.io.quant4j.ZeroCouponBondRateBondPricer;
+import interpolation.math.io.quant4j.LinearInterpolationStrategy;
+import compounding.rates.io.quant4j.ContinuousCompoundingStrategy;
+
 import java.util.Map;
 
 Map<Double, Double> zeroCurve = Map.of(
@@ -119,7 +120,8 @@ double price = new ZeroCouponBondRateBondPricer(
 ### 5. Bootstrap a spot rate curve from par bonds
 
 ```java
-import com.quant4j.bond.curve.SpotRateCurveBootstrappingStrategy;
+import curve.bond.io.quant4j.SpotRateCurveBootstrappingStrategy;
+
 import java.util.List;
 import java.util.NavigableMap;
 
@@ -141,14 +143,14 @@ NavigableMap<Double, Double> spotCurve = bootstrapper.bootstrapFromParBonds(
 ### 6. Convert between compounding conventions
 
 ```java
-import com.quant4j.rates.RateConverter;
+import rates.io.quant4j.RateConverter;
 
 // Semi-annual discrete 5% → continuous equivalent
 double rc = RateConverter.discreteToContinuous(0.05, Frequency.SEMI_ANNUALLY);
 // → 0.04879 (4.879%)
 
-// Continuous 4.879% → quarterly discrete equivalent
-double rq = RateConverter.continuousToDiscrete(rc, Frequency.QUARTERLY);
+        // Continuous 4.879% → quarterly discrete equivalent
+        double rq = RateConverter.continuousToDiscrete(rc, Frequency.QUARTERLY);
 // → 0.04969 (4.969%)
 ```
 
