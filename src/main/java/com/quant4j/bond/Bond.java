@@ -22,9 +22,15 @@ public record Bond(double faceValue,
                    Frequency couponFrequency) {
 
     public Bond {
-        if (faceValue <= 0) throw new IllegalArgumentException("Face value must be positive");
-        if (annualRate < 0) throw new IllegalArgumentException("Annual rate cannot be negative");
-        if (maturityYears <= 0) throw new IllegalArgumentException("Maturity must be positive");
+        if (faceValue <= 0) {
+            throw new IllegalArgumentException("Face value must be positive");
+        }
+        if (annualRate < 0) {
+            throw new IllegalArgumentException("Annual rate cannot be negative");
+        }
+        if (maturityYears <= 0) {
+            throw new IllegalArgumentException("Maturity must be positive");
+        }
         Objects.requireNonNull(couponFrequency, "Coupon frequency cannot be null");
         validateTimeCoherence(maturityYears, couponFrequency);
     }

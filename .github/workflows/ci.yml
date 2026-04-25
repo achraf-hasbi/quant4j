@@ -35,13 +35,17 @@ jobs:
         run: mvn --batch-mode --no-transfer-progress verify
 
       - name: Upload JaCoCo coverage report
-        uses: codecov/codecov-action@v5
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          name: jacoco-report-java-${{ matrix.java }}
+          path: target/site/jacoco/
+          retention-days: 7
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: target/site/jacoco/jacoco.xml
           # Do not fail the workflow if Codecov is not configured yet.
           fail_ci_if_error: false
