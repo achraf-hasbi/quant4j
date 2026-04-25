@@ -12,6 +12,7 @@ public interface BondPricer {
      *
      * @param bond The bond to price.
      * @return The calculated price.
+     * @throws NullPointerException if {@code bond} is null
      */
     double price(Bond bond);
 }
