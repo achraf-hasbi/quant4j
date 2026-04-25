@@ -8,14 +8,14 @@
     <!-- ===== Coordinates ===== -->
     <groupId>io.quant4j</groupId>
     <artifactId>quant4j</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <!-- ===== Project metadata ===== -->
     <name>Quant4J</name>
     <description>A quantitative finance library for Java.</description>
     <url>https://github.com/achraf-hasbi/quant4j</url>
-    <inceptionYear>2026</inceptionYear>
+    <inceptionYear>2025</inceptionYear>
 
     <licenses>
         <license>
@@ -38,7 +38,7 @@
         <connection>scm:git:git://github.com/achraf-hasbi/quant4j.git</connection>
         <developerConnection>scm:git:ssh://github.com/achraf-hasbi/quant4j.git</developerConnection>
         <url>https://github.com/achraf-hasbi/quant4j/tree/main</url>
-        <tag>HEAD</tag>
+        <tag>v1.0.0</tag>
     </scm>
 
     <issueManagement>
