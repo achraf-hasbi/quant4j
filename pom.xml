@@ -46,6 +46,18 @@
         <url>https://github.com/achraf-hasbi/quant4j/issues</url>
     </issueManagement>
 
+    <!-- ===== Distribution management (Maven Central via Sonatype OSSRH) ===== -->
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
     <!-- ===== Properties ===== -->
     <properties>
         <!-- Java -->
@@ -201,5 +213,68 @@
 
         </plugins>
     </build>
+
+    <!-- ===== Release profile (activated with -Prelease) ===== -->
+    <!--
+        Maven Central requires signed artifacts. Run with:
+            mvn deploy -Prelease
+        Credentials are read from ~/.m2/settings.xml under server id "ossrh".
+        The GPG key must be published to a public keyserver.
+    -->
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+
+                    <!-- 7. Sign all artifacts with GPG (required by Maven Central) -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.4</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <!--
+                                        Passphrase can be supplied via:
+                                          -Dgpg.passphrase=... on the command line, or
+                                          <passphrase> in ~/.m2/settings.xml <server> block.
+                                    -->
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- 8. Stage and release to Maven Central via OSSRH -->
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.7.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                            <!--
+                                Set to true to automatically release after a
+                                successful staging validation (no manual click
+                                in the OSSRH UI required).
+                            -->
+                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

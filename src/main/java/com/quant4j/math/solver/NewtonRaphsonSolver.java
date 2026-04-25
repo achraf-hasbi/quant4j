@@ -17,6 +17,7 @@ public class NewtonRaphsonSolver implements RootSolver {
     private static final double DEFAULT_TOLERANCE = 1.0e-10;
     private static final double DEFAULT_INITIAL_GUESS = 0.05;
     private static final double FINITE_DIFF_STEP = 1.0e-6;
+    private static final double EPSILON = 1e-15;
 
     private final double initialGuess;
     private final double tolerance;
@@ -61,7 +62,7 @@ public class NewtonRaphsonSolver implements RootSolver {
             double fPrime = (f.applyAsDouble(x + FINITE_DIFF_STEP) - f.applyAsDouble(x - FINITE_DIFF_STEP))
                     / (2.0 * FINITE_DIFF_STEP);
 
-            if (fPrime == 0.0) {
+            if (Math.abs(fPrime) < EPSILON) {
                 throw new ArithmeticException("Zero derivative encountered in Newton-Raphson");
             }
 
