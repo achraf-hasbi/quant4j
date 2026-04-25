@@ -13,7 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SpotRateCurveBootstrappingStrategyTest {
 
@@ -53,7 +56,7 @@ class SpotRateCurveBootstrappingStrategyTest {
         assertEquals(2, curve.size());
         assertEquals(0.04, curve.get(1.0), TOLERANCE);
         // z(2) = sqrt(1045 * 1.04 / (1040 - 45)) - 1 = sqrt(1086.8 / 995) - 1
-        assertEquals(0.045113, curve.get(2.0), 1e-4);
+        assertEquals(0.045113, curve.get(2.0), 1e-7);
     }
 
     @Test
@@ -146,6 +149,34 @@ class SpotRateCurveBootstrappingStrategyTest {
 
         assertThrows(IllegalArgumentException.class,
                 () -> strategy.bootstrapFromParBonds(List.of(), interpolation));
+    }
+
+    @Test
+    @DisplayName("Zero-coupon bond: single terminal cashflow, bootstrapped rate matches discount factor")
+    void testZeroCouponBond_BootstrappedRateMatchesDiscountFactor() {
+        // annualRate = 0 → getCashflows() produces a single entry {1.0 → faceValue}
+        Bond bond = new Bond(1000, 0.0, 1.0, Frequency.ANNUALLY);
+        double expectedRate = 0.05;
+        double price = 1000.0 / (1.0 + expectedRate); // 952.380...
+        SpotRateCurveBootstrappingStrategy strategy =
+                new SpotRateCurveBootstrappingStrategy(new TreeMap<>(), annualCompounding);
+
+        Map<Double, Double> curve = strategy.bootstrapFromMarketPrices(
+                List.of(bond), Map.of(bond, price), interpolation);
+
+        assertEquals(expectedRate, curve.get(1.0), TOLERANCE);
+    }
+
+    @Test
+    @DisplayName("Duplicate maturities in bond list should throw IllegalArgumentException")
+    void testDuplicateMaturitiesThrows() {
+        Bond bond1 = new Bond(1000, 0.04, 1.0, Frequency.ANNUALLY);
+        Bond bond2 = new Bond(500, 0.06, 1.0, Frequency.ANNUALLY);
+        SpotRateCurveBootstrappingStrategy strategy =
+                new SpotRateCurveBootstrappingStrategy(new TreeMap<>(), annualCompounding);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> strategy.bootstrapFromParBonds(List.of(bond1, bond2), interpolation));
     }
 
     @Test
