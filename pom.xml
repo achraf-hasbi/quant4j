@@ -13,9 +13,9 @@
 
     <!-- ===== Project metadata ===== -->
     <name>Quant4J</name>
-    <description>A clean, well-tested quantitative finance library for Java.</description>
+    <description>A quantitative finance library for Java.</description>
     <url>https://github.com/achraf-hasbi/quant4j</url>
-    <inceptionYear>2025</inceptionYear>
+    <inceptionYear>2026</inceptionYear>
 
     <licenses>
         <license>
@@ -35,8 +35,8 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/Achraf-Hasbi/quant4j.git</connection>
-        <developerConnection>scm:git:ssh://github.com/Achraf-Hasbi/quant4j.git</developerConnection>
+        <connection>scm:git:git://github.com/achraf-hasbi/quant4j.git</connection>
+        <developerConnection>scm:git:ssh://github.com/achraf-hasbi/quant4j.git</developerConnection>
         <url>https://github.com/achraf-hasbi/quant4j/tree/main</url>
         <tag>HEAD</tag>
     </scm>
@@ -45,18 +45,6 @@
         <system>GitHub Issues</system>
         <url>https://github.com/achraf-hasbi/quant4j/issues</url>
     </issueManagement>
-
-    <!-- ===== Distribution management (Maven Central via Sonatype OSSRH) ===== -->
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
     <!-- ===== Properties ===== -->
     <properties>
@@ -79,6 +67,8 @@
         <plugin.jacoco.version>0.8.12</plugin.jacoco.version>
         <plugin.checkstyle.version>3.4.0</plugin.checkstyle.version>
         <checkstyle.version>10.17.0</checkstyle.version>
+        <plugin.central.version>0.6.0</plugin.central.version>
+        <plugin.gpg.version>3.2.8</plugin.gpg.version>
     </properties>
 
     <!-- ===== Dependencies ===== -->
@@ -137,13 +127,7 @@
                 <version>${plugin.javadoc.version}</version>
                 <configuration>
                     <release>${java.version}</release>
-                    <!--
-                        Validate Javadoc syntax and references but allow
-                        missing @param / @return / @throws tags while the
-                        library is still in active development.
-                        Flip to "all" when the public API is stable.
-                    -->
-                    <doclint>all,-missing</doclint>
+                    <doclint>all</doclint>
                     <failOnError>true</failOnError>
                     <quiet>true</quiet>
                 </configuration>
@@ -218,7 +202,7 @@
     <!--
         Maven Central requires signed artifacts. Run with:
             mvn deploy -Prelease
-        Credentials are read from ~/.m2/settings.xml under server id "ossrh".
+        Credentials are read from ~/.m2/settings.xml under server id "central".
         The GPG key must be published to a public keyserver.
     -->
     <profiles>
@@ -231,7 +215,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.2.4</version>
+                        <version>${plugin.gpg.version}</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -254,21 +238,16 @@
                         </executions>
                     </plugin>
 
-                    <!-- 8. Stage and release to Maven Central via OSSRH -->
+                    <!-- 8. Publish to Maven Central via Central Portal -->
                     <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.7.0</version>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>${plugin.central.version}</version>
                         <extensions>true</extensions>
                         <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                            <!--
-                                Set to true to automatically release after a
-                                successful staging validation (no manual click
-                                in the OSSRH UI required).
-                            -->
-                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                            <publishingServerId>central</publishingServerId>
+                            <!-- false = artifact sits in portal for manual review before going live -->
+                            <autoPublish>false</autoPublish>
                         </configuration>
                     </plugin>
 
