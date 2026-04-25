@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+    "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<!--
+    Quant4J Checkstyle configuration.
+
+    Philosophy: enforce rules that prevent real defects and inconsistencies
+    (naming, import hygiene, structural correctness) without nitpicking
+    formatting whitespace — that belongs in an auto-formatter.
+
+    Rules are grouped by category. Add stricter rules incrementally as the
+    codebase stabilises.
+-->
+<module name="Checker">
+
+    <property name="severity" value="error"/>
+    <property name="fileExtensions" value="java"/>
+
+    <!-- ── File-level checks ─────────────────────────────────────────── -->
+
+    <!-- No tab characters; the project uses 4-space indentation. -->
+    <module name="FileTabCharacter"/>
+
+    <!--
+        Lines must not exceed 150 characters.
+        Exempt: package declarations, imports, and bare URLs in Javadoc.
+    -->
+    <module name="LineLength">
+        <property name="max" value="150"/>
+        <property name="ignorePattern"
+                  value="^ *\* *[^ ]+$|^package |^import |.*https?://.*"/>
+    </module>
+
+    <!-- ── Tree-walker checks ─────────────────────────────────────────── -->
+    <module name="TreeWalker">
+
+        <!-- ── Imports ── -->
+
+        <!-- Wildcards hide what is actually used. -->
+        <module name="AvoidStarImport"/>
+
+        <!-- Dead imports add noise and confuse readers. -->
+        <module name="UnusedImports"/>
+
+        <!-- Duplicate imports are always a mistake. -->
+        <module name="RedundantImport"/>
+
+        <!-- ── Naming conventions ── -->
+
+        <!-- Public types: UpperCamelCase -->
+        <module name="TypeName"/>
+
+        <!-- Constants (static final fields): UPPER_SNAKE_CASE -->
+        <module name="ConstantName"/>
+
+        <!-- Instance fields: lowerCamelCase -->
+        <module name="MemberName"/>
+
+        <!-- Static (non-final) fields: lowerCamelCase -->
+        <module name="StaticVariableName"/>
+
+        <!-- Methods: lowerCamelCase -->
+        <module name="MethodName"/>
+
+        <!-- Parameters: lowerCamelCase -->
+        <module name="ParameterName"/>
+
+        <!-- Local variables: lowerCamelCase -->
+        <module name="LocalVariableName"/>
+
+        <!-- Packages: all lowercase, dot-separated -->
+        <module name="PackageName">
+            <property name="format" value="^[a-z]+(\.[a-z][a-z0-9]*)*$"/>
+        </module>
+
+        <!-- ── Coding rules ── -->
+
+        <!-- Braces are required even for single-statement blocks. -->
+        <module name="NeedBraces"/>
+
+        <!-- Empty catch blocks hide failures silently. -->
+        <module name="EmptyCatchBlock"/>
+
+        <!-- equals() and hashCode() must always be overridden together. -->
+        <module name="EqualsHashCode"/>
+
+        <!-- Declaring multiple variables in one statement obscures types. -->
+        <module name="MultipleVariableDeclarations"/>
+
+        <!-- Use 'L' suffix for long literals, not 'l' (easily confused with 1). -->
+        <module name="UpperEll"/>
+
+        <!-- Use C-style array declarations: int[] x, not int x[]. -->
+        <module name="ArrayTypeStyle"/>
+
+        <!-- Modifiers must appear in the canonical JLS order. -->
+        <module name="ModifierOrder"/>
+
+        <!-- ── Design ── -->
+
+        <!-- Interfaces must define a type (methods or constants), not be tag-only. -->
+        <module name="InterfaceIsType"/>
+
+        <!-- Fields must be private; expose state via methods. -->
+        <module name="VisibilityModifier"/>
+
+        <!-- Utility classes must declare a private constructor. -->
+        <module name="HideUtilityClassConstructor"/>
+
+        <!-- ── Miscellaneous ── -->
+
+        <!-- The outer type name must match the file name. -->
+        <module name="OuterTypeFilename"/>
+
+    </module>
+
+</module>
