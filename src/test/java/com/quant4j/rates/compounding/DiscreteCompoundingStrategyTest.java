@@ -2,6 +2,7 @@ package com.quant4j.rates.compounding;
 
 import com.quant4j.rates.Frequency;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -92,6 +93,16 @@ public class DiscreteCompoundingStrategyTest {
 
         double actualRate = strategy.rateFromDiscountFactor(df, time);
         assertEquals(expectedRate, actualRate, TOLERANCE);
+    }
+
+    @Test
+    @DisplayName("adjustMacaulayToModified divides Macaulay duration by (1 + yield/m)")
+    void testAdjustMacaulayToModified() {
+        DiscreteCompoundingStrategy semiAnnual = new DiscreteCompoundingStrategy(2);
+        double macaulay = 4.5;
+        double yield = 0.05;
+        // D_mod = 4.5 / (1 + 0.05/2) = 4.5 / 1.025
+        assertEquals(macaulay / 1.025, semiAnnual.adjustMacaulayToModified(macaulay, yield), 1e-9);
     }
 
     @ParameterizedTest(name = "Discrete Forward (Quarterly): r1={0}, t1={1}, r2={2}, t2={3}")

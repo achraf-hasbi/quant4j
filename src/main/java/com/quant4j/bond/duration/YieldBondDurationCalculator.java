@@ -2,7 +2,6 @@ package com.quant4j.bond.duration;
 
 import com.quant4j.bond.Bond;
 import com.quant4j.rates.compounding.CompoundingStrategy;
-import com.quant4j.rates.compounding.DiscreteCompoundingStrategy;
 
 import java.util.Map;
 import java.util.Objects;
@@ -16,11 +15,9 @@ import java.util.Objects;
  *   D_mac = (1 / P) * sum[ t * CF(t) * DF(y, t) ]
  * </pre>
  *
- * <p>Modified duration adjustment depends on the compounding convention:</p>
- * <ul>
- *   <li>Discrete (m periods/year): {@code D_mod = D_mac / (1 + y/m)}</li>
- *   <li>Continuous:                {@code D_mod = D_mac}</li>
- * </ul>
+ * <p>The Macaulay-to-modified conversion is delegated to the injected
+ * {@link CompoundingStrategy#adjustMacaulayToModified}, so each convention
+ * carries its own adjustment rule.</p>
  */
 public class YieldBondDurationCalculator implements BondDurationCalculator {
 
@@ -35,6 +32,9 @@ public class YieldBondDurationCalculator implements BondDurationCalculator {
      */
     public YieldBondDurationCalculator(double yield, CompoundingStrategy yieldCompoundingStrategy) {
         Objects.requireNonNull(yieldCompoundingStrategy, "Compounding strategy cannot be null");
+        if (!Double.isFinite(yield)) {
+            throw new IllegalArgumentException("Yield must be a finite number");
+        }
         this.yield = yield;
         this.yieldCompoundingStrategy = yieldCompoundingStrategy;
     }
@@ -66,13 +66,7 @@ public class YieldBondDurationCalculator implements BondDurationCalculator {
      */
     @Override
     public double modifiedDuration(Bond bond, double price) {
-        double macaulay = macaulayDuration(bond, price);
-
-        if (yieldCompoundingStrategy instanceof DiscreteCompoundingStrategy discrete) {
-            return macaulay / (1.0 + yield / discrete.getPeriodsPerYear());
-        }
-
-        return macaulay;
+        return yieldCompoundingStrategy.adjustMacaulayToModified(macaulayDuration(bond, price), yield);
     }
 
     /**

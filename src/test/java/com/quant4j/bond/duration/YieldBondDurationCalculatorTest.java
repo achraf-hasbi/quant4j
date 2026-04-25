@@ -1,18 +1,20 @@
 package com.quant4j.bond.duration;
 
-import com.quant4j.rates.Frequency;
 import com.quant4j.bond.Bond;
 import com.quant4j.bond.pricing.YieldBondPricer;
+import com.quant4j.rates.Frequency;
 import com.quant4j.rates.compounding.ContinuousCompoundingStrategy;
 import com.quant4j.rates.compounding.DiscreteCompoundingStrategy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class YieldBondDurationCalculatorTest {
 
-    private static final double TOLERANCE = 0.001;
+    private static final double TOLERANCE = 1e-6;
 
     private final ContinuousCompoundingStrategy continuous = new ContinuousCompoundingStrategy();
     private final DiscreteCompoundingStrategy semiAnnual = new DiscreteCompoundingStrategy(2);
@@ -93,10 +95,31 @@ class YieldBondDurationCalculatorTest {
     }
 
     @Test
+    @DisplayName("Macaulay duration of a zero-coupon bond equals its maturity")
+    void testMacaulayDuration_ZeroCouponBondEqualsMaturity() {
+        Bond bond = new Bond(1000, 0.0, 3.0, Frequency.ANNUALLY);
+        double price = 1000.0 * continuous.discountFactor(0.07, 3.0);
+        YieldBondDurationCalculator calculator = new YieldBondDurationCalculator(0.07, continuous);
+
+        assertEquals(3.0, calculator.macaulayDuration(bond, price), 1e-9);
+    }
+
+    @Test
+    @DisplayName("Non-finite yield should throw IllegalArgumentException")
+    void testNonFiniteYieldThrows() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new YieldBondDurationCalculator(Double.NaN, continuous));
+        assertThrows(IllegalArgumentException.class,
+                () -> new YieldBondDurationCalculator(Double.POSITIVE_INFINITY, continuous));
+    }
+
+    @Test
     @DisplayName("Null bond should throw NullPointerException")
     void testNullBondThrows() {
         YieldBondDurationCalculator calculator = new YieldBondDurationCalculator(0.05, continuous);
         assertThrows(NullPointerException.class, () -> calculator.macaulayDuration(null, 1000));
+        assertThrows(NullPointerException.class, () -> calculator.modifiedDuration(null, 1000));
+        assertThrows(NullPointerException.class, () -> calculator.dv01(null, 1000));
     }
 
     @Test
@@ -105,5 +128,6 @@ class YieldBondDurationCalculatorTest {
         Bond bond = new Bond(1000, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
         YieldBondDurationCalculator calculator = new YieldBondDurationCalculator(0.05, continuous);
         assertThrows(IllegalArgumentException.class, () -> calculator.macaulayDuration(bond, 0));
+        assertThrows(IllegalArgumentException.class, () -> calculator.dv01(bond, 0));
     }
 }

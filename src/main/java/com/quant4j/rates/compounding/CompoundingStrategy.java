@@ -72,4 +72,18 @@ public interface CompoundingStrategy {
      * @throws IllegalArgumentException if t1 >= t2
      */
     double forwardRate(double r1, double t1, double r2, double t2);
+
+    /**
+     * Converts a Macaulay duration to a modified duration under this compounding convention.
+     *
+     * <ul>
+     *   <li>Discrete (m periods/year): {@code D_mod = D_mac / (1 + y/m)}</li>
+     *   <li>Continuous:               {@code D_mod = D_mac}</li>
+     * </ul>
+     *
+     * @param macaulay the Macaulay duration in years
+     * @param yield    the annual yield to maturity (decimal)
+     * @return the modified duration
+     */
+    double adjustMacaulayToModified(double macaulay, double yield);
 }

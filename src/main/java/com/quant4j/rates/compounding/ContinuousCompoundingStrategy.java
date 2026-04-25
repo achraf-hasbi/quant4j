@@ -68,6 +68,17 @@ public class ContinuousCompoundingStrategy implements CompoundingStrategy {
     /**
      * {@inheritDoc}
      * <p>
+     * Under continuous compounding, modified duration equals Macaulay duration.
+     * </p>
+     */
+    @Override
+    public double adjustMacaulayToModified(double macaulay, double yield) {
+        return macaulay;
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
      * Formula: $F = \frac{r_2 \cdot t_2 - r_1 \cdot t_1}{t_2 - t_1}$
      * </p>
      */

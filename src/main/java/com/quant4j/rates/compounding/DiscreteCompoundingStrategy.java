@@ -24,10 +24,6 @@ public class DiscreteCompoundingStrategy implements CompoundingStrategy {
         this.periodsPerYear = periodsPerYear;
     }
 
-    public int getPeriodsPerYear() {
-        return periodsPerYear;
-    }
-
     /**
      * {@inheritDoc}
      * <p>
@@ -85,6 +81,17 @@ public class DiscreteCompoundingStrategy implements CompoundingStrategy {
     public double rateFromDiscountFactor(double discountFactor, double time) {
         double exponent = -1.0 / (periodsPerYear * time);
         return periodsPerYear * (Math.pow(discountFactor, exponent) - 1);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Formula: $D_{mod} = \frac{D_{mac}}{1 + \frac{y}{m}}$
+     * </p>
+     */
+    @Override
+    public double adjustMacaulayToModified(double macaulay, double yield) {
+        return macaulay / (1.0 + yield / periodsPerYear);
     }
 
     /**

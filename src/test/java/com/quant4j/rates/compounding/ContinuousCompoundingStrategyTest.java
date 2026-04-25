@@ -75,6 +75,14 @@ public class ContinuousCompoundingStrategyTest {
         assertEquals(expectedRate, actualRate, TOLERANCE);
     }
 
+    @Test
+    @DisplayName("adjustMacaulayToModified returns Macaulay unchanged under continuous compounding")
+    void testAdjustMacaulayToModified() {
+        ContinuousCompoundingStrategy strategy = new ContinuousCompoundingStrategy();
+        double macaulay = 4.3235;
+        assertEquals(macaulay, strategy.adjustMacaulayToModified(macaulay, 0.07), 1e-9);
+    }
+
     @ParameterizedTest(name = "Continuous Forward: r1={0}, t1={1}, r2={2}, t2={3}")
     @CsvSource({
             "0.030, 0.25, 0.032, 0.50, 0.034",
