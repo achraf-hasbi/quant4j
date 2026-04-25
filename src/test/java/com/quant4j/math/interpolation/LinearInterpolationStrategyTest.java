@@ -1,6 +1,5 @@
-package com.quant4j.math;
+package com.quant4j.math.interpolation;
 
-import com.quant4j.math.interpolation.LinearInterpolationStrategy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
