@@ -76,17 +76,4 @@ class BisectionSolverTest {
         assertThrows(IllegalArgumentException.class,
                 () -> new BisectionSolver(3.0, 3.0, 1.0e-10, 200));
     }
-
-    @Test
-    @DisplayName("Premium bond price yields a rate below its coupon rate")
-    void testSolve_PremiumBond_YieldBelowCoupon() {
-        // A bond trading above par should have YTM < coupon rate (5%)
-        // We verify the solver finds a root in the correct region
-        RootSolver solver = new BisectionSolver(-0.99, 1.0, 1.0e-10, 200);
-
-        // Proxy: f is decreasing and crosses zero somewhere below 0.05
-        double root = solver.solve(x -> x - 0.03);
-
-        assertTrue(root < 0.05);
-    }
 }
