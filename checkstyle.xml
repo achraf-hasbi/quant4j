@@ -24,7 +24,7 @@
     <module name="FileTabCharacter"/>
 
     <!--
-        Lines must not exceed 120 characters.
+        Lines must not exceed 150 characters.
         Exempt: package declarations, imports, and bare URLs in Javadoc.
     -->
     <module name="LineLength">
@@ -77,6 +77,12 @@
 
         <!-- ── Coding rules ── -->
 
+        <!-- Braces are required even for single-statement blocks. -->
+        <module name="NeedBraces"/>
+
+        <!-- Empty catch blocks hide failures silently. -->
+        <module name="EmptyCatchBlock"/>
+
         <!-- equals() and hashCode() must always be overridden together. -->
         <module name="EqualsHashCode"/>
 
@@ -89,10 +95,19 @@
         <!-- Use C-style array declarations: int[] x, not int x[]. -->
         <module name="ArrayTypeStyle"/>
 
+        <!-- Modifiers must appear in the canonical JLS order. -->
+        <module name="ModifierOrder"/>
+
         <!-- ── Design ── -->
 
         <!-- Interfaces must define a type (methods or constants), not be tag-only. -->
         <module name="InterfaceIsType"/>
+
+        <!-- Fields must be private; expose state via methods. -->
+        <module name="VisibilityModifier"/>
+
+        <!-- Utility classes must declare a private constructor. -->
+        <module name="HideUtilityClassConstructor"/>
 
         <!-- ── Miscellaneous ── -->
 
