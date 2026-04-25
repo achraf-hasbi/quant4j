@@ -1,6 +1,6 @@
 package com.quant4j.bond.yield;
 
-import com.quant4j.bond.pojo.Bond;
+import com.quant4j.bond.Bond;
 
 /**
  * Defines the contract for computing the yield to maturity of a bond given its price.

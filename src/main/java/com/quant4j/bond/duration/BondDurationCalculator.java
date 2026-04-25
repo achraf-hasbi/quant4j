@@ -1,6 +1,6 @@
 package com.quant4j.bond.duration;
 
-import com.quant4j.bond.pojo.Bond;
+import com.quant4j.bond.Bond;
 
 /**
  * Defines the contract for computing the duration and related risk measures of a bond.

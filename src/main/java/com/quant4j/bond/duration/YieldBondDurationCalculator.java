@@ -1,8 +1,8 @@
 package com.quant4j.bond.duration;
 
-import com.quant4j.bond.pojo.Bond;
-import com.quant4j.bond.rate.compound.CompoundingStrategy;
-import com.quant4j.bond.rate.compound.DiscreteCompoundingStrategy;
+import com.quant4j.bond.Bond;
+import com.quant4j.rates.compounding.CompoundingStrategy;
+import com.quant4j.rates.compounding.DiscreteCompoundingStrategy;
 
 import java.util.Map;
 import java.util.Objects;

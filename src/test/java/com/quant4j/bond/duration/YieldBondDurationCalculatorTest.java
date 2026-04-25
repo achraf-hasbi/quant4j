@@ -1,10 +1,10 @@
 package com.quant4j.bond.duration;
 
-import com.quant4j.bond.enumeration.Frequency;
-import com.quant4j.bond.pojo.Bond;
-import com.quant4j.bond.price.YieldBondPricer;
-import com.quant4j.bond.rate.compound.ContinuousCompoundingStrategy;
-import com.quant4j.bond.rate.compound.DiscreteCompoundingStrategy;
+import com.quant4j.rates.Frequency;
+import com.quant4j.bond.Bond;
+import com.quant4j.bond.pricing.YieldBondPricer;
+import com.quant4j.rates.compounding.ContinuousCompoundingStrategy;
+import com.quant4j.rates.compounding.DiscreteCompoundingStrategy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -66,32 +66,31 @@ implementation 'com.quant4j:quant4j:0.1.0-SNAPSHOT'
 ## Quick Start
 
 ```java
-import com.quant4j.bond.enumeration.Frequency;
-import com.quant4j.bond.pojo.Bond;
-import com.quant4j.bond.price.YieldBondPricer;
+import com.quant4j.rates.Frequency;
+import com.quant4j.bond.Bond;
+import com.quant4j.bond.pricing.YieldBondPricer;
 import com.quant4j.bond.duration.YieldBondDurationCalculator;
 import com.quant4j.bond.yield.BondYieldCalculator;
-import com.quant4j.bond.yield.NewtonRaphsonBondYieldCalculator;
-import com.quant4j.bond.rate.compound.DiscreteCompoundingStrategy;
+import com.quant4j.rates.compounding.DiscreteCompoundingStrategy;
 
 // ── 1. Define a 5-year semi-annual coupon bond ─────────────────────────────
 Bond bond = new Bond(1000.0, 0.05, 5.0, Frequency.SEMI_ANNUALLY);
 
-var compounding = new DiscreteCompoundingStrategy(2);
+        var compounding = new DiscreteCompoundingStrategy(2);
 
-// ── 2. Price at a 5% semi-annual yield ─────────────────────────────────────
-double price = new YieldBondPricer(0.05, compounding).price(bond);
+        // ── 2. Price at a 5% semi-annual yield ─────────────────────────────────────
+        double price = new YieldBondPricer(0.05, compounding).price(bond);
 // → 1000.00  (par, since coupon rate == yield)
 
-// ── 3. Compute duration and DV01 ───────────────────────────────────────────
-var calculator = new YieldBondDurationCalculator(0.05, compounding);
-double macaulay = calculator.macaulayDuration(bond, price);   // ~4.49 years
-double modified = calculator.modifiedDuration(bond, price);   // ~4.38
-double dv01     = calculator.dv01(bond, price);               // ~$0.438 per bp
+        // ── 3. Compute duration and DV01 ───────────────────────────────────────────
+        var calculator = new YieldBondDurationCalculator(0.05, compounding);
+        double macaulay = calculator.macaulayDuration(bond, price);   // ~4.49 years
+        double modified = calculator.modifiedDuration(bond, price);   // ~4.38
+        double dv01 = calculator.dv01(bond, price);               // ~$0.438 per bp
 
-// ── 4. Recover yield from price using Newton-Raphson ──────────────────────
-BondYieldCalculator ytmCalc = new NewtonRaphsonBondYieldCalculator(compounding);
-double ytm = ytmCalc.yield(bond, price);                      // → 0.05
+        // ── 4. Recover yield from price using Newton-Raphson ──────────────────────
+        BondYieldCalculator ytmCalc = new NewtonRaphsonBondYieldCalculator(compounding);
+        double ytm = ytmCalc.yield(bond, price);                      // → 0.05
 ```
 
 ---
