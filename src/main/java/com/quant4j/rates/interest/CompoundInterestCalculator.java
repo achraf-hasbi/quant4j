@@ -4,7 +4,7 @@ import com.quant4j.rates.Frequency;
 
 import java.util.Objects;
 
-import static com.quant4j.bond.ValidationHelper.validateTimeCoherence;
+import static com.quant4j.math.ValidationHelper.validateTimeCoherence;
 
 /**
  * Calculator for determining the growth of an investment using compound interest.

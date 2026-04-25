@@ -1,10 +1,10 @@
-package com.quant4j.bond;
+package com.quant4j.math;
 
 import com.quant4j.rates.Frequency;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static com.quant4j.bond.ValidationHelper.validateTimeCoherence;
+import static com.quant4j.math.ValidationHelper.validateTimeCoherence;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

@@ -1,4 +1,4 @@
-package com.quant4j.bond;
+package com.quant4j.math;
 
 import com.quant4j.rates.Frequency;
 
