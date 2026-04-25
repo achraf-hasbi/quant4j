@@ -39,6 +39,12 @@ public class SecantSolver implements RootSolver {
         if (firstGuess == secondGuess) {
             throw new IllegalArgumentException("First and second guesses must be different");
         }
+        if (tolerance <= 0) {
+            throw new IllegalArgumentException("Tolerance must be positive");
+        }
+        if (maxIterations < 1) {
+            throw new IllegalArgumentException("Max iterations must be at least 1");
+        }
         this.firstGuess = firstGuess;
         this.secondGuess = secondGuess;
         this.tolerance = tolerance;

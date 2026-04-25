@@ -50,7 +50,9 @@ public class GeometricYieldBondPricer implements BondPricer {
         }
 
         // Calculate Present Value of Redemption (Face Value)
-        double pvRedemption = bond.faceValue() * bond.couponFrequency().getCompoundingStrategy().discountFactor(yield, bond.maturityYears());
+        double dfAtMaturity = bond.couponFrequency().getCompoundingStrategy()
+                .discountFactor(yield, bond.maturityYears());
+        double pvRedemption = bond.faceValue() * dfAtMaturity;
 
         return pvCoupons + pvRedemption;
     }

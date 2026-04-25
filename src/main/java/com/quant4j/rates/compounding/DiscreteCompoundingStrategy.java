@@ -14,9 +14,13 @@ public class DiscreteCompoundingStrategy implements CompoundingStrategy {
     /**
      * Constructs a strategy with the specified compounding frequency.
      *
-     * @param periodsPerYear The number of periods per year.
+     * @param periodsPerYear The number of compounding periods per year; must be at least 1.
+     * @throws IllegalArgumentException if {@code periodsPerYear} is less than 1.
      */
     public DiscreteCompoundingStrategy(int periodsPerYear) {
+        if (periodsPerYear < 1) {
+            throw new IllegalArgumentException("Periods per year must be at least 1");
+        }
         this.periodsPerYear = periodsPerYear;
     }
 

@@ -35,6 +35,12 @@ public class NewtonRaphsonSolver implements RootSolver {
      * @param maxIterations maximum iterations before throwing
      */
     public NewtonRaphsonSolver(double initialGuess, double tolerance, int maxIterations) {
+        if (tolerance <= 0) {
+            throw new IllegalArgumentException("Tolerance must be positive");
+        }
+        if (maxIterations < 1) {
+            throw new IllegalArgumentException("Max iterations must be at least 1");
+        }
         this.initialGuess = initialGuess;
         this.tolerance = tolerance;
         this.maxIterations = maxIterations;

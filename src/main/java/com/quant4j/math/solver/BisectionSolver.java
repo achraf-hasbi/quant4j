@@ -39,6 +39,12 @@ public class BisectionSolver implements RootSolver {
         if (lowerBound >= upperBound) {
             throw new IllegalArgumentException("Lower bound must be less than upper bound");
         }
+        if (tolerance <= 0) {
+            throw new IllegalArgumentException("Tolerance must be positive");
+        }
+        if (maxIterations < 1) {
+            throw new IllegalArgumentException("Max iterations must be at least 1");
+        }
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
         this.tolerance = tolerance;

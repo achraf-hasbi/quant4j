@@ -4,7 +4,15 @@ import com.quant4j.rates.Frequency;
 
 import java.math.BigDecimal;
 
+/**
+ * Internal utility for validating bond and rate parameters.
+ *
+ * <p>All methods are static; this class is not instantiable.</p>
+ */
 public class ValidationHelper {
+
+    private ValidationHelper() {
+    }
 
     /**
      * Validates that the total duration aligns with the compounding frequency.
