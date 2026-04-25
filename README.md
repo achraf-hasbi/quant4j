@@ -90,7 +90,7 @@ Bond bond = new Bond(1000.0, 0.05, 5.0, Frequency.SEMI_ANNUALLY);
 
         // ── 4. Recover yield from price using Newton-Raphson ──────────────────────
         BondYieldCalculator ytmCalc = new NewtonRaphsonBondYieldCalculator(compounding);
-        double ytm = ytmCalc.yield(bond, price);                      // → 0.05
+        double ytm = ytmCalc.yieldToMaturity(bond, price);                      // → 0.05
 ```
 
 ---

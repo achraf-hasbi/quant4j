@@ -14,10 +14,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class RootFindingBondYieldCalculatorTest {
 
     private static final double TOLERANCE = 1.0e-6;
+    private static final double BENCHMARK_TOLERANCE = 1.0e-4;
 
     private final DiscreteCompoundingStrategy semiAnnual = new DiscreteCompoundingStrategy(2);
     private final ContinuousCompoundingStrategy continuous = new ContinuousCompoundingStrategy();
@@ -31,28 +33,31 @@ class RootFindingBondYieldCalculatorTest {
         double parPrice = new YieldBondPricer(0.05, semiAnnual).price(bond);
         BondYieldCalculator calculator = new RootFindingBondYieldCalculator(semiAnnual, new BisectionSolver());
 
-        assertEquals(0.05, calculator.yield(bond, parPrice), TOLERANCE);
+        assertEquals(0.05, calculator.yieldToMaturity(bond, parPrice), TOLERANCE);
     }
 
     @Test
-    @DisplayName("Bisection: premium bond yields below coupon rate")
-    void testBisection_PremiumBond_YieldBelowCoupon() {
+    @DisplayName("Bisection: premium bond yields below coupon rate with bounded magnitude")
+    void testBisection_PremiumBond_YieldToMaturityBelowCoupon() {
         Bond bond = new Bond(1000, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
         BondYieldCalculator calculator = new RootFindingBondYieldCalculator(semiAnnual, new BisectionSolver());
 
-        double yield = calculator.yield(bond, 1020.0);
+        double yield = calculator.yieldToMaturity(bond, 1020.0);
 
-        assertTrue(yield < 0.05);
+        assertAll(
+            () -> assertTrue(yield < 0.05, "Premium bond yield must be below coupon rate"),
+            () -> assertTrue(yield > 0.02, "Premium bond yield must remain positive and realistic")
+        );
     }
 
     @Test
     @DisplayName("Bisection: yield recovery under continuous compounding")
-    void testBisection_RecoversContinuousYield() {
+    void testBisection_RecoversContinuousYieldToMaturity() {
         Bond bond = new Bond(100, 0.08, 5, Frequency.ANNUALLY);
         double price = new YieldBondPricer(0.07, continuous).price(bond);
         BondYieldCalculator calculator = new RootFindingBondYieldCalculator(continuous, new BisectionSolver());
 
-        assertEquals(0.07, calculator.yield(bond, price), TOLERANCE);
+        assertEquals(0.07, calculator.yieldToMaturity(bond, price), TOLERANCE);
     }
 
     // ── Newton-Raphson ───────────────────────────────────────────────────────
@@ -64,28 +69,31 @@ class RootFindingBondYieldCalculatorTest {
         double parPrice = new YieldBondPricer(0.05, semiAnnual).price(bond);
         BondYieldCalculator calculator = new RootFindingBondYieldCalculator(semiAnnual, new NewtonRaphsonSolver());
 
-        assertEquals(0.05, calculator.yield(bond, parPrice), TOLERANCE);
+        assertEquals(0.05, calculator.yieldToMaturity(bond, parPrice), TOLERANCE);
     }
 
     @Test
-    @DisplayName("Newton-Raphson: discount bond yields above coupon rate")
-    void testNewton_DiscountBond_YieldAboveCoupon() {
+    @DisplayName("Newton-Raphson: discount bond yields above coupon rate with bounded magnitude")
+    void testNewton_DiscountBond_YieldToMaturityAboveCoupon() {
         Bond bond = new Bond(1000, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
         BondYieldCalculator calculator = new RootFindingBondYieldCalculator(semiAnnual, new NewtonRaphsonSolver());
 
-        double yield = calculator.yield(bond, 980.0);
+        double yield = calculator.yieldToMaturity(bond, 980.0);
 
-        assertTrue(yield > 0.05);
+        assertAll(
+            () -> assertTrue(yield > 0.05, "Discount bond yield must exceed coupon rate"),
+            () -> assertTrue(yield < 0.10, "Discount bond yield must remain within realistic range")
+        );
     }
 
     @Test
     @DisplayName("Newton-Raphson: yield recovery under continuous compounding")
-    void testNewton_RecoversContinuousYield() {
+    void testNewton_RecoversContinuousYieldToMaturity() {
         Bond bond = new Bond(100, 0.08, 5, Frequency.ANNUALLY);
         double price = new YieldBondPricer(0.07, continuous).price(bond);
         BondYieldCalculator calculator = new RootFindingBondYieldCalculator(continuous, new NewtonRaphsonSolver());
 
-        assertEquals(0.07, calculator.yield(bond, price), TOLERANCE);
+        assertEquals(0.07, calculator.yieldToMaturity(bond, price), TOLERANCE);
     }
 
     // ── Secant ───────────────────────────────────────────────────────────────
@@ -97,38 +105,39 @@ class RootFindingBondYieldCalculatorTest {
         double parPrice = new YieldBondPricer(0.05, semiAnnual).price(bond);
         BondYieldCalculator calculator = new RootFindingBondYieldCalculator(semiAnnual, new SecantSolver());
 
-        assertEquals(0.05, calculator.yield(bond, parPrice), TOLERANCE);
+        assertEquals(0.05, calculator.yieldToMaturity(bond, parPrice), TOLERANCE);
     }
 
     @Test
-    @DisplayName("Secant: discount bond yields above coupon rate")
-    void testSecant_DiscountBond_YieldAboveCoupon() {
+    @DisplayName("Secant: discount bond yields above coupon rate with bounded magnitude")
+    void testSecant_DiscountBond_YieldToMaturityAboveCoupon() {
         Bond bond = new Bond(1000, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
         BondYieldCalculator calculator = new RootFindingBondYieldCalculator(semiAnnual, new SecantSolver());
 
-        double yield = calculator.yield(bond, 980.0);
+        double yield = calculator.yieldToMaturity(bond, 980.0);
 
-        assertTrue(yield > 0.05);
+        assertAll(
+            () -> assertTrue(yield > 0.05, "Discount bond yield must exceed coupon rate"),
+            () -> assertTrue(yield < 0.10, "Discount bond yield must remain within realistic range")
+        );
     }
 
     @Test
     @DisplayName("Secant: yield recovery under continuous compounding")
-    void testSecant_RecoversContinuousYield() {
+    void testSecant_RecoversContinuousYieldToMaturity() {
         Bond bond = new Bond(100, 0.08, 5, Frequency.ANNUALLY);
         double price = new YieldBondPricer(0.07, continuous).price(bond);
         BondYieldCalculator calculator = new RootFindingBondYieldCalculator(continuous, new SecantSolver());
 
-        assertEquals(0.07, calculator.yield(bond, price), TOLERANCE);
+        assertEquals(0.07, calculator.yieldToMaturity(bond, price), TOLERANCE);
     }
-
-    // ── Guard conditions ─────────────────────────────────────────────────────
 
     @Test
     @DisplayName("Null bond throws NullPointerException")
     void testNullBondThrows() {
         BondYieldCalculator calculator = new RootFindingBondYieldCalculator(semiAnnual, new NewtonRaphsonSolver());
 
-        assertThrows(NullPointerException.class, () -> calculator.yield(null, 1000));
+        assertThrows(NullPointerException.class, () -> calculator.yieldToMaturity(null, 1000));
     }
 
     @Test
@@ -137,8 +146,8 @@ class RootFindingBondYieldCalculatorTest {
         Bond bond = new Bond(1000, 0.05, 2.0, Frequency.SEMI_ANNUALLY);
         BondYieldCalculator calculator = new RootFindingBondYieldCalculator(semiAnnual, new NewtonRaphsonSolver());
 
-        assertThrows(IllegalArgumentException.class, () -> calculator.yield(bond, 0));
-        assertThrows(IllegalArgumentException.class, () -> calculator.yield(bond, -100));
+        assertThrows(IllegalArgumentException.class, () -> calculator.yieldToMaturity(bond, 0));
+        assertThrows(IllegalArgumentException.class, () -> calculator.yieldToMaturity(bond, -100));
     }
 
     @Test

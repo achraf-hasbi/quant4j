@@ -14,6 +14,10 @@ public interface BondYieldCalculator {
      * @param bond  The bond.
      * @param price The observed (market) price of the bond.
      * @return The annual yield to maturity (decimal).
+     * @throws NullPointerException     if {@code bond} is null
+     * @throws IllegalArgumentException if {@code price} is not positive, or if the solver
+     *                                  cannot bracket the root within its configured interval
+     * @throws ArithmeticException      if the numerical solver fails to converge
      */
-    double yield(Bond bond, double price);
+    double yieldToMaturity(Bond bond, double price);
 }

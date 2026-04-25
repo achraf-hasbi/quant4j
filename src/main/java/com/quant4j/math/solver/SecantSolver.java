@@ -16,6 +16,7 @@ public class SecantSolver implements RootSolver {
     private static final double DEFAULT_TOLERANCE = 1.0e-10;
     private static final double DEFAULT_FIRST_GUESS = 0.01;
     private static final double DEFAULT_SECOND_GUESS = 0.10;
+    private static final double EPSILON = 1.0e-15;
 
     private final double firstGuess;
     private final double secondGuess;
@@ -65,7 +66,7 @@ public class SecantSolver implements RootSolver {
                 return y1;
             }
             double denom = f1 - f0;
-            if (denom == 0.0) {
+            if (Math.abs(denom) < EPSILON) {
                 throw new ArithmeticException("Zero denominator encountered in secant method");
             }
             double y2 = y1 - f1 * (y1 - y0) / denom;
