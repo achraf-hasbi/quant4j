@@ -511,7 +511,10 @@ bond.<span class="cm">getCashflows</span>();    <span class="cc">// → {0.5=30.
 
             <div class="code-block">
                 <div class="code-block-bar"><span>Example</span></div>
-                <pre><code><span class="ct">CompoundingStrategy</span> cs = <span class="ck">new</span> DiscreteCompoundingStrategy(<span class="cv">2</span>); <span class="cc">// semi-annual</span>
+                <pre><code><span class="cc">// 6% annual coupon rate, semi-annual payments, 5-year maturity</span>
+<span class="ct">Bond</span> bond = <span class="ck">new</span> Bond(<span class="cv">1000.0</span>, <span class="cv">0.06</span>, <span class="cv">5.0</span>, Frequency.SEMI_ANNUALLY);
+
+<span class="ct">CompoundingStrategy</span> cs = <span class="ck">new</span> DiscreteCompoundingStrategy(<span class="cv">2</span>); <span class="cc">// semi-annual</span>
 <span class="ct">BondPricer</span> pricer = <span class="ck">new</span> YieldBondPricer(<span class="cv">0.07</span>, cs);
 <span class="ck">double</span> price = pricer.<span class="cm">price</span>(bond); <span class="cc">// → 958.42</span></code></pre>
             </div>
