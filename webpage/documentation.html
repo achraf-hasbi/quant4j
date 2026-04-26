@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Quant4J — Documentation</title>
     <meta name="description" content="Quant4J library documentation — fixed income analytics, rates, and math utilities." />
+    <link rel="icon" type="image/png" sizes="16x16" href="quant4j-favicon-16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="quant4j-favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="quant4j-favicon-180.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="quant4j-favicon-512.png" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous" />
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" crossorigin="anonymous"
@@ -53,15 +57,8 @@
             justify-content: space-between;
             gap: 20px;
         }
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 800;
-            font-size: 0.97rem;
-        }
-        .brand-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
-        .brand-sub { color: var(--muted); font-weight: 500; }
+        .brand { display: flex; align-items: center; }
+        .brand-logo { display: block; height: 32px; width: auto; object-fit: contain; }
         .header-nav { display: flex; gap: 6px; align-items: center; }
         .nav-pill {
             padding: 7px 14px;
@@ -361,10 +358,8 @@
 
 <header class="site-header">
     <div class="header-inner">
-        <a class="brand" href="index.html">
-            <span class="brand-dot"></span>
-            <span>Quant4J</span>
-            <span class="brand-sub">/ Documentation</span>
+        <a class="brand" href="index.html" aria-label="Quant4J home">
+            <img class="brand-logo" src="quant4j-logo.png" alt="Quant4J" />
         </a>
         <nav class="header-nav">
             <a class="nav-pill" href="index.html">Home</a>
@@ -506,17 +501,12 @@ bond.<span class="cm">getCashflows</span>();    <span class="cc">// → {0.5=30.
                 <p class="math-note">$CF(t)$ — cash flow at time $t$. &nbsp; $DF(y, t)$ — discount factor from the compounding strategy at yield $y$.</p>
             </div>
 
-            <div class="group-label">Constructor</div>
-            <div class="sig">
-<span class="sk">new</span> <span class="st">YieldBondPricer</span>(
-  <span class="st">double</span>             yield,               <span class="sc">// annual YTM, decimal — must be finite</span>
-  <span class="st">CompoundingStrategy</span> yieldCompounding     <span class="sc">// compounding convention for the yield</span>
-)
-            </div>
-
             <div class="code-block">
                 <div class="code-block-bar"><span>Example</span></div>
-                <pre><code><span class="ct">CompoundingStrategy</span> cs = <span class="ck">new</span> DiscreteCompoundingStrategy(<span class="cv">2</span>); <span class="cc">// semi-annual</span>
+                <pre><code><span class="cc">// 6% annual coupon rate, semi-annual payments, 5-year maturity</span>
+<span class="ct">Bond</span> bond = <span class="ck">new</span> Bond(<span class="cv">1000.0</span>, <span class="cv">0.06</span>, <span class="cv">5.0</span>, Frequency.SEMI_ANNUALLY);
+
+<span class="ct">CompoundingStrategy</span> cs = <span class="ck">new</span> DiscreteCompoundingStrategy(<span class="cv">2</span>); <span class="cc">// semi-annual</span>
 <span class="ct">BondPricer</span> pricer = <span class="ck">new</span> YieldBondPricer(<span class="cv">0.07</span>, cs);
 <span class="ck">double</span> price = pricer.<span class="cm">price</span>(bond); <span class="cc">// → 958.42</span></code></pre>
             </div>
@@ -528,7 +518,7 @@ bond.<span class="cm">getCashflows</span>();    <span class="cc">// → {0.5=30.
                 <span class="card-name">ZeroCouponBondRateBondPricer</span>
                 <span class="type-badge tb-class">class implements BondPricer</span>
             </div>
-            <p class="card-desc">Prices a bond by discounting each cash flow at its own zero (spot) rate, interpolated from a provided curve. More realistic than flat-YTM pricing when the yield curve is not flat.</p>
+            <p class="card-desc">Prices a bond by discounting each cash flow at its own zero (spot) rate, interpolated from a provided curve.</p>
 
             <div class="math-block">
                 <div class="math-label">Zero-curve price</div>
@@ -536,18 +526,13 @@ bond.<span class="cm">getCashflows</span>();    <span class="cc">// → {0.5=30.
                 <p class="math-note">$r(t)$ — zero rate at tenor $t$, obtained by interpolating the supplied curve. Each cash flow is discounted at its own tenor rate.</p>
             </div>
 
-            <div class="group-label">Constructor</div>
-            <div class="sig">
-<span class="sk">new</span> <span class="st">ZeroCouponBondRateBondPricer</span>(
-  <span class="st">Map&lt;Double, Double&gt;</span>  zeroCurve,      <span class="sc">// tenor (years) → zero rate</span>
-  <span class="st">InterpolationStrategy</span> interpolation,  <span class="sc">// e.g. LinearInterpolationStrategy</span>
-  <span class="st">CompoundingStrategy</span>   compounding     <span class="sc">// discount factor convention</span>
-)
-            </div>
 
             <div class="code-block">
                 <div class="code-block-bar"><span>Example</span></div>
-                <pre><code><span class="ct">Map&lt;Double, Double&gt;</span> curve = Map.of(
+                <pre><code><span class="cc">// 6% annual coupon rate, semi-annual payments, 5-year maturity</span>
+<span class="ct">Bond</span> bond = <span class="ck">new</span> Bond(<span class="cv">1000.0</span>, <span class="cv">0.06</span>, <span class="cv">5.0</span>, Frequency.SEMI_ANNUALLY);
+
+<span class="ct">Map&lt;Double, Double&gt;</span> curve = Map.of(
     <span class="cv">0.5</span>, <span class="cv">0.050</span>,  <span class="cv">1.0</span>, <span class="cv">0.055</span>,
     <span class="cv">2.0</span>, <span class="cv">0.060</span>,  <span class="cv">5.0</span>, <span class="cv">0.065</span>);
 
@@ -579,17 +564,12 @@ bond.<span class="cm">getCashflows</span>();    <span class="cc">// → {0.5=30.
                 <p class="math-note">Cash flows are captured once before the solver loop to avoid recomputation across iterations.</p>
             </div>
 
-            <div class="group-label">Constructor</div>
-            <div class="sig">
-<span class="sk">new</span> <span class="st">RootFindingBondYieldCalculator</span>(
-  <span class="st">CompoundingStrategy</span> compounding,  <span class="sc">// convention used to price at each trial yield</span>
-  <span class="st">RootSolver</span>          solver        <span class="sc">// BisectionSolver | NewtonRaphsonSolver | SecantSolver</span>
-)
-            </div>
-
             <div class="code-block">
                 <div class="code-block-bar"><span>Example</span></div>
-                <pre><code><span class="ct">BondYieldCalculator</span> calc = <span class="ck">new</span> RootFindingBondYieldCalculator(
+                <pre><code><span class="cc">// 6% annual coupon rate, semi-annual payments, 5-year maturity</span>
+<span class="ct">Bond</span> bond = <span class="ck">new</span> Bond(<span class="cv">1000.0</span>, <span class="cv">0.06</span>, <span class="cv">5.0</span>, Frequency.SEMI_ANNUALLY);
+
+<span class="ct">BondYieldCalculator</span> calc = <span class="ck">new</span> RootFindingBondYieldCalculator(
     <span class="ck">new</span> DiscreteCompoundingStrategy(<span class="cv">2</span>),
     <span class="ck">new</span> NewtonRaphsonSolver());
 
@@ -636,23 +616,18 @@ bond.<span class="cm">getCashflows</span>();    <span class="cc">// → {0.5=30.
                 <p class="math-note">Absolute price change for a 1 basis point (0.01%) increase in yield. Same currency unit as the bond price.</p>
             </div>
 
-            <div class="group-label">Constructor</div>
-            <div class="sig">
-<span class="sk">new</span> <span class="st">YieldBondDurationCalculator</span>(
-  <span class="st">double</span>             yield,           <span class="sc">// annual YTM, decimal</span>
-  <span class="st">CompoundingStrategy</span> yieldCompounding <span class="sc">// compounding convention</span>
-)
-            </div>
-
             <div class="code-block">
                 <div class="code-block-bar"><span>Example</span></div>
-                <pre><code><span class="ct">CompoundingStrategy</span> cs = <span class="ck">new</span> DiscreteCompoundingStrategy(<span class="cv">2</span>);
+                <pre><code><span class="cc">// 6% annual coupon rate, semi-annual payments, 5-year maturity</span>
+<span class="ct">Bond</span> bond = <span class="ck">new</span> Bond(<span class="cv">1000.0</span>, <span class="cv">0.06</span>, <span class="cv">5.0</span>, Frequency.SEMI_ANNUALLY);
+
+<span class="ct">CompoundingStrategy</span> cs = <span class="ck">new</span> DiscreteCompoundingStrategy(<span class="cv">2</span>);
 <span class="ct">BondDurationCalculator</span> calc = <span class="ck">new</span> YieldBondDurationCalculator(<span class="cv">0.07</span>, cs);
 
 <span class="ck">double</span> price = <span class="cv">958.42</span>;
-<span class="ck">double</span> dmac  = calc.<span class="cm">macaulayDuration</span>(bond, price); <span class="cc">// → 4.36 years</span>
-<span class="ck">double</span> dmod  = calc.<span class="cm">modifiedDuration</span>(bond, price); <span class="cc">// → 4.21</span>
-<span class="ck">double</span> dv01  = calc.<span class="cm">dv01</span>(bond, price);             <span class="cc">// → 0.0404</span></code></pre>
+<span class="ck">double</span> dmac  = calc.<span class="cm">macaulayDuration</span>(bond, price); <span class="cc">// → 4.38 years</span>
+<span class="ck">double</span> dmod  = calc.<span class="cm">modifiedDuration</span>(bond, price); <span class="cc">// → 4.23</span>
+<span class="ck">double</span> dv01  = calc.<span class="cm">dv01</span>(bond, price);             <span class="cc">// → 0.0405</span></code></pre>
             </div>
         </div>
 
@@ -674,26 +649,6 @@ bond.<span class="cm">getCashflows</span>();    <span class="cc">// → {0.5=30.
                 <p class="math-note">Applied sequentially for each bond in ascending maturity order. The initial zero curve provides seed rates for the shortest tenors. The result is an unmodifiable <code>NavigableMap</code>.</p>
             </div>
 
-            <div class="group-label">Constructor</div>
-            <div class="sig">
-<span class="sk">new</span> <span class="st">SpotRateCurveBootstrappingStrategy</span>(
-  <span class="st">Map&lt;Double, Double&gt;</span> initialZeroCurve,  <span class="sc">// seed rates (defensively copied)</span>
-  <span class="st">CompoundingStrategy</span>  compounding         <span class="sc">// used for all DF and rate-from-DF calls</span>
-)
-            </div>
-
-            <div class="group-label">Methods</div>
-            <span class="anchor" id="bootstrap-par"></span>
-            <div class="method-item">
-                <span class="method-sig">NavigableMap&lt;Double, Double&gt; bootstrapFromParBonds(List&lt;Bond&gt; bonds, InterpolationStrategy interpolation)</span>
-                <span class="method-desc">Assumes every bond trades at par (price = faceValue). Delegates to <code>bootstrapFromMarketPrices</code> internally.</span>
-            </div>
-            <span class="anchor" id="bootstrap-market"></span>
-            <div class="method-item">
-                <span class="method-sig">NavigableMap&lt;Double, Double&gt; bootstrapFromMarketPrices(List&lt;Bond&gt; bonds, Map&lt;Bond, Double&gt; marketPrices, InterpolationStrategy interpolation)</span>
-                <span class="method-desc">Uses observed market prices. All bonds must have distinct maturities and an entry in <code>marketPrices</code>.</span>
-            </div>
-
             <div class="code-block">
                 <div class="code-block-bar"><span>Example — par bonds</span></div>
                 <pre><code><span class="ct">BootstrappingStrategy</span> boot = <span class="ck">new</span> SpotRateCurveBootstrappingStrategy(
@@ -706,7 +661,26 @@ bond.<span class="cm">getCashflows</span>();    <span class="cc">// → {0.5=30.
         <span class="ck">new</span> Bond(<span class="cv">1000</span>, <span class="cv">0.05</span>,  <span class="cv">2.0</span>, Frequency.SEMI_ANNUALLY),
         <span class="ck">new</span> Bond(<span class="cv">1000</span>, <span class="cv">0.055</span>, <span class="cv">3.0</span>, Frequency.SEMI_ANNUALLY)),
     <span class="ck">new</span> LinearInterpolationStrategy());
-<span class="cc">// → {0.5=0.04, 1.0=0.0408, 2.0=0.0502, 3.0=0.0551}</span></code></pre>
+<span class="cc">// → {0.5=0.04, 1.0=0.0396, 2.0=0.0497, 3.0=0.0548}</span></code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-block-bar"><span>Example — market prices</span></div>
+                <pre><code><span class="cc">// Seed curve: known short-end spot rates</span>
+<span class="ct">TreeMap&lt;Double, Double&gt;</span> zeroCurve = <span class="ck">new</span> TreeMap&lt;&gt;(
+    Map.of(<span class="cv">0.5</span>, <span class="cv">0.1238</span>, <span class="cv">1.0</span>, <span class="cv">0.1165</span>));
+
+<span class="ct">Bond</span> bond1 = <span class="ck">new</span> Bond(<span class="cv">100</span>, <span class="cv">0.08</span>, <span class="cv">1.5</span>, Frequency.SEMI_ANNUALLY);
+<span class="ct">Bond</span> bond2 = <span class="ck">new</span> Bond(<span class="cv">100</span>, <span class="cv">0.10</span>, <span class="cv">2.0</span>, Frequency.SEMI_ANNUALLY);
+
+<span class="ct">Map&lt;Bond, Double&gt;</span> marketPrices = Map.of(bond1, <span class="cv">94.84</span>, bond2, <span class="cv">97.12</span>);
+
+<span class="ct">BootstrappingStrategy</span> boot = <span class="ck">new</span> SpotRateCurveBootstrappingStrategy(
+    zeroCurve, <span class="ck">new</span> ContinuousCompoundingStrategy());
+
+<span class="ct">Map&lt;Double, Double&gt;</span> curve = boot.<span class="cm">bootstrapFromMarketPrices</span>(
+    List.of(bond1, bond2), marketPrices, <span class="ck">new</span> LinearInterpolationStrategy());
+<span class="cc">// → {0.5=0.1238, 1.0=0.1165, 1.5=0.1150, 2.0=0.1130}</span></code></pre>
             </div>
         </div>
 
@@ -792,12 +766,6 @@ cs.<span class="cm">forwardRate</span>(<span class="cv">0.04</span>, <span class
                 $$D_{\text{mod}} = \frac{D_{\text{mac}}}{1 + y/m}$$
             </div>
 
-            <div class="group-label">Constructor</div>
-            <div class="sig">
-<span class="sk">new</span> <span class="st">DiscreteCompoundingStrategy</span>(<span class="st">int</span> periodsPerYear)
-<span class="sc">// periodsPerYear ≥ 1</span>
-            </div>
-
             <div class="code-block">
                 <div class="code-block-bar"><span>Example</span></div>
                 <pre><code><span class="ct">CompoundingStrategy</span> semi = <span class="ck">new</span> DiscreteCompoundingStrategy(<span class="cv">2</span>);
@@ -805,7 +773,7 @@ cs.<span class="cm">forwardRate</span>(<span class="cv">0.04</span>, <span class
 semi.<span class="cm">discountFactor</span>(<span class="cv">0.06</span>, <span class="cv">5.0</span>);           <span class="cc">// → (1.03)^(-10) = 0.7441</span>
 semi.<span class="cm">futureValue</span>(<span class="cv">1000</span>, <span class="cv">0.06</span>, <span class="cv">5.0</span>);         <span class="cc">// → 1343.92</span>
 semi.<span class="cm">rateFromDiscountFactor</span>(<span class="cv">0.7441</span>, <span class="cv">5.0</span>);  <span class="cc">// → 0.0600</span>
-semi.<span class="cm">forwardRate</span>(<span class="cv">0.04</span>, <span class="cv">1.0</span>, <span class="cv">0.05</span>, <span class="cv">2.0</span>);   <span class="cc">// → 0.0602</span></code></pre>
+semi.<span class="cm">forwardRate</span>(<span class="cv">0.04</span>, <span class="cv">1.0</span>, <span class="cv">0.05</span>, <span class="cv">2.0</span>);   <span class="cc">// → 0.06</span></code></pre>
             </div>
         </div>
 
@@ -825,18 +793,6 @@ semi.<span class="cm">forwardRate</span>(<span class="cv">0.04</span>, <span cla
                 <div class="math-label">Balance per compounding period</div>
                 $$B_n = B_{n-1} \cdot \left(1 + \frac{r}{m}\right) + C_n$$
                 <p class="math-note">$m$ — compounding periods per year. &nbsp; $r$ — annual rate. &nbsp; $C_n$ — contribution aggregated for period $n$ (added after interest, ordinary annuity convention). When contribution and compounding frequencies differ, $C_n$ is scaled proportionally.</p>
-            </div>
-
-            <div class="group-label">Method</div>
-            <div class="sig">
-<span class="st">CompoundInterestResult</span> <span class="cm">calculate</span>(
-  <span class="st">double</span>    initialInvestment,      <span class="sc">// starting principal</span>
-  <span class="st">double</span>    periodicContribution,   <span class="sc">// amount added per contribution period</span>
-  <span class="st">Frequency</span> contributionFrequency,  <span class="sc">// how often contributions are made</span>
-  <span class="st">double</span>    timeInYears,            <span class="sc">// investment horizon</span>
-  <span class="st">double</span>    annualRate,             <span class="sc">// annual interest rate, decimal</span>
-  <span class="st">Frequency</span> compoundingFrequency    <span class="sc">// compounding frequency</span>
-)
             </div>
 
             <div class="group-label">CompoundInterestResult fields</div>
@@ -863,7 +819,7 @@ semi.<span class="cm">forwardRate</span>(<span class="cv">0.04</span>, <span cla
     <span class="cv">0.06</span>,               <span class="cc">// 6% annual rate</span>
     Frequency.MONTHLY); <span class="cc">// monthly compounding</span>
 
-<span class="ck">double</span> finalBalance = res.balance().getLast(); <span class="cc">// → ~27,943</span>
+<span class="ck">double</span> finalBalance = res.balance().getLast(); <span class="cc">// → ~27,442</span>
 <span class="ck">int</span>    periods      = res.balance().size();     <span class="cc">// → 61 (period 0 + 60 monthly periods)</span></code></pre>
             </div>
         </div>
@@ -902,7 +858,7 @@ semi.<span class="cm">forwardRate</span>(<span class="cv">0.04</span>, <span cla
                 <div class="code-block-bar"><span>Example</span></div>
                 <pre><code><span class="cc">// Semi-annual 5% → equivalent continuous rate</span>
 <span class="ck">double</span> rc = RateConverter.<span class="cm">discreteToContinuous</span>(<span class="cv">0.05</span>, Frequency.SEMI_ANNUALLY);
-<span class="cc">// → 0.04879  (4.879%)</span>
+<span class="cc">// → 0.04938  (4.938%)</span>
 
 <span class="cc">// Continuous → quarterly discrete</span>
 <span class="ck">double</span> rq = RateConverter.<span class="cm">continuousToDiscrete</span>(rc, Frequency.QUARTERLY);
@@ -973,13 +929,6 @@ semi.<span class="cm">forwardRate</span>(<span class="cv">0.04</span>, <span cla
                 $$\text{stop when } |f(\text{mid})| < \varepsilon \;\text{ or }\; \tfrac{b-a}{2} < \varepsilon$$
             </div>
 
-            <div class="group-label">Constructors</div>
-            <div class="sig">
-<span class="sk">new</span> <span class="st">BisectionSolver</span>()
-<span class="sc">// interval [-0.99, 1.0]  ·  tolerance 1e-10  ·  maxIterations 200</span>
-
-<span class="sk">new</span> <span class="st">BisectionSolver</span>(<span class="st">double</span> lowerBound, <span class="st">double</span> upperBound, <span class="st">double</span> tolerance, <span class="st">int</span> maxIterations)
-            </div>
         </div>
 
         <!-- Newton-Raphson -->
@@ -996,13 +945,6 @@ semi.<span class="cm">forwardRate</span>(<span class="cv">0.04</span>, <span cla
                 $$x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}, \qquad f'(x) \approx \frac{f(x+h) - f(x-h)}{2h}, \quad h = 10^{-6}$$
             </div>
 
-            <div class="group-label">Constructors</div>
-            <div class="sig">
-<span class="sk">new</span> <span class="st">NewtonRaphsonSolver</span>()
-<span class="sc">// initialGuess 0.05  ·  tolerance 1e-10  ·  maxIterations 100</span>
-
-<span class="sk">new</span> <span class="st">NewtonRaphsonSolver</span>(<span class="st">double</span> initialGuess, <span class="st">double</span> tolerance, <span class="st">int</span> maxIterations)
-            </div>
         </div>
 
         <!-- Secant -->
@@ -1019,13 +961,6 @@ semi.<span class="cm">forwardRate</span>(<span class="cv">0.04</span>, <span cla
                 $$y_{n+1} = y_n - f(y_n) \cdot \frac{y_n - y_{n-1}}{f(y_n) - f(y_{n-1})}$$
             </div>
 
-            <div class="group-label">Constructors</div>
-            <div class="sig">
-<span class="sk">new</span> <span class="st">SecantSolver</span>()
-<span class="sc">// firstGuess 0.01  ·  secondGuess 0.10  ·  tolerance 1e-10  ·  maxIterations 100</span>
-
-<span class="sk">new</span> <span class="st">SecantSolver</span>(<span class="st">double</span> firstGuess, <span class="st">double</span> secondGuess, <span class="st">double</span> tolerance, <span class="st">int</span> maxIterations)
-            </div>
         </div>
 
         <hr class="sep" />
