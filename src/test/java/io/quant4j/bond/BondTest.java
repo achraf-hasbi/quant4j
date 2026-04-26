@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("Bond Tests")
 class BondTest {
@@ -34,5 +35,40 @@ class BondTest {
         assertEquals(25.0, cashflows.get(1.0), 1e-9);
         assertEquals(25.0, cashflows.get(1.5), 1e-9);
         assertEquals(1025.0, cashflows.get(2.0), 1e-9);
+    }
+
+    @Test
+    @DisplayName("Zero face value throws IllegalArgumentException")
+    void testFaceValueZeroThrows() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new Bond(0.0, 0.05, 2.0, Frequency.SEMI_ANNUALLY));
+    }
+
+    @Test
+    @DisplayName("Negative face value throws IllegalArgumentException")
+    void testFaceValueNegativeThrows() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new Bond(-1000.0, 0.05, 2.0, Frequency.SEMI_ANNUALLY));
+    }
+
+    @Test
+    @DisplayName("Negative annual rate throws IllegalArgumentException")
+    void testAnnualRateNegativeThrows() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new Bond(1000.0, -0.05, 2.0, Frequency.SEMI_ANNUALLY));
+    }
+
+    @Test
+    @DisplayName("Zero maturity throws IllegalArgumentException")
+    void testMaturityZeroThrows() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new Bond(1000.0, 0.05, 0.0, Frequency.SEMI_ANNUALLY));
+    }
+
+    @Test
+    @DisplayName("Negative maturity throws IllegalArgumentException")
+    void testMaturityNegativeThrows() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new Bond(1000.0, 0.05, -1.0, Frequency.SEMI_ANNUALLY));
     }
 }

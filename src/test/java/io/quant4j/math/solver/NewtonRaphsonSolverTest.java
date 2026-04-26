@@ -66,4 +66,32 @@ class NewtonRaphsonSolverTest {
 
         assertThrows(ArithmeticException.class, () -> solver.solve(x -> 5.0));
     }
+
+    @Test
+    @DisplayName("Zero tolerance throws IllegalArgumentException")
+    void testZeroToleranceThrows() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new NewtonRaphsonSolver(0.05, 0.0, 100));
+    }
+
+    @Test
+    @DisplayName("Negative tolerance throws IllegalArgumentException")
+    void testNegativeToleranceThrows() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new NewtonRaphsonSolver(0.05, -1.0e-10, 100));
+    }
+
+    @Test
+    @DisplayName("Zero maxIterations throws IllegalArgumentException")
+    void testZeroMaxIterationsThrows() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new NewtonRaphsonSolver(0.05, 1.0e-10, 0));
+    }
+
+    @Test
+    @DisplayName("Negative maxIterations throws IllegalArgumentException")
+    void testNegativeMaxIterationsThrows() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new NewtonRaphsonSolver(0.05, 1.0e-10, -1));
+    }
 }

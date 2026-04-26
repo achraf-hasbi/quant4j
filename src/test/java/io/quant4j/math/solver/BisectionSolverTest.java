@@ -75,4 +75,32 @@ class BisectionSolverTest {
         assertThrows(IllegalArgumentException.class,
                 () -> new BisectionSolver(3.0, 3.0, 1.0e-10, 200));
     }
+
+    @Test
+    @DisplayName("Zero tolerance throws IllegalArgumentException")
+    void testZeroToleranceThrows() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new BisectionSolver(0.0, 5.0, 0.0, 200));
+    }
+
+    @Test
+    @DisplayName("Negative tolerance throws IllegalArgumentException")
+    void testNegativeToleranceThrows() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new BisectionSolver(0.0, 5.0, -1.0e-10, 200));
+    }
+
+    @Test
+    @DisplayName("Zero maxIterations throws IllegalArgumentException")
+    void testZeroMaxIterationsThrows() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new BisectionSolver(0.0, 5.0, 1.0e-10, 0));
+    }
+
+    @Test
+    @DisplayName("Negative maxIterations throws IllegalArgumentException")
+    void testNegativeMaxIterationsThrows() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new BisectionSolver(0.0, 5.0, 1.0e-10, -1));
+    }
 }

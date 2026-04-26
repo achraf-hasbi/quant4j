@@ -72,4 +72,13 @@ public class RateConverterTest {
         assertThrows(NullPointerException.class, () -> RateConverter.discreteToContinuous(0.05, null));
         assertThrows(NullPointerException.class, () -> RateConverter.continuousToDiscrete(0.05, null));
     }
+
+    @ParameterizedTest
+    @EnumSource(Frequency.class)
+    @DisplayName("Same source and target frequency returns the original rate unchanged")
+    void testConvertDiscreteRates_SameFrequency_ReturnsUnchanged(Frequency frequency) {
+        double rate = 0.08;
+        double result = RateConverter.convertDiscreteRates(rate, frequency, frequency);
+        assertEquals(rate, result, TOLERANCE);
+    }
 }
