@@ -650,13 +650,16 @@ bond.<span class="cm">getCashflows</span>();    <span class="cc">// → {0.5=30.
 
             <div class="code-block">
                 <div class="code-block-bar"><span>Example</span></div>
-                <pre><code><span class="ct">CompoundingStrategy</span> cs = <span class="ck">new</span> DiscreteCompoundingStrategy(<span class="cv">2</span>);
+                <pre><code><span class="cc">// 6% annual coupon rate, semi-annual payments, 5-year maturity</span>
+<span class="ct">Bond</span> bond = <span class="ck">new</span> Bond(<span class="cv">1000.0</span>, <span class="cv">0.06</span>, <span class="cv">5.0</span>, Frequency.SEMI_ANNUALLY);
+
+<span class="ct">CompoundingStrategy</span> cs = <span class="ck">new</span> DiscreteCompoundingStrategy(<span class="cv">2</span>);
 <span class="ct">BondDurationCalculator</span> calc = <span class="ck">new</span> YieldBondDurationCalculator(<span class="cv">0.07</span>, cs);
 
 <span class="ck">double</span> price = <span class="cv">958.42</span>;
-<span class="ck">double</span> dmac  = calc.<span class="cm">macaulayDuration</span>(bond, price); <span class="cc">// → 4.36 years</span>
-<span class="ck">double</span> dmod  = calc.<span class="cm">modifiedDuration</span>(bond, price); <span class="cc">// → 4.21</span>
-<span class="ck">double</span> dv01  = calc.<span class="cm">dv01</span>(bond, price);             <span class="cc">// → 0.0404</span></code></pre>
+<span class="ck">double</span> dmac  = calc.<span class="cm">macaulayDuration</span>(bond, price); <span class="cc">// → 4.38 years</span>
+<span class="ck">double</span> dmod  = calc.<span class="cm">modifiedDuration</span>(bond, price); <span class="cc">// → 4.23</span>
+<span class="ck">double</span> dv01  = calc.<span class="cm">dv01</span>(bond, price);             <span class="cc">// → 0.0405</span></code></pre>
             </div>
         </div>
 
