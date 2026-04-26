@@ -653,7 +653,10 @@
                             <span class="example-title">Zero curve pricing</span>
                             <span class="example-class">ZeroCouponBondRateBondPricer</span>
                         </div>
-                        <pre><code><span class="code-type">Map&lt;Double, Double&gt;</span> curve = Map.of(
+                        <pre><code><span class="code-comment">// 6% bond, semi-annual coupons, 5-year maturity</span>
+<span class="code-type">Bond</span> bond = <span class="code-key">new</span> Bond(<span class="code-value">1000.0</span>, <span class="code-value">0.06</span>, <span class="code-value">5.0</span>, Frequency.SEMI_ANNUALLY);
+
+<span class="code-type">Map&lt;Double, Double&gt;</span> curve = Map.of(
     <span class="code-value">0.5</span>, <span class="code-value">0.050</span>,  <span class="code-value">1.0</span>, <span class="code-value">0.055</span>,
     <span class="code-value">2.0</span>, <span class="code-value">0.060</span>,  <span class="code-value">5.0</span>, <span class="code-value">0.065</span>);
 
@@ -663,7 +666,7 @@
     <span class="code-key">new</span> ContinuousCompoundingStrategy());
 
 <span class="code-key">double</span> price = pricer.<span class="code-method">price</span>(bond);
-<span class="code-comment">// → 976.57 (each cash flow at its own interpolated spot rate)</span></code></pre>
+<span class="code-comment">// → 976.55 (each cash flow at its own interpolated spot rate)</span></code></pre>
                     </div>
 
                     <!-- Curve bootstrapping -->
