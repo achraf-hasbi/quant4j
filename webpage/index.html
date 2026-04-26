@@ -686,7 +686,7 @@
 
 <span class="code-type">NavigableMap&lt;Double, Double&gt;</span> spotCurve =
     boot.<span class="code-method">bootstrapFromParBonds</span>(benchmarks, <span class="code-key">new</span> LinearInterpolationStrategy());
-<span class="code-comment">// → {0.5=0.04, 1.0=0.0408, 2.0=0.0502, 3.0=0.0551}</span></code></pre>
+<span class="code-comment">// → {0.5=0.04, 1.0=0.0396, 2.0=0.0497, 3.0=0.0548}</span></code></pre>
                     </div>
 
                     <!-- Rate conversion -->
@@ -698,7 +698,7 @@
                         <pre><code><span class="code-comment">// Semi-annual 5% → continuous equivalent</span>
 <span class="code-key">double</span> rc = RateConverter.<span class="code-method">discreteToContinuous</span>(
     <span class="code-value">0.05</span>, Frequency.SEMI_ANNUALLY);
-<span class="code-comment">// → 0.04879 (4.879%)</span>
+<span class="code-comment">// → 0.04938 (4.938%)</span>
 
 <span class="code-comment">// Continuous → quarterly discrete</span>
 <span class="code-key">double</span> rq = RateConverter.<span class="code-method">continuousToDiscrete</span>(
