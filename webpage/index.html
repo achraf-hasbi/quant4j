@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Quant4J — Quantitative finance, built for Java.</title>
+    <title>Quant4J — Quantitative finance library built for Java.</title>
     <meta name="description" content="Quant4J is an open-source Java library for quantitative finance with a clean API for fixed income analytics and zero external runtime dependencies." />
     <style>
         :root {
@@ -522,12 +522,14 @@
             <div class="container hero-grid">
                 <div>
                     <span class="eyebrow">v1.0.0 · Fixed Income · Stable</span>
-                    <p class="tagline">Quantitative finance, built for Java.</p>
+                    <p class="tagline">Quantitative finance library built for Java.</p>
                     <p class="hero-copy">
-                        An interface-driven Java library for fixed income analytics.
-                        Price bonds, compute duration and DV01, invert yields, bootstrap spot curves,
-                        and convert rates — with explicit conventions, immutable models,
-                        and zero external runtime dependencies.
+                        Quant4J is a Java library for quantitative finance — covering fixed income,
+                        derivatives, options, futures, swaps, credit, and risk analytics.
+                        The v1.0.0 release establishes the fixed income foundation: bond pricing,
+                        duration, yield inversion, and curve construction. Each subsequent release
+                        extends the library with new instrument types, all sharing the same
+                        consistent, interface-driven API.
                     </p>
                     <div class="actions">
                         <a class="btn primary" href="#install">Get started →</a>
@@ -552,7 +554,7 @@
 
 <span class="code-comment">// Duration &amp; DV01</span>
 <span class="code-type">BondDurationCalculator</span> calc = <span class="code-key">new</span> YieldBondDurationCalculator(<span class="code-value">0.07</span>, compounding);
-<span class="code-key">double</span> dv01 = calc.<span class="code-method">dv01</span>(bond, price); <span class="code-comment">// → 0.0392</span></code></pre>
+<span class="code-key">double</span> dv01 = calc.<span class="code-method">dv01</span>(bond, price); <span class="code-comment">// → 0.4053</span></code></pre>
                 </div>
             </div>
         </section>
@@ -629,7 +631,10 @@
                             <span class="example-title">Yield to Maturity inversion</span>
                             <span class="example-class">RootFindingBondYieldCalculator</span>
                         </div>
-                        <pre><code><span class="code-type">BondYieldCalculator</span> ytm = <span class="code-key">new</span> RootFindingBondYieldCalculator(
+                        <pre><code><span class="code-comment">// 6% bond, semi-annual coupons, 5-year maturity</span>
+<span class="code-type">Bond</span> bond = <span class="code-key">new</span> Bond(<span class="code-value">1000.0</span>, <span class="code-value">0.06</span>, <span class="code-value">5.0</span>, Frequency.SEMI_ANNUALLY);
+
+<span class="code-type">BondYieldCalculator</span> ytm = <span class="code-key">new</span> RootFindingBondYieldCalculator(
     <span class="code-key">new</span> DiscreteCompoundingStrategy(<span class="code-value">2</span>),
     <span class="code-key">new</span> NewtonRaphsonSolver());
 
