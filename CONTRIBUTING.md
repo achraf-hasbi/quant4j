@@ -22,9 +22,7 @@ environment setup, coding conventions, testing standards, and the pull request p
 
 | Tool | Minimum version |
 |---|---|
-| JDK | 21 (Temurin recommended) |
-| Maven | 3.9 |
-| Git | 2.x |
+| JDK | 21  |
 
 ---
 
@@ -58,9 +56,6 @@ mvn checkstyle:check
 
 # Generate Javadoc
 mvn javadoc:javadoc
-
-# Open coverage report (macOS / Linux)
-open target/site/jacoco/index.html
 ```
 
 `mvn verify` must exit 0 before any pull request will be merged.
@@ -169,13 +164,13 @@ it does not prove that either is financially correct.
 @DisplayName("Benchmark: 6% semi-annual, 5yr, face 1000, price 950.24 → YTM ≈ 7.00%")
 void testBenchmark_KnownYtm() {
     // CFA Level 1 standard example. Derivation:
-    //   coupon = 30, r_period = 3.5%, 10 periods
-    //   PV = Σ 30/(1.035)^i + 1000/(1.035)^10 ≈ 950.24 at YTM = 7%
+    // coupon = 30, r_period = 3.5%, 10 periods
+    // PV = Σ 30/(1.036)^i + 1000/(1.036)^10 ≈ 950.24 at YTM = 7.2%
     Bond bond = new Bond(1000, 0.06, 5.0, Frequency.SEMI_ANNUALLY);
     BondYieldCalculator calc = new RootFindingBondYieldCalculator(
             new DiscreteCompoundingStrategy(2), new NewtonRaphsonSolver());
 
-    assertEquals(0.07, calc.yield(bond, 950.24), 1e-3);
+    assertEquals(0.072, calc.yieldToMaturity(bond, 950.24), 1e-3);
 }
 ```
 
