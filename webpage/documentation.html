@@ -1,0 +1,1096 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Quant4J — Documentation</title>
+    <meta name="description" content="Quant4J library documentation — fixed income analytics, rates, and math utilities." />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous" />
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" crossorigin="anonymous"
+        onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+    <style>
+        :root {
+            --bg: #f7faf8;
+            --surface: #ffffff;
+            --ink: #0f2425;
+            --muted: #587071;
+            --line: #dce8e1;
+            --green: #23cc45;
+            --green-dark: #14842b;
+            --shadow: 0 4px 20px rgba(15,36,37,0.07);
+            --radius-md: 14px;
+            --radius-sm: 8px;
+            --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            --sans: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+            --sidebar-w: 256px;
+            --header-h: 64px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: var(--sans); color: var(--ink); background: var(--bg); line-height: 1.6; }
+        a { color: inherit; text-decoration: none; }
+        code { font-family: var(--mono); }
+
+        /* ===== Header ===== */
+        .site-header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--header-h);
+            z-index: 100;
+            backdrop-filter: blur(18px);
+            background: rgba(255,255,255,0.90);
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+        }
+        .header-inner {
+            width: 100%;
+            padding: 0 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            font-size: 0.97rem;
+        }
+        .brand-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+        .brand-sub { color: var(--muted); font-weight: 500; }
+        .header-nav { display: flex; gap: 6px; align-items: center; }
+        .nav-pill {
+            padding: 7px 14px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--muted);
+            border: 1px solid transparent;
+            transition: all 130ms ease;
+        }
+        .nav-pill:hover { color: var(--ink); background: rgba(15,36,37,0.05); }
+        .nav-pill.current { background: var(--green); color: #06220d; }
+
+        /* ===== Layout ===== */
+        .layout {
+            display: grid;
+            grid-template-columns: var(--sidebar-w) 1fr;
+            margin-top: var(--header-h);
+            min-height: calc(100vh - var(--header-h));
+        }
+
+        /* ===== Sidebar ===== */
+        .sidebar {
+            position: sticky;
+            top: var(--header-h);
+            height: calc(100vh - var(--header-h));
+            overflow-y: auto;
+            border-right: 1px solid var(--line);
+            background: var(--surface);
+            padding: 20px 0 48px;
+        }
+        .sidebar::-webkit-scrollbar { width: 3px; }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
+
+        .nav-section-label {
+            display: block;
+            padding: 14px 18px 5px;
+            font-size: 0.68rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.13em;
+            color: var(--muted);
+        }
+        .nav-link {
+            display: block;
+            padding: 5px 18px;
+            font-size: 0.82rem;
+            color: var(--muted);
+            border-left: 2px solid transparent;
+            transition: all 110ms ease;
+        }
+        .nav-link:hover { color: var(--ink); background: rgba(35,204,69,0.06); }
+        .nav-link.active { color: var(--green-dark); border-left-color: var(--green); background: rgba(35,204,69,0.08); font-weight: 700; }
+        .nav-link.l1 { padding-left: 18px; font-weight: 600; color: var(--ink); font-size: 0.85rem; }
+        .nav-link.l2 { padding-left: 30px; }
+        .nav-link.l3 { padding-left: 42px; font-size: 0.79rem; }
+        .nav-divider { height: 1px; background: var(--line); margin: 10px 18px; }
+
+        /* ===== Main ===== */
+        .main { padding: 52px 60px 100px; max-width: 860px; }
+
+        .page-hero { margin-bottom: 52px; }
+        .page-hero h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.05em; margin-bottom: 6px; }
+        .page-hero p { color: var(--muted); font-size: 0.96rem; }
+
+        /* ===== Module headings ===== */
+        .module {
+            margin-top: 64px;
+            margin-bottom: 28px;
+            padding-top: 8px;
+        }
+        .module:first-of-type { margin-top: 0; }
+
+        .module-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            background: rgba(35,204,69,0.10);
+            color: var(--green-dark);
+            border: 1px solid rgba(35,204,69,0.22);
+            border-radius: 999px;
+            font-size: 0.70rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.10em;
+            margin-bottom: 8px;
+        }
+        .module h2 {
+            font-size: 1.7rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            margin-bottom: 6px;
+        }
+        .module p { color: var(--muted); font-size: 0.94rem; max-width: 660px; }
+
+        /* ===== Group label ===== */
+        .group-label {
+            font-size: 0.70rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--muted);
+            margin: 32px 0 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        /* ===== Doc card ===== */
+        .doc-card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            padding: 24px 26px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .card-name {
+            font-family: var(--mono);
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--green-dark);
+        }
+        .type-badge {
+            flex-shrink: 0;
+            padding: 2px 9px;
+            border-radius: 5px;
+            font-size: 0.69rem;
+            font-weight: 800;
+            font-family: var(--mono);
+            white-space: nowrap;
+        }
+        .tb-class     { background: #e8f0fe; color: #1a56cc; }
+        .tb-interface { background: #fdf0e0; color: #b45309; }
+        .tb-record    { background: #f0e8fe; color: #6b21a8; }
+        .tb-enum      { background: #e8fef0; color: var(--green-dark); }
+        .tb-utility   { background: #fde8e8; color: #b91c1c; }
+
+        .card-desc { color: var(--muted); font-size: 0.91rem; margin-bottom: 14px; }
+
+        /* ===== Math block ===== */
+        .math-block {
+            background: #f8fbf9;
+            border: 1px solid var(--line);
+            border-left: 3px solid var(--green);
+            border-radius: var(--radius-sm);
+            padding: 14px 18px;
+            margin: 14px 0;
+            overflow-x: auto;
+        }
+        .math-label {
+            font-size: 0.68rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.10em;
+            color: var(--green-dark);
+            margin-bottom: 6px;
+        }
+        .math-note { font-size: 0.80rem; color: var(--muted); margin-top: 6px; }
+
+        /* ===== Signature block ===== */
+        .sig {
+            background: #102829;
+            border-radius: var(--radius-sm);
+            padding: 14px 18px;
+            margin: 12px 0;
+            font-family: var(--mono);
+            font-size: 0.79rem;
+            line-height: 1.75;
+            color: #d9fff0;
+            overflow-x: auto;
+        }
+        .sk { color: #77f49a; }
+        .st { color: #b7d7ff; }
+        .sc { color: #607d7e; }
+
+        /* ===== Code block ===== */
+        .code-block {
+            background: #102829;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            margin: 14px 0;
+        }
+        .code-block-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            background: rgba(255,255,255,0.04);
+        }
+        .code-block-bar span {
+            font-size: 0.71rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.38);
+            font-family: var(--mono);
+        }
+        .code-block pre {
+            margin: 0;
+            padding: 16px 18px;
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            line-height: 1.75;
+            color: #d9fff0;
+            overflow-x: auto;
+        }
+        .cc { color: #8aa0a1; }
+        .ck { color: #77f49a; }
+        .ct { color: #b7d7ff; }
+        .cv { color: #ffb2a8; }
+        .cm { color: #ffd580; }
+
+        /* ===== Params table ===== */
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.84rem;
+            margin: 12px 0;
+        }
+        .param-table th {
+            text-align: left;
+            padding: 7px 12px;
+            background: #f3f8f5;
+            border-bottom: 1px solid var(--line);
+            font-size: 0.69rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            font-weight: 900;
+        }
+        .param-table td { padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+        .param-table tr:last-child td { border-bottom: 0; }
+        .pn { font-family: var(--mono); font-size: 0.79rem; color: var(--green-dark); font-weight: 700; }
+        .pt { font-family: var(--mono); font-size: 0.77rem; color: #1a56cc; }
+        .pd { color: var(--muted); font-size: 0.86rem; }
+
+        /* ===== Methods list ===== */
+        .method-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 10px 14px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+            background: #fafcfb;
+        }
+        .method-sig { font-family: var(--mono); font-size: 0.78rem; color: var(--green-dark); font-weight: 700; }
+        .method-desc { font-size: 0.86rem; color: var(--muted); }
+
+        /* ===== Solver comparison table ===== */
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin: 16px 0;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+        .compare-table th {
+            text-align: left;
+            padding: 10px 14px;
+            background: #f3f8f5;
+            border-bottom: 1px solid var(--line);
+            font-size: 0.70rem;
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            color: var(--muted);
+            font-weight: 900;
+        }
+        .compare-table td { padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+        .compare-table tr:last-child td { border-bottom: 0; }
+        .compare-table td:first-child { font-family: var(--mono); font-size: 0.82rem; font-weight: 700; color: var(--green-dark); }
+
+        /* anchor offset for sticky header */
+        .anchor { display: block; height: var(--header-h); margin-top: calc(-1 * var(--header-h)); visibility: hidden; pointer-events: none; }
+
+        hr.sep { border: 0; border-top: 1px solid var(--line); margin: 56px 0; }
+
+        @media (max-width: 860px) {
+            .layout { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+            .main { padding: 32px 22px 64px; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+        <a class="brand" href="index.html">
+            <span class="brand-dot"></span>
+            <span>Quant4J</span>
+            <span class="brand-sub">/ Documentation</span>
+        </a>
+        <nav class="header-nav">
+            <a class="nav-pill" href="index.html">Home</a>
+            <a class="nav-pill" href="https://github.com/achraf-hasbi/quant4j" target="_blank" rel="noreferrer">GitHub</a>
+            <a class="nav-pill current" target="_blank" href="https://javadoc.io/doc/io.quant4j/quant4j/latest/index.html">API Docs</a>
+        </nav>
+    </div>
+</header>
+
+<div class="layout">
+
+    <!-- ===== Sidebar ===== -->
+    <nav class="sidebar" aria-label="Documentation navigation">
+
+        <span class="nav-section-label">Fixed Income</span>
+
+        <a class="nav-link l1" href="#bonds">Bonds</a>
+        <a class="nav-link l2" href="#bond-record">Bond</a>
+
+        <a class="nav-link l2" href="#pricing">Pricing</a>
+        <a class="nav-link l3" href="#yield-pricer">Yield-based pricing</a>
+        <a class="nav-link l3" href="#zero-curve-pricer">Zero curve pricing</a>
+
+        <a class="nav-link l2" href="#yield-section">Yield</a>
+        <a class="nav-link l3" href="#ytm">Yield to Maturity</a>
+
+        <a class="nav-link l2" href="#duration-section">Duration &amp; Risk</a>
+        <a class="nav-link l3" href="#macaulay">Macaulay duration</a>
+        <a class="nav-link l3" href="#modified">Modified duration</a>
+        <a class="nav-link l3" href="#dv01">DV01</a>
+
+        <a class="nav-link l2" href="#curve-section">Curve Construction</a>
+        <a class="nav-link l3" href="#bootstrap-par">Bootstrap from par bonds</a>
+        <a class="nav-link l3" href="#bootstrap-market">Bootstrap from market prices</a>
+
+        <div class="nav-divider"></div>
+
+        <a class="nav-link l1" href="#rates">Rates</a>
+
+        <a class="nav-link l2" href="#compounding-section">Compounding</a>
+        <a class="nav-link l3" href="#continuous">Continuous compounding</a>
+        <a class="nav-link l3" href="#discrete">Discrete compounding</a>
+
+        <a class="nav-link l2" href="#interest-section">Interest</a>
+        <a class="nav-link l3" href="#compound-interest">Compound Interest</a>
+
+        <a class="nav-link l2" href="#rate-converter">Rate Converter</a>
+        <a class="nav-link l3" href="#d-to-c">Discrete → Continuous</a>
+        <a class="nav-link l3" href="#c-to-d">Continuous → Discrete</a>
+        <a class="nav-link l3" href="#d-to-d">Discrete → Discrete</a>
+
+        <div class="nav-divider"></div>
+
+        <span class="nav-section-label">Math</span>
+
+        <a class="nav-link l1" href="#solvers">Numerical Solvers</a>
+        <a class="nav-link l3" href="#bisection">Bisection</a>
+        <a class="nav-link l3" href="#newton">Newton-Raphson</a>
+        <a class="nav-link l3" href="#secant">Secant</a>
+
+        <a class="nav-link l1" href="#interpolation">Interpolation</a>
+        <a class="nav-link l3" href="#linear-interp">Linear interpolation</a>
+
+    </nav>
+
+    <!-- ===== Main content ===== -->
+    <main class="main">
+
+        <div class="page-hero">
+            <h1>Documentation</h1>
+            <p>v1.0.0 &nbsp;·&nbsp; Fixed Income &nbsp;·&nbsp; Java 21+ &nbsp;·&nbsp; Apache 2.0</p>
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- BONDS                                                             -->
+        <!-- ================================================================ -->
+        <span class="anchor" id="bonds"></span>
+        <div class="module">
+            <span class="module-badge">Fixed Income · Bonds</span>
+            <h2>Bonds</h2>
+            <p>Bond pricing, yield inversion, duration, and curve construction — all built around the immutable <code>Bond</code> record. Every operation is expressed as an interface so implementations can be swapped without changing calling code.</p>
+        </div>
+
+        <!-- Bond record -->
+        <span class="anchor" id="bond-record"></span>
+        <div class="doc-card">
+            <div class="card-header">
+                <span class="card-name">Bond</span>
+                <span class="type-badge tb-record">record</span>
+            </div>
+            <p class="card-desc">Immutable representation of a fixed-coupon bond. Being a Java record, equality is field-based — two <code>Bond</code> instances with identical parameters are equal and can be used as map keys.</p>
+
+            <div class="group-label" style="margin-top:4px">Fields</div>
+            <table class="param-table">
+                <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td class="pn">faceValue</td><td class="pt">double</td><td class="pd">Principal amount (e.g. 1000). Must be &gt; 0.</td></tr>
+                    <tr><td class="pn">annualRate</td><td class="pt">double</td><td class="pd">Annual coupon rate, decimal (e.g. 0.06 for 6%). Must be ≥ 0.</td></tr>
+                    <tr><td class="pn">maturityYears</td><td class="pt">double</td><td class="pd">Time to maturity in years. Must be &gt; 0 and coherent with couponFrequency.</td></tr>
+                    <tr><td class="pn">couponFrequency</td><td class="pt">Frequency</td><td class="pd">Payment frequency: ANNUALLY, SEMI_ANNUALLY, QUARTERLY, MONTHLY, DAILY.</td></tr>
+                </tbody>
+            </table>
+
+            <div class="group-label">Methods</div>
+            <div class="method-item">
+                <span class="method-sig">double getCouponPayment()</span>
+                <span class="method-desc">Returns <code>faceValue × annualRate / periodsPerYear</code>.</span>
+            </div>
+            <div class="method-item">
+                <span class="method-sig">Map&lt;Double, Double&gt; getCashflows()</span>
+                <span class="method-desc">Ordered map of (time in years → cash flow). The final period includes the face value redemption.</span>
+            </div>
+
+            <div class="code-block">
+                <div class="code-block-bar"><span>Bond.java</span></div>
+                <pre><code><span class="cc">// 6% annual coupon rate, semi-annual payments, 5-year maturity</span>
+<span class="ct">Bond</span> bond = <span class="ck">new</span> Bond(<span class="cv">1000.0</span>, <span class="cv">0.06</span>, <span class="cv">5.0</span>, Frequency.SEMI_ANNUALLY);
+
+bond.<span class="cm">getCouponPayment</span>(); <span class="cc">// → 30.0  (1000 × 0.06 / 2)</span>
+bond.<span class="cm">getCashflows</span>();    <span class="cc">// → {0.5=30.0, 1.0=30.0, ..., 5.0=1030.0}</span></code></pre>
+            </div>
+        </div>
+
+        <!-- ── Pricing ────────────────────────────────────────────────────── -->
+        <span class="anchor" id="pricing"></span>
+        <div class="group-label">Pricing</div>
+
+        <span class="anchor" id="yield-pricer"></span>
+        <div class="doc-card">
+            <div class="card-header">
+                <span class="card-name">YieldBondPricer</span>
+                <span class="type-badge tb-class">class implements BondPricer</span>
+            </div>
+            <p class="card-desc">Prices a bond by discounting all cash flows at a single Yield to Maturity. The compounding convention for the yield is supplied explicitly and may differ from the bond's coupon frequency.</p>
+
+            <div class="math-block">
+                <div class="math-label">Bond price</div>
+                $$P = \sum_{t} CF(t) \cdot DF(y,\, t)$$
+                <p class="math-note">$CF(t)$ — cash flow at time $t$. &nbsp; $DF(y, t)$ — discount factor from the compounding strategy at yield $y$.</p>
+            </div>
+
+            <div class="group-label">Constructor</div>
+            <div class="sig">
+<span class="sk">new</span> <span class="st">YieldBondPricer</span>(
+  <span class="st">double</span>             yield,               <span class="sc">// annual YTM, decimal — must be finite</span>
+  <span class="st">CompoundingStrategy</span> yieldCompounding     <span class="sc">// compounding convention for the yield</span>
+)
+            </div>
+
+            <div class="code-block">
+                <div class="code-block-bar"><span>Example</span></div>
+                <pre><code><span class="ct">CompoundingStrategy</span> cs = <span class="ck">new</span> DiscreteCompoundingStrategy(<span class="cv">2</span>); <span class="cc">// semi-annual</span>
+<span class="ct">BondPricer</span> pricer = <span class="ck">new</span> YieldBondPricer(<span class="cv">0.07</span>, cs);
+<span class="ck">double</span> price = pricer.<span class="cm">price</span>(bond); <span class="cc">// → 958.42</span></code></pre>
+            </div>
+        </div>
+
+        <span class="anchor" id="zero-curve-pricer"></span>
+        <div class="doc-card">
+            <div class="card-header">
+                <span class="card-name">ZeroCouponBondRateBondPricer</span>
+                <span class="type-badge tb-class">class implements BondPricer</span>
+            </div>
+            <p class="card-desc">Prices a bond by discounting each cash flow at its own zero (spot) rate, interpolated from a provided curve. More realistic than flat-YTM pricing when the yield curve is not flat.</p>
+
+            <div class="math-block">
+                <div class="math-label">Zero-curve price</div>
+                $$P = \sum_{t} CF(t) \cdot DF\!\left(r(t),\, t\right)$$
+                <p class="math-note">$r(t)$ — zero rate at tenor $t$, obtained by interpolating the supplied curve. Each cash flow is discounted at its own tenor rate.</p>
+            </div>
+
+            <div class="group-label">Constructor</div>
+            <div class="sig">
+<span class="sk">new</span> <span class="st">ZeroCouponBondRateBondPricer</span>(
+  <span class="st">Map&lt;Double, Double&gt;</span>  zeroCurve,      <span class="sc">// tenor (years) → zero rate</span>
+  <span class="st">InterpolationStrategy</span> interpolation,  <span class="sc">// e.g. LinearInterpolationStrategy</span>
+  <span class="st">CompoundingStrategy</span>   compounding     <span class="sc">// discount factor convention</span>
+)
+            </div>
+
+            <div class="code-block">
+                <div class="code-block-bar"><span>Example</span></div>
+                <pre><code><span class="ct">Map&lt;Double, Double&gt;</span> curve = Map.of(
+    <span class="cv">0.5</span>, <span class="cv">0.050</span>,  <span class="cv">1.0</span>, <span class="cv">0.055</span>,
+    <span class="cv">2.0</span>, <span class="cv">0.060</span>,  <span class="cv">5.0</span>, <span class="cv">0.065</span>);
+
+<span class="ct">BondPricer</span> pricer = <span class="ck">new</span> ZeroCouponBondRateBondPricer(
+    curve,
+    <span class="ck">new</span> LinearInterpolationStrategy(),
+    <span class="ck">new</span> ContinuousCompoundingStrategy());
+
+<span class="ck">double</span> price = pricer.<span class="cm">price</span>(bond); <span class="cc">// → 976.57</span></code></pre>
+            </div>
+        </div>
+
+        <!-- ── Yield ──────────────────────────────────────────────────────── -->
+        <span class="anchor" id="yield-section"></span>
+        <div class="group-label">Yield</div>
+
+        <span class="anchor" id="ytm"></span>
+        <div class="doc-card">
+            <div class="card-header">
+                <span class="card-name">RootFindingBondYieldCalculator</span>
+                <span class="type-badge tb-class">class implements BondYieldCalculator</span>
+            </div>
+            <p class="card-desc">Inverts the pricing formula numerically to find the YTM that makes the theoretical price equal to the observed market price. The solver algorithm is injected as a strategy — use Bisection, Newton-Raphson, or Secant interchangeably.</p>
+
+            <div class="math-block">
+                <div class="math-label">Root-finding problem</div>
+                $$\text{Find } y \text{ such that } P(y) - P_{\text{market}} = 0$$
+                $$P(y) = \sum_{t} CF(t) \cdot DF(y,\, t)$$
+                <p class="math-note">Cash flows are captured once before the solver loop to avoid recomputation across iterations.</p>
+            </div>
+
+            <div class="group-label">Constructor</div>
+            <div class="sig">
+<span class="sk">new</span> <span class="st">RootFindingBondYieldCalculator</span>(
+  <span class="st">CompoundingStrategy</span> compounding,  <span class="sc">// convention used to price at each trial yield</span>
+  <span class="st">RootSolver</span>          solver        <span class="sc">// BisectionSolver | NewtonRaphsonSolver | SecantSolver</span>
+)
+            </div>
+
+            <div class="code-block">
+                <div class="code-block-bar"><span>Example</span></div>
+                <pre><code><span class="ct">BondYieldCalculator</span> calc = <span class="ck">new</span> RootFindingBondYieldCalculator(
+    <span class="ck">new</span> DiscreteCompoundingStrategy(<span class="cv">2</span>),
+    <span class="ck">new</span> NewtonRaphsonSolver());
+
+<span class="ck">double</span> ytm = calc.<span class="cm">yieldToMaturity</span>(bond, <span class="cv">958.42</span>);
+<span class="cc">// → 0.0700  (7.00%)</span>
+
+<span class="cc">// Any RootSolver works — swap without changing the rest of the code</span>
+<span class="ct">BondYieldCalculator</span> calc2 = <span class="ck">new</span> RootFindingBondYieldCalculator(
+    <span class="ck">new</span> DiscreteCompoundingStrategy(<span class="cv">2</span>),
+    <span class="ck">new</span> BisectionSolver());</code></pre>
+            </div>
+        </div>
+
+        <!-- ── Duration & Risk ───────────────────────────────────────────── -->
+        <span class="anchor" id="duration-section"></span>
+        <div class="group-label">Duration &amp; Risk</div>
+
+        <div class="doc-card">
+            <div class="card-header">
+                <span class="card-name">YieldBondDurationCalculator</span>
+                <span class="type-badge tb-class">class implements BondDurationCalculator</span>
+            </div>
+            <p class="card-desc">Computes Macaulay duration, modified duration, and DV01 from a yield and compounding convention. All three measures share the same weighted cash flow schedule, ensuring internal consistency.</p>
+
+            <span class="anchor" id="macaulay"></span>
+            <div class="math-block">
+                <div class="math-label">Macaulay Duration</div>
+                $$D_{\text{mac}} = \frac{1}{P} \sum_{t}\, t \cdot CF(t) \cdot DF(y,\, t)$$
+                <p class="math-note">Time-weighted average of discounted cash flows, in years.</p>
+            </div>
+
+            <span class="anchor" id="modified"></span>
+            <div class="math-block">
+                <div class="math-label">Modified Duration</div>
+                $$D_{\text{mod}} = \frac{D_{\text{mac}}}{1 + y/m} \quad \text{(discrete,}\;m\text{ periods/year)}$$
+                $$D_{\text{mod}} = D_{\text{mac}} \quad \text{(continuous compounding)}$$
+                <p class="math-note">Percentage price change per unit parallel shift in yield. The conversion is delegated to the compounding strategy, so the formula is automatically correct for both conventions.</p>
+            </div>
+
+            <span class="anchor" id="dv01"></span>
+            <div class="math-block">
+                <div class="math-label">DV01</div>
+                $$\text{DV01} = D_{\text{mod}} \times P \times 0.0001$$
+                <p class="math-note">Absolute price change for a 1 basis point (0.01%) increase in yield. Same currency unit as the bond price.</p>
+            </div>
+
+            <div class="group-label">Constructor</div>
+            <div class="sig">
+<span class="sk">new</span> <span class="st">YieldBondDurationCalculator</span>(
+  <span class="st">double</span>             yield,           <span class="sc">// annual YTM, decimal</span>
+  <span class="st">CompoundingStrategy</span> yieldCompounding <span class="sc">// compounding convention</span>
+)
+            </div>
+
+            <div class="code-block">
+                <div class="code-block-bar"><span>Example</span></div>
+                <pre><code><span class="ct">CompoundingStrategy</span> cs = <span class="ck">new</span> DiscreteCompoundingStrategy(<span class="cv">2</span>);
+<span class="ct">BondDurationCalculator</span> calc = <span class="ck">new</span> YieldBondDurationCalculator(<span class="cv">0.07</span>, cs);
+
+<span class="ck">double</span> price = <span class="cv">958.42</span>;
+<span class="ck">double</span> dmac  = calc.<span class="cm">macaulayDuration</span>(bond, price); <span class="cc">// → 4.36 years</span>
+<span class="ck">double</span> dmod  = calc.<span class="cm">modifiedDuration</span>(bond, price); <span class="cc">// → 4.21</span>
+<span class="ck">double</span> dv01  = calc.<span class="cm">dv01</span>(bond, price);             <span class="cc">// → 0.0404</span></code></pre>
+            </div>
+        </div>
+
+        <!-- ── Curve Construction ─────────────────────────────────────────── -->
+        <span class="anchor" id="curve-section"></span>
+        <div class="group-label">Curve Construction</div>
+
+        <div class="doc-card">
+            <div class="card-header">
+                <span class="card-name">SpotRateCurveBootstrappingStrategy</span>
+                <span class="type-badge tb-class">class implements BootstrappingStrategy</span>
+            </div>
+            <p class="card-desc">Bootstraps a zero-coupon (spot rate) curve from coupon bonds sorted in ascending maturity order. At each step, all intermediate cash flows are discounted at already-derived spot rates, and the unknown rate at the bond's maturity is solved analytically.</p>
+
+            <div class="math-block">
+                <div class="math-label">Bootstrapping step at maturity $T$</div>
+                $$DF(T) = \frac{P_T - \displaystyle\sum_{t < T} CF(t) \cdot DF\!\left(r_t,\, t\right)}{CF(T)}$$
+                $$r_T = \text{rateFromDiscountFactor}\!\left(DF(T),\; T\right)$$
+                <p class="math-note">Applied sequentially for each bond in ascending maturity order. The initial zero curve provides seed rates for the shortest tenors. The result is an unmodifiable <code>NavigableMap</code>.</p>
+            </div>
+
+            <div class="group-label">Constructor</div>
+            <div class="sig">
+<span class="sk">new</span> <span class="st">SpotRateCurveBootstrappingStrategy</span>(
+  <span class="st">Map&lt;Double, Double&gt;</span> initialZeroCurve,  <span class="sc">// seed rates (defensively copied)</span>
+  <span class="st">CompoundingStrategy</span>  compounding         <span class="sc">// used for all DF and rate-from-DF calls</span>
+)
+            </div>
+
+            <div class="group-label">Methods</div>
+            <span class="anchor" id="bootstrap-par"></span>
+            <div class="method-item">
+                <span class="method-sig">NavigableMap&lt;Double, Double&gt; bootstrapFromParBonds(List&lt;Bond&gt; bonds, InterpolationStrategy interpolation)</span>
+                <span class="method-desc">Assumes every bond trades at par (price = faceValue). Delegates to <code>bootstrapFromMarketPrices</code> internally.</span>
+            </div>
+            <span class="anchor" id="bootstrap-market"></span>
+            <div class="method-item">
+                <span class="method-sig">NavigableMap&lt;Double, Double&gt; bootstrapFromMarketPrices(List&lt;Bond&gt; bonds, Map&lt;Bond, Double&gt; marketPrices, InterpolationStrategy interpolation)</span>
+                <span class="method-desc">Uses observed market prices. All bonds must have distinct maturities and an entry in <code>marketPrices</code>.</span>
+            </div>
+
+            <div class="code-block">
+                <div class="code-block-bar"><span>Example — par bonds</span></div>
+                <pre><code><span class="ct">BootstrappingStrategy</span> boot = <span class="ck">new</span> SpotRateCurveBootstrappingStrategy(
+    Map.of(<span class="cv">0.5</span>, <span class="cv">0.04</span>),              <span class="cc">// seed: 6-month spot rate</span>
+    <span class="ck">new</span> ContinuousCompoundingStrategy());
+
+<span class="ct">NavigableMap&lt;Double, Double&gt;</span> curve = boot.<span class="cm">bootstrapFromParBonds</span>(
+    List.of(
+        <span class="ck">new</span> Bond(<span class="cv">1000</span>, <span class="cv">0.04</span>,  <span class="cv">1.0</span>, Frequency.SEMI_ANNUALLY),
+        <span class="ck">new</span> Bond(<span class="cv">1000</span>, <span class="cv">0.05</span>,  <span class="cv">2.0</span>, Frequency.SEMI_ANNUALLY),
+        <span class="ck">new</span> Bond(<span class="cv">1000</span>, <span class="cv">0.055</span>, <span class="cv">3.0</span>, Frequency.SEMI_ANNUALLY)),
+    <span class="ck">new</span> LinearInterpolationStrategy());
+<span class="cc">// → {0.5=0.04, 1.0=0.0408, 2.0=0.0502, 3.0=0.0551}</span></code></pre>
+            </div>
+        </div>
+
+        <hr class="sep" />
+
+        <!-- ================================================================ -->
+        <!-- RATES                                                             -->
+        <!-- ================================================================ -->
+        <span class="anchor" id="rates"></span>
+        <div class="module">
+            <span class="module-badge">Fixed Income · Rates</span>
+            <h2>Rates</h2>
+            <p>Compounding strategies, compound interest, and rate conversion utilities. All compounding strategies share a common <code>CompoundingStrategy</code> interface and are interchangeable across the library.</p>
+        </div>
+
+        <!-- ── Compounding ───────────────────────────────────────────────── -->
+        <span class="anchor" id="compounding-section"></span>
+        <div class="group-label">Compounding</div>
+
+        <span class="anchor" id="continuous"></span>
+        <div class="doc-card">
+            <div class="card-header">
+                <span class="card-name">ContinuousCompoundingStrategy</span>
+                <span class="type-badge tb-class">class implements CompoundingStrategy</span>
+            </div>
+            <p class="card-desc">Implements continuous compounding. Used throughout the library wherever a compounding convention is required. Under continuous compounding, modified duration equals Macaulay duration (no adjustment needed).</p>
+
+            <div class="math-block">
+                <div class="math-label">Discount &amp; accumulation factors</div>
+                $$DF(r, t) = e^{-rt} \qquad AF(r, t) = e^{rt}$$
+            </div>
+            <div class="math-block">
+                <div class="math-label">Present &amp; future value</div>
+                $$PV = FV \cdot e^{-rt} \qquad FV = PV \cdot e^{rt}$$
+            </div>
+            <div class="math-block">
+                <div class="math-label">Rate from discount factor</div>
+                $$r = -\frac{\ln(DF)}{t}$$
+            </div>
+            <div class="math-block">
+                <div class="math-label">Forward rate</div>
+                $$F(t_1, t_2) = \frac{r_2\, t_2 - r_1\, t_1}{t_2 - t_1}$$
+            </div>
+            <div class="math-block">
+                <div class="math-label">Macaulay → Modified duration</div>
+                $$D_{\text{mod}} = D_{\text{mac}}$$
+            </div>
+
+            <div class="code-block">
+                <div class="code-block-bar"><span>Example</span></div>
+                <pre><code><span class="ct">CompoundingStrategy</span> cs = <span class="ck">new</span> ContinuousCompoundingStrategy();
+
+cs.<span class="cm">discountFactor</span>(<span class="cv">0.05</span>, <span class="cv">2.0</span>);          <span class="cc">// → e^(-0.10) = 0.9048</span>
+cs.<span class="cm">accumulationFactor</span>(<span class="cv">0.05</span>, <span class="cv">2.0</span>);      <span class="cc">// → e^( 0.10) = 1.1052</span>
+cs.<span class="cm">futureValue</span>(<span class="cv">1000</span>, <span class="cv">0.05</span>, <span class="cv">2.0</span>);       <span class="cc">// → 1105.17</span>
+cs.<span class="cm">rateFromDiscountFactor</span>(<span class="cv">0.9048</span>, <span class="cv">2.0</span>); <span class="cc">// → 0.0500</span>
+cs.<span class="cm">forwardRate</span>(<span class="cv">0.04</span>, <span class="cv">1.0</span>, <span class="cv">0.05</span>, <span class="cv">2.0</span>);  <span class="cc">// → 0.06</span></code></pre>
+            </div>
+        </div>
+
+        <span class="anchor" id="discrete"></span>
+        <div class="doc-card">
+            <div class="card-header">
+                <span class="card-name">DiscreteCompoundingStrategy</span>
+                <span class="type-badge tb-class">class implements CompoundingStrategy</span>
+            </div>
+            <p class="card-desc">Implements discrete compounding with a configurable number of periods per year $m$. Common conventions: semi-annual ($m=2$) for bonds, annual ($m=1$) for general finance, monthly ($m=12$) for consumer products.</p>
+
+            <div class="math-block">
+                <div class="math-label">Discount &amp; accumulation factors</div>
+                $$DF(r, t) = \left(1 + \frac{r}{m}\right)^{-mt} \qquad AF(r, t) = \left(1 + \frac{r}{m}\right)^{mt}$$
+            </div>
+            <div class="math-block">
+                <div class="math-label">Rate from discount factor</div>
+                $$r = m \cdot \left(DF^{-1/(mt)} - 1\right)$$
+            </div>
+            <div class="math-block">
+                <div class="math-label">Forward rate</div>
+                $$\left(1 + \frac{F}{m}\right)^{m(t_2 - t_1)} = \frac{AF(r_2, t_2)}{AF(r_1, t_1)}$$
+            </div>
+            <div class="math-block">
+                <div class="math-label">Macaulay → Modified duration</div>
+                $$D_{\text{mod}} = \frac{D_{\text{mac}}}{1 + y/m}$$
+            </div>
+
+            <div class="group-label">Constructor</div>
+            <div class="sig">
+<span class="sk">new</span> <span class="st">DiscreteCompoundingStrategy</span>(<span class="st">int</span> periodsPerYear)
+<span class="sc">// periodsPerYear ≥ 1</span>
+            </div>
+
+            <div class="code-block">
+                <div class="code-block-bar"><span>Example</span></div>
+                <pre><code><span class="ct">CompoundingStrategy</span> semi = <span class="ck">new</span> DiscreteCompoundingStrategy(<span class="cv">2</span>);
+
+semi.<span class="cm">discountFactor</span>(<span class="cv">0.06</span>, <span class="cv">5.0</span>);           <span class="cc">// → (1.03)^(-10) = 0.7441</span>
+semi.<span class="cm">futureValue</span>(<span class="cv">1000</span>, <span class="cv">0.06</span>, <span class="cv">5.0</span>);         <span class="cc">// → 1343.92</span>
+semi.<span class="cm">rateFromDiscountFactor</span>(<span class="cv">0.7441</span>, <span class="cv">5.0</span>);  <span class="cc">// → 0.0600</span>
+semi.<span class="cm">forwardRate</span>(<span class="cv">0.04</span>, <span class="cv">1.0</span>, <span class="cv">0.05</span>, <span class="cv">2.0</span>);   <span class="cc">// → 0.0602</span></code></pre>
+            </div>
+        </div>
+
+        <!-- ── Interest ───────────────────────────────────────────────────── -->
+        <span class="anchor" id="interest-section"></span>
+        <div class="group-label">Interest</div>
+
+        <span class="anchor" id="compound-interest"></span>
+        <div class="doc-card">
+            <div class="card-header">
+                <span class="card-name">CompoundInterestCalculator</span>
+                <span class="type-badge tb-class">class</span>
+            </div>
+            <p class="card-desc">Calculates the period-by-period growth of an investment under compound interest. Supports an initial principal, regular periodic contributions (ordinary annuity), and independent compounding and contribution frequencies.</p>
+
+            <div class="math-block">
+                <div class="math-label">Balance per compounding period</div>
+                $$B_n = B_{n-1} \cdot \left(1 + \frac{r}{m}\right) + C_n$$
+                <p class="math-note">$m$ — compounding periods per year. &nbsp; $r$ — annual rate. &nbsp; $C_n$ — contribution aggregated for period $n$ (added after interest, ordinary annuity convention). When contribution and compounding frequencies differ, $C_n$ is scaled proportionally.</p>
+            </div>
+
+            <div class="group-label">Method</div>
+            <div class="sig">
+<span class="st">CompoundInterestResult</span> <span class="cm">calculate</span>(
+  <span class="st">double</span>    initialInvestment,      <span class="sc">// starting principal</span>
+  <span class="st">double</span>    periodicContribution,   <span class="sc">// amount added per contribution period</span>
+  <span class="st">Frequency</span> contributionFrequency,  <span class="sc">// how often contributions are made</span>
+  <span class="st">double</span>    timeInYears,            <span class="sc">// investment horizon</span>
+  <span class="st">double</span>    annualRate,             <span class="sc">// annual interest rate, decimal</span>
+  <span class="st">Frequency</span> compoundingFrequency    <span class="sc">// compounding frequency</span>
+)
+            </div>
+
+            <div class="group-label">CompoundInterestResult fields</div>
+            <table class="param-table">
+                <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td class="pn">deposits</td><td class="pt">List&lt;Double&gt;</td><td class="pd">Contribution added each period (index 0 = initial investment).</td></tr>
+                    <tr><td class="pn">interests</td><td class="pt">List&lt;Double&gt;</td><td class="pd">Interest earned each compounding period.</td></tr>
+                    <tr><td class="pn">totalDeposit</td><td class="pt">List&lt;Double&gt;</td><td class="pd">Cumulative principal deposited through each period.</td></tr>
+                    <tr><td class="pn">accuredInterest</td><td class="pt">List&lt;Double&gt;</td><td class="pd">Cumulative interest earned through each period.</td></tr>
+                    <tr><td class="pn">balance</td><td class="pt">List&lt;Double&gt;</td><td class="pd">Total account balance at the end of each period.</td></tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+                <div class="code-block-bar"><span>Example</span></div>
+                <pre><code><span class="ct">CompoundInterestCalculator</span> calc = <span class="ck">new</span> CompoundInterestCalculator();
+
+<span class="ct">CompoundInterestResult</span> res = calc.<span class="cm">calculate</span>(
+    <span class="cv">10_000</span>,             <span class="cc">// initial investment</span>
+    <span class="cv">200</span>,                <span class="cc">// $200 monthly contribution</span>
+    Frequency.MONTHLY,  <span class="cc">// contribution frequency</span>
+    <span class="cv">5.0</span>,                <span class="cc">// 5-year horizon</span>
+    <span class="cv">0.06</span>,               <span class="cc">// 6% annual rate</span>
+    Frequency.MONTHLY); <span class="cc">// monthly compounding</span>
+
+<span class="ck">double</span> finalBalance = res.balance().getLast(); <span class="cc">// → ~27,943</span>
+<span class="ck">int</span>    periods      = res.balance().size();     <span class="cc">// → 61 (period 0 + 60 monthly periods)</span></code></pre>
+            </div>
+        </div>
+
+        <!-- ── Rate Converter ─────────────────────────────────────────────── -->
+        <span class="anchor" id="rate-converter"></span>
+        <div class="group-label">Rate Converter</div>
+
+        <div class="doc-card">
+            <div class="card-header">
+                <span class="card-name">RateConverter</span>
+                <span class="type-badge tb-utility">static utility</span>
+            </div>
+            <p class="card-desc">Static utility for converting interest rates between compounding conventions. All conversions are derived from the principle of equated accumulation factors — two rates are equivalent if they produce the same future value over the same period.</p>
+
+            <span class="anchor" id="d-to-c"></span>
+            <div class="math-block">
+                <div class="math-label">Discrete → Continuous</div>
+                $$R_c = m \cdot \ln\!\left(1 + \frac{R_d}{m}\right)$$
+            </div>
+
+            <span class="anchor" id="c-to-d"></span>
+            <div class="math-block">
+                <div class="math-label">Continuous → Discrete</div>
+                $$R_d = m \cdot \left(e^{R_c/m} - 1\right)$$
+            </div>
+
+            <span class="anchor" id="d-to-d"></span>
+            <div class="math-block">
+                <div class="math-label">Discrete → Discrete (frequency change)</div>
+                $$\left(1 + \frac{r_1}{m_1}\right)^{m_1} = \left(1 + \frac{r_2}{m_2}\right)^{m_2}$$
+                $$r_2 = m_2 \cdot \left[\left(1 + \frac{r_1}{m_1}\right)^{m_1/m_2} - 1\right]$$
+            </div>
+
+            <div class="code-block">
+                <div class="code-block-bar"><span>Example</span></div>
+                <pre><code><span class="cc">// Semi-annual 5% → equivalent continuous rate</span>
+<span class="ck">double</span> rc = RateConverter.<span class="cm">discreteToContinuous</span>(<span class="cv">0.05</span>, Frequency.SEMI_ANNUALLY);
+<span class="cc">// → 0.04879  (4.879%)</span>
+
+<span class="cc">// Continuous → quarterly discrete</span>
+<span class="ck">double</span> rq = RateConverter.<span class="cm">continuousToDiscrete</span>(rc, Frequency.QUARTERLY);
+<span class="cc">// → 0.04969  (4.969%)</span>
+
+<span class="cc">// Semi-annual 5% → monthly discrete</span>
+<span class="ck">double</span> rm = RateConverter.<span class="cm">convertDiscreteRates</span>(
+    <span class="cv">0.05</span>, Frequency.SEMI_ANNUALLY, Frequency.MONTHLY);
+<span class="cc">// → 0.04949  (4.949%)</span></code></pre>
+            </div>
+        </div>
+
+        <hr class="sep" />
+
+        <!-- ================================================================ -->
+        <!-- MATH — SOLVERS                                                    -->
+        <!-- ================================================================ -->
+        <span class="anchor" id="solvers"></span>
+        <div class="module">
+            <span class="module-badge">Math</span>
+            <h2>Numerical Solvers</h2>
+            <p>Three root-finding strategies implement the <code>RootSolver</code> interface. All are injected into <code>RootFindingBondYieldCalculator</code> and are interchangeable without changing calling code.</p>
+        </div>
+
+        <table class="compare-table" style="margin-bottom:24px">
+            <thead>
+                <tr>
+                    <th>Solver</th>
+                    <th>Convergence</th>
+                    <th>Requires</th>
+                    <th>Best for</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>BisectionSolver</td>
+                    <td>Linear — halves interval each step</td>
+                    <td>Sign change in [a, b]</td>
+                    <td>Guaranteed convergence, robust fallback</td>
+                </tr>
+                <tr>
+                    <td>NewtonRaphsonSolver</td>
+                    <td>Quadratic near root</td>
+                    <td>Single initial guess</td>
+                    <td>Fast convergence when guess is close</td>
+                </tr>
+                <tr>
+                    <td>SecantSolver</td>
+                    <td>Superlinear (~1.618×)</td>
+                    <td>Two distinct initial guesses</td>
+                    <td>No bracket needed, faster than bisection</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Bisection -->
+        <span class="anchor" id="bisection"></span>
+        <div class="doc-card">
+            <div class="card-header">
+                <span class="card-name">BisectionSolver</span>
+                <span class="type-badge tb-class">class implements RootSolver</span>
+            </div>
+            <p class="card-desc">Guaranteed convergence by halving a bracketing interval at each step. Requires a sign change in the interval: <code>f(a) × f(b) &lt; 0</code>. Slower than Newton-Raphson but will always converge if a root exists in the bracket.</p>
+
+            <div class="math-block">
+                <div class="math-label">Algorithm</div>
+                $$\text{mid} = \frac{a + b}{2}, \qquad \text{update } a \text{ or } b = \text{mid based on sign of } f(\text{mid})$$
+                $$\text{stop when } |f(\text{mid})| < \varepsilon \;\text{ or }\; \tfrac{b-a}{2} < \varepsilon$$
+            </div>
+
+            <div class="group-label">Constructors</div>
+            <div class="sig">
+<span class="sk">new</span> <span class="st">BisectionSolver</span>()
+<span class="sc">// interval [-0.99, 1.0]  ·  tolerance 1e-10  ·  maxIterations 200</span>
+
+<span class="sk">new</span> <span class="st">BisectionSolver</span>(<span class="st">double</span> lowerBound, <span class="st">double</span> upperBound, <span class="st">double</span> tolerance, <span class="st">int</span> maxIterations)
+            </div>
+        </div>
+
+        <!-- Newton-Raphson -->
+        <span class="anchor" id="newton"></span>
+        <div class="doc-card">
+            <div class="card-header">
+                <span class="card-name">NewtonRaphsonSolver</span>
+                <span class="type-badge tb-class">class implements RootSolver</span>
+            </div>
+            <p class="card-desc">Quadratic convergence near the root. The derivative is approximated numerically using a symmetric finite difference with step $h = 10^{-6}$. Fastest of the three for well-conditioned problems; may diverge far from the root.</p>
+
+            <div class="math-block">
+                <div class="math-label">Iteration</div>
+                $$x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}, \qquad f'(x) \approx \frac{f(x+h) - f(x-h)}{2h}, \quad h = 10^{-6}$$
+            </div>
+
+            <div class="group-label">Constructors</div>
+            <div class="sig">
+<span class="sk">new</span> <span class="st">NewtonRaphsonSolver</span>()
+<span class="sc">// initialGuess 0.05  ·  tolerance 1e-10  ·  maxIterations 100</span>
+
+<span class="sk">new</span> <span class="st">NewtonRaphsonSolver</span>(<span class="st">double</span> initialGuess, <span class="st">double</span> tolerance, <span class="st">int</span> maxIterations)
+            </div>
+        </div>
+
+        <!-- Secant -->
+        <span class="anchor" id="secant"></span>
+        <div class="doc-card">
+            <div class="card-header">
+                <span class="card-name">SecantSolver</span>
+                <span class="type-badge tb-class">class implements RootSolver</span>
+            </div>
+            <p class="card-desc">Superlinear convergence (~1.618×). Approximates the derivative using the slope of the chord through the two most recent iterates. No bracketing interval required — needs two distinct initial guesses.</p>
+
+            <div class="math-block">
+                <div class="math-label">Iteration</div>
+                $$y_{n+1} = y_n - f(y_n) \cdot \frac{y_n - y_{n-1}}{f(y_n) - f(y_{n-1})}$$
+            </div>
+
+            <div class="group-label">Constructors</div>
+            <div class="sig">
+<span class="sk">new</span> <span class="st">SecantSolver</span>()
+<span class="sc">// firstGuess 0.01  ·  secondGuess 0.10  ·  tolerance 1e-10  ·  maxIterations 100</span>
+
+<span class="sk">new</span> <span class="st">SecantSolver</span>(<span class="st">double</span> firstGuess, <span class="st">double</span> secondGuess, <span class="st">double</span> tolerance, <span class="st">int</span> maxIterations)
+            </div>
+        </div>
+
+        <hr class="sep" />
+
+        <!-- ================================================================ -->
+        <!-- MATH — INTERPOLATION                                              -->
+        <!-- ================================================================ -->
+        <span class="anchor" id="interpolation"></span>
+        <div class="module">
+            <span class="module-badge">Math</span>
+            <h2>Interpolation</h2>
+            <p>The <code>InterpolationStrategy</code> interface is used by <code>ZeroCouponBondRateBondPricer</code> and <code>SpotRateCurveBootstrappingStrategy</code> to look up rates at arbitrary maturities between known curve points.</p>
+        </div>
+
+        <span class="anchor" id="linear-interp"></span>
+        <div class="doc-card">
+            <div class="card-header">
+                <span class="card-name">LinearInterpolationStrategy</span>
+                <span class="type-badge tb-class">class implements InterpolationStrategy</span>
+            </div>
+            <p class="card-desc">Linearly interpolates between the two nearest known data points. Falls back to flat extrapolation (nearest edge value) when the requested point lies outside the data range.</p>
+
+            <div class="math-block">
+                <div class="math-label">Linear interpolation</div>
+                $$y = y_1 + \frac{(x - x_1)(y_2 - y_1)}{x_2 - x_1}, \qquad x_1 \le x \le x_2$$
+                <p class="math-note">Outside range: $y = y_{\min}$ if $x &lt; x_{\min}$ &nbsp;(left flat extrapolation), &nbsp;$y = y_{\max}$ if $x &gt; x_{\max}$ &nbsp;(right flat extrapolation).</p>
+            </div>
+
+            <div class="code-block">
+                <div class="code-block-bar"><span>Example</span></div>
+                <pre><code><span class="ct">NavigableMap&lt;Double, Double&gt;</span> curve = <span class="ck">new</span> TreeMap&lt;&gt;(Map.of(
+    <span class="cv">1.0</span>, <span class="cv">0.04</span>,
+    <span class="cv">2.0</span>, <span class="cv">0.05</span>,
+    <span class="cv">5.0</span>, <span class="cv">0.06</span>));
+
+<span class="ct">InterpolationStrategy</span> interp = <span class="ck">new</span> LinearInterpolationStrategy();
+
+interp.<span class="cm">interpolate</span>(curve, <span class="cv">1.5</span>); <span class="cc">// → 0.045  (midpoint between 1yr and 2yr)</span>
+interp.<span class="cm">interpolate</span>(curve, <span class="cv">3.5</span>); <span class="cc">// → 0.055  (midpoint between 2yr and 5yr)</span>
+interp.<span class="cm">interpolate</span>(curve, <span class="cv">8.0</span>); <span class="cc">// → 0.060  (flat extrapolation past 5yr)</span>
+interp.<span class="cm">interpolate</span>(curve, <span class="cv">0.5</span>); <span class="cc">// → 0.040  (flat extrapolation before 1yr)</span></code></pre>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<script>
+    // Highlight active sidebar link based on scroll position
+    const anchors = Array.from(document.querySelectorAll('.anchor[id]'));
+    const navLinks = Array.from(document.querySelectorAll('.nav-link[href]'));
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.id;
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+                });
+            }
+        });
+    }, { rootMargin: '-5% 0px -85% 0px', threshold: 0 });
+
+    anchors.forEach(a => observer.observe(a));
+</script>
+
+</body>
+</html>

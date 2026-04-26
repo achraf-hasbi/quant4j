@@ -53,56 +53,47 @@ implementation 'io.quant4j:quant4j:1.0.0'
 ### 1. Price a bond at a given yield
 
 ```java
-import bond.io.quant4j.Bond;
-import pricing.bond.io.quant4j.YieldBondPricer;
-import rates.io.quant4j.Frequency;
-import compounding.rates.io.quant4j.DiscreteCompoundingStrategy;
-
 // 6% annual coupon, semi-annual payments, 5 years, face value 1000
 Bond bond = new Bond(1000, 0.06, 5.0, Frequency.SEMI_ANNUALLY);
 
-        // Price at a 7% YTM using semi-annual discrete compounding
-        double price = new YieldBondPricer(0.07, new DiscreteCompoundingStrategy(2)).price(bond);
+// Price at a 7% YTM using semi-annual discrete compounding
+double price = new YieldBondPricer(0.07, new DiscreteCompoundingStrategy(2)).price(bond);
 // → 958.42
 ```
 
 ### 2. Compute yield to maturity from a market price
 
 ```java
-import yield.bond.io.quant4j.BondYieldCalculator;
-import yield.bond.io.quant4j.RootFindingBondYieldCalculator;
-import solver.math.io.quant4j.NewtonRaphsonSolver;
+// 6% annual coupon, semi-annual payments, 5 years, face value 1000
+Bond bond = new Bond(1000, 0.06, 5.0, Frequency.SEMI_ANNUALLY);
 
 BondYieldCalculator calculator = new RootFindingBondYieldCalculator(
         new DiscreteCompoundingStrategy(2),
         new NewtonRaphsonSolver());
 
-double ytm = calculator.yield(bond, 950.24);
-// → 0.0700 (7.00%)
+double ytm = calculator.yieldToMaturity(bond, 950.24);
+// → 0.072 (7.20%)
 ```
 
 ### 3. Compute duration and DV01
 
 ```java
-import duration.bond.io.quant4j.BondDurationCalculator;
-import duration.bond.io.quant4j.YieldBondDurationCalculator;
+// 6% annual coupon, semi-annual payments, 5 years, face value 1000
+Bond bond = new Bond(1000, 0.06, 5.0, Frequency.SEMI_ANNUALLY);
 
 BondDurationCalculator duration = new YieldBondDurationCalculator(
         0.07, new DiscreteCompoundingStrategy(2));
 
-double macaulay = duration.macaulayDuration(bond, price); // years
-double modified = duration.modifiedDuration(bond, price); // % per unit yield
-double dv01 = duration.dv01(bond, price);             // $ per basis point
+double macaulay = duration.macaulayDuration(bond, 950.24); // 4.41 years
+double modified = duration.modifiedDuration(bond, 950.24); // % per unit yield
+double dv01 = duration.dv01(bond, 950.24);             // 0.405 $ per basis point
 ```
 
 ### 4. Price using a full zero rate curve
 
 ```java
-import pricing.bond.io.quant4j.ZeroCouponBondRateBondPricer;
-import interpolation.math.io.quant4j.LinearInterpolationStrategy;
-import compounding.rates.io.quant4j.ContinuousCompoundingStrategy;
-
-import java.util.Map;
+// 6% annual coupon, semi-annual payments, 5 years, face value 1000
+Bond bond = new Bond(1000, 0.06, 5.0, Frequency.SEMI_ANNUALLY);
 
 Map<Double, Double> zeroCurve = Map.of(
         0.5, 0.050,
@@ -114,17 +105,12 @@ Map<Double, Double> zeroCurve = Map.of(
 double price = new ZeroCouponBondRateBondPricer(
         zeroCurve,
         new LinearInterpolationStrategy(),
-        new ContinuousCompoundingStrategy()).price(bond);
+        new ContinuousCompoundingStrategy()).price(bond); // 976.554
 ```
 
 ### 5. Bootstrap a spot rate curve from par bonds
 
 ```java
-import curve.bond.io.quant4j.SpotRateCurveBootstrappingStrategy;
-
-import java.util.List;
-import java.util.NavigableMap;
-
 SpotRateCurveBootstrappingStrategy bootstrapper = new SpotRateCurveBootstrappingStrategy(
         Map.of(0.5, 0.04),                  // seed: 6-month spot rate known
         new ContinuousCompoundingStrategy());
@@ -137,20 +123,18 @@ List<Bond> benchmarkBonds = List.of(
 
 NavigableMap<Double, Double> spotCurve = bootstrapper.bootstrapFromParBonds(
         benchmarkBonds, new LinearInterpolationStrategy());
-// → {0.5=0.04, 1.0=0.0408, 2.0=0.0502, 3.0=0.0551}
+// → {0.5=0.04, 1.0=0.0396, 2.0=0.0497, 3.0=0.0548}
 ```
 
 ### 6. Convert between compounding conventions
 
 ```java
-import rates.io.quant4j.RateConverter;
-
 // Semi-annual discrete 5% → continuous equivalent
 double rc = RateConverter.discreteToContinuous(0.05, Frequency.SEMI_ANNUALLY);
-// → 0.04879 (4.879%)
+// → 0.04938 (4.938%)
 
-        // Continuous 4.879% → quarterly discrete equivalent
-        double rq = RateConverter.continuousToDiscrete(rc, Frequency.QUARTERLY);
+// Continuous 4.879% → quarterly discrete equivalent
+double rq = RateConverter.continuousToDiscrete(rc, Frequency.QUARTERLY);
 // → 0.04969 (4.969%)
 ```
 

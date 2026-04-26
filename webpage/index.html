@@ -1,0 +1,892 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Quant4J — Quantitative finance, built for Java.</title>
+    <meta name="description" content="Quant4J is an open-source Java library for quantitative finance with a clean API for fixed income analytics and zero external runtime dependencies." />
+    <style>
+        :root {
+            --bg: #f7faf8;
+            --surface: #ffffff;
+            --surface-2: #eef6f1;
+            --ink: #0f2425;
+            --muted: #587071;
+            --line: #dce8e1;
+            --green: #23cc45;
+            --green-dark: #14842b;
+            --red: #e22c16;
+            --shadow: 0 18px 50px rgba(15, 36, 37, 0.10);
+            --radius-lg: 28px;
+            --radius-md: 18px;
+            --radius-sm: 12px;
+            --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            font-family: var(--sans);
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 20% 10%, rgba(35, 204, 69, 0.12), transparent 34rem),
+                radial-gradient(circle at 85% 20%, rgba(226, 44, 22, 0.09), transparent 28rem),
+                linear-gradient(180deg, #ffffff 0%, var(--bg) 50%, #ffffff 100%);
+            line-height: 1.6;
+        }
+
+        a { color: inherit; text-decoration: none; }
+        .page { min-height: 100vh; overflow: hidden; }
+
+        .container {
+            width: min(1160px, calc(100% - 40px));
+            margin-inline: auto;
+        }
+
+        /* ===== Header ===== */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(18px);
+            background: rgba(255, 255, 255, 0.78);
+            border-bottom: 1px solid rgba(220, 232, 225, 0.8);
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            min-height: 76px;
+        }
+
+        .brand-logo-img { display: block; width: 156px; height: auto; object-fit: contain; }
+
+        .header-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 16px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.86);
+            color: var(--ink);
+            font-size: 0.88rem;
+            font-weight: 800;
+            box-shadow: 0 4px 14px rgba(15, 36, 37, 0.05);
+            transition: transform 160ms ease, box-shadow 160ms ease;
+        }
+
+        .header-link:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(15, 36, 37, 0.09); }
+        .header-link.primary { background: var(--green); color: #06220d; border-color: transparent; }
+
+        /* ===== Hero ===== */
+        .hero { padding: 94px 0 68px; }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.15fr;
+            align-items: center;
+            gap: 52px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 8px 12px;
+            border: 1px solid rgba(35, 204, 69, 0.28);
+            background: rgba(35, 204, 69, 0.09);
+            color: var(--green-dark);
+            border-radius: 999px;
+            font-weight: 800;
+            font-size: 0.86rem;
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 0 6px rgba(35, 204, 69, 0.14);
+        }
+
+        .tagline {
+            margin: 20px 0 0;
+            font-size: clamp(1.4rem, 2.5vw, 2.25rem);
+            line-height: 1.16;
+            letter-spacing: -0.04em;
+            max-width: 650px;
+            font-weight: 830;
+        }
+
+        .hero-copy {
+            margin: 20px 0 0;
+            max-width: 580px;
+            color: var(--muted);
+            font-size: 1.08rem;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 13px;
+            margin-top: 32px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            min-height: 48px;
+            padding: 0 22px;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            font-weight: 850;
+            font-size: 0.95rem;
+            transition: transform 180ms ease, box-shadow 180ms ease;
+        }
+
+        .btn:hover { transform: translateY(-2px); }
+        .btn.primary { background: var(--green); color: #06220d; box-shadow: 0 18px 35px rgba(35, 204, 69, 0.25); }
+        .btn.secondary { background: #ffffff; color: var(--ink); border-color: var(--line); box-shadow: 0 12px 30px rgba(15, 36, 37, 0.07); }
+
+        /* ===== Terminal card ===== */
+        .terminal-card {
+            position: relative;
+            border-radius: var(--radius-lg);
+            background: #102829;
+            color: #d9fff0;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            overflow: hidden;
+        }
+
+        .terminal-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .terminal-bar-label {
+            margin-left: auto;
+            font-size: 0.74rem;
+            font-family: var(--mono);
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .dot { width: 11px; height: 11px; border-radius: 50%; background: rgba(255, 255, 255, 0.28); }
+        .dot.red { background: #ff6b58; }
+        .dot.yellow { background: #ffc857; }
+        .dot.green { background: var(--green); }
+
+        pre {
+            margin: 0;
+            padding: 24px;
+            overflow-x: hidden;
+            font-family: var(--mono);
+            font-size: 0.8rem;
+            line-height: 1.72;
+            tab-size: 2;
+        }
+
+        code { font-family: var(--mono); }
+        .code-comment { color: #8aa0a1; }
+        .code-key     { color: #77f49a; }
+        .code-value   { color: #ffb2a8; }
+        .code-type    { color: #b7d7ff; }
+        .code-method  { color: #ffd580; }
+
+        /* ===== Sections ===== */
+        section { padding: 70px 0; }
+
+        .section-head { max-width: 760px; margin-bottom: 36px; }
+
+        .section-kicker {
+            color: var(--green-dark);
+            font-size: 0.82rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+        }
+
+        h2 {
+            margin: 8px 0 12px;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            line-height: 1.02;
+            letter-spacing: -0.065em;
+        }
+
+        .lead { color: var(--muted); font-size: 1.06rem; margin: 0; }
+
+        /* ===== Feature cards ===== */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .feature-card {
+            padding: 26px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            box-shadow: 0 12px 35px rgba(15, 36, 37, 0.05);
+        }
+
+        .icon {
+            display: grid;
+            place-items: center;
+            width: 44px; height: 44px;
+            border-radius: 14px;
+            background: rgba(35, 204, 69, 0.12);
+            color: var(--green-dark);
+            font-size: 1.22rem;
+            margin-bottom: 18px;
+        }
+
+        .feature-card h3 { margin: 0 0 6px; letter-spacing: -0.03em; font-size: 1.1rem; }
+        .feature-card p  { margin: 0; color: var(--muted); font-size: 0.94rem; }
+
+        .feature-api {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 3px 9px;
+            background: #102829;
+            color: #77f49a;
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            border-radius: 6px;
+        }
+
+        /* ===== Code examples grid ===== */
+        .examples-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .example-card {
+            border-radius: var(--radius-md);
+            background: #102829;
+            color: #d9fff0;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 12px 35px rgba(15, 36, 37, 0.12);
+            overflow: hidden;
+        }
+
+        .example-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 13px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .example-title {
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.75);
+            letter-spacing: 0.02em;
+        }
+
+        .example-class {
+            font-family: var(--mono);
+            font-size: 0.70rem;
+            color: #77f49a;
+            padding: 2px 8px;
+            background: rgba(35, 204, 69, 0.12);
+            border-radius: 5px;
+        }
+
+        .example-card pre { font-size: 0.76rem; padding: 18px 20px; }
+
+        /* ===== Design principles ===== */
+        .principles {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-top: 8px;
+        }
+
+        .principle-card {
+            padding: 28px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            background: white;
+        }
+
+        .principle-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px; height: 32px;
+            border-radius: 10px;
+            background: rgba(35, 204, 69, 0.12);
+            color: var(--green-dark);
+            font-weight: 900;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+
+        .principle-card h3 { margin: 0 0 8px; font-size: 1.05rem; letter-spacing: -0.02em; }
+        .principle-card p  { margin: 0; color: var(--muted); font-size: 0.93rem; }
+
+        .interface-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .iface-tag {
+            padding: 2px 8px;
+            background: #102829;
+            color: #b7d7ff;
+            font-family: var(--mono);
+            font-size: 0.70rem;
+            border-radius: 5px;
+        }
+
+        /* ===== Callout ===== */
+        .callout {
+            position: relative;
+            padding: 48px;
+            border-radius: var(--radius-lg);
+            background:
+                linear-gradient(135deg, rgba(16, 40, 41, 0.96), rgba(19, 55, 45, 0.96)),
+                radial-gradient(circle at right, rgba(35, 204, 69, 0.35), transparent 30rem);
+            color: white;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .callout::after {
+            content: "{}";
+            position: absolute;
+            right: 34px; bottom: -28px;
+            color: rgba(255, 255, 255, 0.06);
+            font-size: 11rem;
+            line-height: 1;
+            font-weight: 900;
+            letter-spacing: -0.12em;
+        }
+
+        .callout h2 { max-width: 780px; margin-top: 0; color: white; }
+        .callout p  { position: relative; z-index: 1; max-width: 720px; color: rgba(255, 255, 255, 0.72); margin: 0; }
+
+        /* ===== Roadmap ===== */
+        .roadmap-card {
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.82);
+            box-shadow: 0 18px 50px rgba(15, 36, 37, 0.06);
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+
+        th, td {
+            text-align: left;
+            padding: 16px 22px;
+            border-bottom: 1px solid var(--line);
+            vertical-align: middle;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 0.76rem;
+            text-transform: uppercase;
+            letter-spacing: 0.11em;
+            background: #f8fbf9;
+            font-weight: 800;
+        }
+
+        tr:last-child td { border-bottom: 0; }
+        td:first-child { font-family: var(--mono); font-size: 0.88rem; font-weight: 700; color: var(--green-dark); white-space: nowrap; }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.76rem;
+            font-weight: 800;
+        }
+
+        .status-stable  { background: rgba(35, 204, 69, 0.12); color: var(--green-dark); border: 1px solid rgba(35, 204, 69, 0.25); }
+        .status-planned { background: rgba(88, 112, 113, 0.1); color: var(--muted); border: 1px solid rgba(88, 112, 113, 0.2); }
+
+        /* ===== Install ===== */
+        .install-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .snippet {
+            background: #102829;
+            color: #e9fff4;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .snippet h3 {
+            margin: 0;
+            padding: 14px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.88rem;
+            letter-spacing: -0.01em;
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* ===== Footer ===== */
+        .footer {
+            padding: 46px 0;
+            color: var(--muted);
+            border-top: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.65);
+            font-size: 0.9rem;
+        }
+
+        .footer-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .footer a { color: var(--green-dark); font-weight: 800; }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 980px) {
+            .header-inner { align-items: flex-start; flex-direction: column; padding: 14px 0; }
+            .hero-grid, .install-grid { grid-template-columns: 1fr; }
+            .features, .principles { grid-template-columns: repeat(2, 1fr); }
+            .examples-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 680px) {
+            .container { width: min(100% - 28px, 1160px); }
+            .hero { padding-top: 58px; }
+            .features, .principles, .examples-grid { grid-template-columns: 1fr; }
+            th, td { padding: 14px 14px; }
+            table { font-size: 0.88rem; }
+            .callout { padding: 28px; }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+
+    <!-- ===== Header ===== -->
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="#top" aria-label="Quant4J home">
+                <img class="brand-logo-img" src="quant4j-logo.png" alt="Quant4J quantitative finance library" />
+            </a>
+            <nav class="header-links" aria-label="Main navigation">
+                <a class="header-link" href="#examples">Examples</a>
+                <a class="header-link" href="#roadmap">Roadmap</a>
+                <a class="header-link" href="https://github.com/achraf-hasbi/quant4j" target="_blank" rel="noreferrer">GitHub</a>
+                <a class="header-link" href="documentation.html">Documentation</a>
+                <a class="header-link primary" href="https://javadoc.io/doc/io.quant4j/quant4j/latest/index.html" target="_blank" rel="noreferrer">API Docs ↗</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="top">
+
+        <!-- ===== Hero ===== -->
+        <section class="hero">
+            <div class="container hero-grid">
+                <div>
+                    <span class="eyebrow">v1.0.0 · Fixed Income · Stable</span>
+                    <p class="tagline">Quantitative finance, built for Java.</p>
+                    <p class="hero-copy">
+                        An interface-driven Java library for fixed income analytics.
+                        Price bonds, compute duration and DV01, invert yields, bootstrap spot curves,
+                        and convert rates — with explicit conventions, immutable models,
+                        and zero external runtime dependencies.
+                    </p>
+                    <div class="actions">
+                        <a class="btn primary" href="#install">Get started →</a>
+                        <a class="btn secondary" href="#examples">See examples</a>
+                    </div>
+                </div>
+
+                <div class="terminal-card" aria-label="Java usage example">
+                    <div class="terminal-bar">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                        <span class="terminal-bar-label">BondPricing.java</span>
+                    </div>
+                    <pre><code><span class="code-comment">// 6% bond, semi-annual coupons, 5-year maturity</span>
+<span class="code-type">Bond</span> bond = <span class="code-key">new</span> Bond(<span class="code-value">1000.0</span>, <span class="code-value">0.06</span>, <span class="code-value">5.0</span>, Frequency.SEMI_ANNUALLY);
+
+<span class="code-comment">// Price at 7% YTM, discrete semi-annual compounding</span>
+<span class="code-type">CompoundingStrategy</span> compounding = <span class="code-key">new</span> DiscreteCompoundingStrategy(<span class="code-value">2</span>);
+<span class="code-type">BondPricer</span> pricer = <span class="code-key">new</span> YieldBondPricer(<span class="code-value">0.07</span>, compounding);
+<span class="code-key">double</span> price = pricer.<span class="code-method">price</span>(bond); <span class="code-comment">// → 958.42</span>
+
+<span class="code-comment">// Duration &amp; DV01</span>
+<span class="code-type">BondDurationCalculator</span> calc = <span class="code-key">new</span> YieldBondDurationCalculator(<span class="code-value">0.07</span>, compounding);
+<span class="code-key">double</span> dv01 = calc.<span class="code-method">dv01</span>(bond, price); <span class="code-comment">// → 0.0392</span></code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== Features ===== -->
+        <section id="features">
+            <div class="container">
+                <div class="section-head">
+                    <span class="section-kicker">v1.0.0 — Fixed Income Core</span>
+                    <h2>A solid foundation for fixed income analytics.</h2>
+                    <p class="lead">Every operation is backed by a named interface. Swap any implementation without touching the rest of your code.</p>
+                </div>
+
+                <div class="features">
+                    <article class="feature-card">
+                        <div class="icon">💵</div>
+                        <h3>Bond Pricing</h3>
+                        <p>Price bonds by discounting cash flows at a single YTM, or tenor-by-tenor from a full zero rate curve with linear interpolation.</p>
+                        <span class="feature-api">BondPricer</span>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="icon">🎯</div>
+                        <h3>Yield to Maturity</h3>
+                        <p>Invert the pricing formula numerically. Plug in Bisection, Newton-Raphson, or Secant — the solver is a strategy you supply.</p>
+                        <span class="feature-api">BondYieldCalculator</span>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="icon">📉</div>
+                        <h3>Duration &amp; Risk</h3>
+                        <p>Macaulay duration, modified duration, and DV01 in one call. The Macaulay-to-modified conversion is delegated to the compounding strategy.</p>
+                        <span class="feature-api">BondDurationCalculator</span>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="icon">🧱</div>
+                        <h3>Curve Bootstrapping</h3>
+                        <p>Build a spot rate curve from par bonds or observed market prices. Bonds are processed in ascending maturity order; intermediate cash flows are discounted from the curve built so far.</p>
+                        <span class="feature-api">BootstrappingStrategy</span>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="icon">∞</div>
+                        <h3>Compounding Conventions</h3>
+                        <p>Discrete (any frequency) and continuous compounding, each exposing discount factor, accumulation factor, present value, future value, and forward rate.</p>
+                        <span class="feature-api">CompoundingStrategy</span>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="icon">⇄</div>
+                        <h3>Rate Conversion</h3>
+                        <p>Convert between any discrete frequency and continuous compounding, or between two discrete frequencies, using the standard equated-accumulation-factor formula.</p>
+                        <span class="feature-api">RateConverter</span>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== Code examples ===== -->
+        <section id="examples">
+            <div class="container">
+                <div class="section-head">
+                    <span class="section-kicker">Code examples</span>
+                    <h2>Usage examples.</h2>
+                    <p class="lead">The following examples cover the main entry points of the library. Inline comments show the actual computed output.</p>
+                </div>
+
+                <div class="examples-grid">
+
+                    <!-- YTM inversion -->
+                    <div class="example-card">
+                        <div class="example-header">
+                            <span class="example-title">Yield to Maturity inversion</span>
+                            <span class="example-class">RootFindingBondYieldCalculator</span>
+                        </div>
+                        <pre><code><span class="code-type">BondYieldCalculator</span> ytm = <span class="code-key">new</span> RootFindingBondYieldCalculator(
+    <span class="code-key">new</span> DiscreteCompoundingStrategy(<span class="code-value">2</span>),
+    <span class="code-key">new</span> NewtonRaphsonSolver());
+
+<span class="code-key">double</span> yield = ytm.<span class="code-method">yieldToMaturity</span>(bond, <span class="code-value">958.42</span>);
+<span class="code-comment">// → 0.0700 (7.00%)</span>
+
+<span class="code-comment">// Any RootSolver works — Bisection and Secant are also available</span>
+<span class="code-type">BondYieldCalculator</span> ytm2 = <span class="code-key">new</span> RootFindingBondYieldCalculator(
+    <span class="code-key">new</span> DiscreteCompoundingStrategy(<span class="code-value">2</span>),
+    <span class="code-key">new</span> BisectionSolver());</code></pre>
+                    </div>
+
+                    <!-- Zero curve pricing -->
+                    <div class="example-card">
+                        <div class="example-header">
+                            <span class="example-title">Zero curve pricing</span>
+                            <span class="example-class">ZeroCouponBondRateBondPricer</span>
+                        </div>
+                        <pre><code><span class="code-type">Map&lt;Double, Double&gt;</span> curve = Map.of(
+    <span class="code-value">0.5</span>, <span class="code-value">0.050</span>,  <span class="code-value">1.0</span>, <span class="code-value">0.055</span>,
+    <span class="code-value">2.0</span>, <span class="code-value">0.060</span>,  <span class="code-value">5.0</span>, <span class="code-value">0.065</span>);
+
+<span class="code-type">BondPricer</span> pricer = <span class="code-key">new</span> ZeroCouponBondRateBondPricer(
+    curve,
+    <span class="code-key">new</span> LinearInterpolationStrategy(),
+    <span class="code-key">new</span> ContinuousCompoundingStrategy());
+
+<span class="code-key">double</span> price = pricer.<span class="code-method">price</span>(bond);
+<span class="code-comment">// → 976.57 (each cash flow at its own interpolated spot rate)</span></code></pre>
+                    </div>
+
+                    <!-- Curve bootstrapping -->
+                    <div class="example-card">
+                        <div class="example-header">
+                            <span class="example-title">Spot curve bootstrapping</span>
+                            <span class="example-class">SpotRateCurveBootstrappingStrategy</span>
+                        </div>
+                        <pre><code><span class="code-type">BootstrappingStrategy</span> boot = <span class="code-key">new</span> SpotRateCurveBootstrappingStrategy(
+    Map.of(<span class="code-value">0.5</span>, <span class="code-value">0.04</span>),              <span class="code-comment">// seed: 6-month spot rate</span>
+    <span class="code-key">new</span> ContinuousCompoundingStrategy());
+
+<span class="code-type">List&lt;Bond&gt;</span> benchmarks = List.of(
+    <span class="code-key">new</span> Bond(<span class="code-value">1000</span>, <span class="code-value">0.04</span>, <span class="code-value">1.0</span>, Frequency.SEMI_ANNUALLY),
+    <span class="code-key">new</span> Bond(<span class="code-value">1000</span>, <span class="code-value">0.05</span>, <span class="code-value">2.0</span>, Frequency.SEMI_ANNUALLY),
+    <span class="code-key">new</span> Bond(<span class="code-value">1000</span>, <span class="code-value">0.055</span>, <span class="code-value">3.0</span>, Frequency.SEMI_ANNUALLY));
+
+<span class="code-type">NavigableMap&lt;Double, Double&gt;</span> spotCurve =
+    boot.<span class="code-method">bootstrapFromParBonds</span>(benchmarks, <span class="code-key">new</span> LinearInterpolationStrategy());
+<span class="code-comment">// → {0.5=0.04, 1.0=0.0408, 2.0=0.0502, 3.0=0.0551}</span></code></pre>
+                    </div>
+
+                    <!-- Rate conversion -->
+                    <div class="example-card">
+                        <div class="example-header">
+                            <span class="example-title">Rate conversion</span>
+                            <span class="example-class">RateConverter</span>
+                        </div>
+                        <pre><code><span class="code-comment">// Semi-annual 5% → continuous equivalent</span>
+<span class="code-key">double</span> rc = RateConverter.<span class="code-method">discreteToContinuous</span>(
+    <span class="code-value">0.05</span>, Frequency.SEMI_ANNUALLY);
+<span class="code-comment">// → 0.04879 (4.879%)</span>
+
+<span class="code-comment">// Continuous → quarterly discrete</span>
+<span class="code-key">double</span> rq = RateConverter.<span class="code-method">continuousToDiscrete</span>(
+    rc, Frequency.QUARTERLY);
+<span class="code-comment">// → 0.04969 (4.969%)</span>
+
+<span class="code-comment">// Direct discrete-to-discrete (equated accumulation factors)</span>
+<span class="code-key">double</span> rm = RateConverter.<span class="code-method">convertDiscreteRates</span>(
+    <span class="code-value">0.05</span>, Frequency.SEMI_ANNUALLY, Frequency.MONTHLY);
+<span class="code-comment">// → 0.04949 (4.949%)</span></code></pre>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== Design principles ===== -->
+        <section id="design">
+            <div class="container">
+                <div class="section-head">
+                    <span class="section-kicker">Design</span>
+                    <h2>Built for production codebases.</h2>
+                    <p class="lead">Three principles that apply to every module, present and future.</p>
+                </div>
+
+                <div class="principles">
+                    <div class="principle-card">
+                        <div class="principle-number">1</div>
+                        <h3>Interface First</h3>
+                        <p>Every operation is expressed as an interface. Swap any implementation — pricer, solver, compounding convention — without touching the rest of your code.</p>
+                        <div class="interface-list">
+                            <span class="iface-tag">BondPricer</span>
+                            <span class="iface-tag">BondYieldCalculator</span>
+                            <span class="iface-tag">BondDurationCalculator</span>
+                            <span class="iface-tag">CompoundingStrategy</span>
+                            <span class="iface-tag">RootSolver</span>
+                            <span class="iface-tag">InterpolationStrategy</span>
+                            <span class="iface-tag">BootstrappingStrategy</span>
+                        </div>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-number">2</div>
+                        <h3>Explicit Conventions</h3>
+                        <p>Compounding convention, coupon frequency, and interpolation method are always supplied by the caller. The library never infers them. What you pass is what you get.</p>
+                        <div class="interface-list">
+                            <span class="iface-tag">DiscreteCompoundingStrategy(m)</span>
+                            <span class="iface-tag">ContinuousCompoundingStrategy</span>
+                            <span class="iface-tag">Frequency.SEMI_ANNUALLY</span>
+                            <span class="iface-tag">LinearInterpolationStrategy</span>
+                        </div>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-number">3</div>
+                        <h3>Immutable by Design</h3>
+                        <p><code style="font-size:0.85em;background:#f0f6f2;padding:1px 5px;border-radius:4px">Bond</code> is a Java record. All calculators hold only final fields. Every instance is safe for concurrent use with no synchronisation.</p>
+                        <div class="interface-list">
+                            <span class="iface-tag">record Bond(...)</span>
+                            <span class="iface-tag">final fields</span>
+                            <span class="iface-tag">thread-safe</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== Zero-dep callout ===== -->
+        <section>
+            <div class="container">
+                <div class="callout">
+                    <span class="section-kicker" style="color: rgba(255,255,255,0.55);">Zero dependencies</span>
+                    <h2>Pure Java. No third-party runtime dependencies.</h2>
+                    <p>
+                        Keep quantitative finance logic portable, auditable, and simple to embed.
+                        Quant4J integrates cleanly into services, batch jobs, trading tools, and risk applications
+                        without pulling a dependency graph behind it.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== Roadmap ===== -->
+        <section id="roadmap">
+            <div class="container">
+                <div class="section-head">
+                    <span class="section-kicker">Roadmap</span>
+                    <h2>From fixed income to a full quant stack.</h2>
+                    <p class="lead">v1.0.0 ships the fixed income foundation. Every subsequent release adds a new instrument class, all sharing the same consistent interface-driven API.</p>
+                </div>
+
+                <div class="roadmap-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Version</th>
+                                <th>Module</th>
+                                <th>Key additions</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>v1.0.0</td>
+                                <td><strong>Fixed Income Core</strong></td>
+                                <td>Bond pricing, YTM, duration, DV01, curve bootstrapping, compounding, rate conversion, solvers</td>
+                                <td><span class="status-badge status-stable">✓ Stable</span></td>
+                            </tr>
+                            <tr>
+                                <td>v1.1.0</td>
+                                <td>Market Conventions</td>
+                                <td>Day-count conventions (Act/Act, 30/360), business calendars, dirty/clean price, accrued interest, settlement lag</td>
+                                <td><span class="status-badge status-planned">Planned</span></td>
+                            </tr>
+                            <tr>
+                                <td>v1.2.0</td>
+                                <td>Money Market</td>
+                                <td>T-bills, certificates of deposit, commercial paper, repo, FRAs, OIS rates</td>
+                                <td><span class="status-badge status-planned">Planned</span></td>
+                            </tr>
+                            <tr>
+                                <td>v2.0.0</td>
+                                <td>Interest Rate Swaps</td>
+                                <td>IRS, OIS, basis swaps, multi-curve framework (OIS discounting + SOFR/LIBOR projection), swap curve bootstrapping</td>
+                                <td><span class="status-badge status-planned">Planned</span></td>
+                            </tr>
+                            <tr>
+                                <td>v2.1.0</td>
+                                <td>Interest Rate Options</td>
+                                <td>Caps, floors, swaptions — Black &amp; Bachelier models, volatility surfaces, Greeks</td>
+                                <td><span class="status-badge status-planned">Planned</span></td>
+                            </tr>
+                            <tr>
+                                <td>v3.0.0</td>
+                                <td>Credit</td>
+                                <td>CDS pricing (ISDA model), credit curve bootstrapping, hazard rates, Z-spread, asset swap spread</td>
+                                <td><span class="status-badge status-planned">Planned</span></td>
+                            </tr>
+                            <tr>
+                                <td>v3.1.0</td>
+                                <td>Equity Derivatives</td>
+                                <td>European &amp; American options, Black-Scholes-Merton, binomial tree, Monte Carlo, full Greeks, implied volatility</td>
+                                <td><span class="status-badge status-planned">Planned</span></td>
+                            </tr>
+                            <tr>
+                                <td>v5.0.0</td>
+                                <td>Risk Engine</td>
+                                <td>VaR (historical, parametric, Monte Carlo), CVaR, Greeks aggregation, scenario analysis, XVA</td>
+                                <td><span class="status-badge status-planned">Planned</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== Install ===== -->
+        <section id="install">
+            <div class="container">
+                <div class="section-head">
+                    <span class="section-kicker">Quick install</span>
+                    <h2>Add Quant4J to your project.</h2>
+                    <p class="lead">Java 21+. No runtime dependencies.</p>
+                </div>
+
+                <div class="install-grid">
+                    <div class="snippet">
+                        <h3>Maven</h3>
+                        <pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;io.quant4j&lt;/groupId&gt;
+  &lt;artifactId&gt;quant4j&lt;/artifactId&gt;
+  &lt;version&gt;1.0.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+                    </div>
+                    <div class="snippet">
+                        <h3>Gradle</h3>
+                        <pre><code>dependencies {
+  implementation("io.quant4j:quant4j:1.0.0")
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div>© <span id="year"></span> Quant4J · Apache 2.0 License · Built by <a href="https://github.com/achraf-hasbi" target="_blank" rel="noreferrer">Achraf Hasbi</a></div>
+            <div>
+                <a href="https://github.com/achraf-hasbi/quant4j" target="_blank" rel="noreferrer">GitHub →</a>
+            </div>
+        </div>
+    </footer>
+
+</div>
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

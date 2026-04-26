@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DiscreteCompoundingStrategyTest {
 
@@ -93,6 +94,36 @@ public class DiscreteCompoundingStrategyTest {
 
         double actualRate = strategy.rateFromDiscountFactor(df, time);
         assertEquals(expectedRate, actualRate, TOLERANCE);
+    }
+
+    @Test
+    @DisplayName("Zero periodsPerYear throws IllegalArgumentException")
+    void testPeriodsPerYear_Zero_Throws() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new DiscreteCompoundingStrategy(0));
+    }
+
+    @Test
+    @DisplayName("Negative periodsPerYear throws IllegalArgumentException")
+    void testPeriodsPerYear_Negative_Throws() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new DiscreteCompoundingStrategy(-2));
+    }
+
+    @Test
+    @DisplayName("forwardRate with t1 == t2 throws IllegalArgumentException")
+    void testForwardRate_EqualTimes_Throws() {
+        CompoundingStrategy strategy = new DiscreteCompoundingStrategy(2);
+        assertThrows(IllegalArgumentException.class,
+                () -> strategy.forwardRate(0.03, 1.0, 0.05, 1.0));
+    }
+
+    @Test
+    @DisplayName("forwardRate with t1 > t2 throws IllegalArgumentException")
+    void testForwardRate_T1GreaterThanT2_Throws() {
+        CompoundingStrategy strategy = new DiscreteCompoundingStrategy(2);
+        assertThrows(IllegalArgumentException.class,
+                () -> strategy.forwardRate(0.05, 2.0, 0.03, 1.0));
     }
 
     @Test

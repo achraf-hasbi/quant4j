@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ContinuousCompoundingStrategyTest {
 
@@ -81,6 +82,22 @@ public class ContinuousCompoundingStrategyTest {
         ContinuousCompoundingStrategy strategy = new ContinuousCompoundingStrategy();
         double macaulay = 4.3235;
         assertEquals(macaulay, strategy.adjustMacaulayToModified(macaulay, 0.07), 1e-9);
+    }
+
+    @Test
+    @DisplayName("forwardRate with t1 == t2 throws IllegalArgumentException")
+    void testForwardRate_EqualTimes_Throws() {
+        CompoundingStrategy strategy = new ContinuousCompoundingStrategy();
+        assertThrows(IllegalArgumentException.class,
+                () -> strategy.forwardRate(0.03, 1.0, 0.05, 1.0));
+    }
+
+    @Test
+    @DisplayName("forwardRate with t1 > t2 throws IllegalArgumentException")
+    void testForwardRate_T1GreaterThanT2_Throws() {
+        CompoundingStrategy strategy = new ContinuousCompoundingStrategy();
+        assertThrows(IllegalArgumentException.class,
+                () -> strategy.forwardRate(0.05, 2.0, 0.03, 1.0));
     }
 
     @ParameterizedTest(name = "Continuous Forward: r1={0}, t1={1}, r2={2}, t2={3}")
