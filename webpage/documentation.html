@@ -870,7 +870,7 @@ semi.<span class="cm">forwardRate</span>(<span class="cv">0.04</span>, <span cla
     <span class="cv">0.06</span>,               <span class="cc">// 6% annual rate</span>
     Frequency.MONTHLY); <span class="cc">// monthly compounding</span>
 
-<span class="ck">double</span> finalBalance = res.balance().getLast(); <span class="cc">// → ~27,943</span>
+<span class="ck">double</span> finalBalance = res.balance().getLast(); <span class="cc">// → ~27,442</span>
 <span class="ck">int</span>    periods      = res.balance().size();     <span class="cc">// → 61 (period 0 + 60 monthly periods)</span></code></pre>
             </div>
         </div>
@@ -909,7 +909,7 @@ semi.<span class="cm">forwardRate</span>(<span class="cv">0.04</span>, <span cla
                 <div class="code-block-bar"><span>Example</span></div>
                 <pre><code><span class="cc">// Semi-annual 5% → equivalent continuous rate</span>
 <span class="ck">double</span> rc = RateConverter.<span class="cm">discreteToContinuous</span>(<span class="cv">0.05</span>, Frequency.SEMI_ANNUALLY);
-<span class="cc">// → 0.04879  (4.879%)</span>
+<span class="cc">// → 0.04938  (4.938%)</span>
 
 <span class="cc">// Continuous → quarterly discrete</span>
 <span class="ck">double</span> rq = RateConverter.<span class="cm">continuousToDiscrete</span>(rc, Frequency.QUARTERLY);
