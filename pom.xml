@@ -67,6 +67,7 @@
         <plugin.jacoco.version>0.8.12</plugin.jacoco.version>
         <plugin.checkstyle.version>3.4.0</plugin.checkstyle.version>
         <checkstyle.version>10.17.0</checkstyle.version>
+        <plugin.license.version>4.3</plugin.license.version>
         <plugin.central.version>0.6.0</plugin.central.version>
         <plugin.gpg.version>3.2.8</plugin.gpg.version>
     </properties>
@@ -165,7 +166,35 @@
                 </executions>
             </plugin>
 
-            <!-- 6. Checkstyle — enforce code style on main sources -->
+            <!-- 6. License header — fail build if any source file is missing the header -->
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${plugin.license.version}</version>
+                <configuration>
+                    <licenseSets>
+                        <licenseSet>
+                            <header>${project.basedir}/LICENSE_HEADER</header>
+                            <includes>
+                                <include>src/main/java/**/*.java</include>
+                                <include>src/test/java/**/*.java</include>
+                            </includes>
+                        </licenseSet>
+                    </licenseSets>
+                    <strictCheck>true</strictCheck>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>check-license-headers</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 7. Checkstyle — enforce code style on main sources -->
             <plugin>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${plugin.checkstyle.version}</version>
